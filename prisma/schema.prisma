@@ -1,0 +1,158 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(uuid())
+  name           String
+  email          String      @unique
+  emailVerified  DateTime?   @map("email_verified")
+  hashedPassword String?
+  image          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  posts          Post[]
+  savedPosts     SavedPost[]
+  chats          ChatUser[]
+  accounts       Account[]
+  sessions       Session[]
+  messages       Message[]
+
+  @@map("users")
+}
+
+model Post {
+  id           String      @id @default(uuid())
+  title        String
+  price        Int
+  imageUrls    String[]
+  address      String
+  city         String
+  numBedrooms  Int
+  numBathrooms Int
+  latitude     Float
+  longitude    Float
+  type         Type
+  property     Property
+  createdAt    DateTime    @default(now())
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String
+  postDetail   PostDetail?
+  savedPosts   SavedPost[]
+}
+
+model PostDetail {
+  id                 String  @id @default(uuid())
+  description        String
+  utilitiesIncluded  String?
+  petPolicy          String?
+  incomeRequirement  String?
+  propertySize       Int?
+  schoolDistance     Int?
+  busStopDistance    Int?
+  restaurantDistance Int?
+  post               Post    @relation(fields: [postId], references: [id])
+  postId             String  @unique
+}
+
+model SavedPost {
+  id      String   @id @default(uuid())
+  user    User     @relation(fields: [userId], references: [id])
+  post    Post     @relation(fields: [postId], references: [id])
+  userId  String
+  postId  String
+  savedAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
+
+model Chat {
+  id            String     @id @default(uuid())
+  seenByUserIds String[]
+  lastMessage   String?
+  createdAt     DateTime   @default(now())
+  messages      Message[]
+  users         ChatUser[]
+}
+
+model ChatUser {
+  chatId String
+  userId String
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@id([chatId, userId])
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  messageText String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  chatId      String
+  sentAt      DateTime @default(now())
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  type              String?
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  token_type        String?
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  scope             String?
+  id_token          String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String?  @map("user_id")
+  sessionToken String   @unique @map("session_token") @db.Text
+  accessToken  String?  @map("access_token") @db.Text
+  expires      DateTime
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
+enum Type {
+  buy
+  rent
+}
+
+enum Property {
+  apartment
+  house
+  condo
+  land
+}
