@@ -1,5 +1,5 @@
-import Header from '@/components/header';
-import { LoginForm } from './login-form';
+import Header from '@/components/Header/Header';
+import { LoginForm } from '@/components/LoginForm';
 import { Suspense } from 'react';
 
 export default async function LoginPage() {

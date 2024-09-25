@@ -1,5 +1,5 @@
-import Header from '@/components/header';
-import { RegisterForm } from './register-form';
+import Header from '@/components/Header/Header';
+import { RegisterForm } from '@/components/RegisterForm';
 
 export default async function RegisterPage() {
   return (
