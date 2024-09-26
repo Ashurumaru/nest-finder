@@ -13,7 +13,6 @@ model User {
   id             String      @id @default(uuid())
   name           String
   email          String      @unique
-  emailVerified  DateTime?   @map("email_verified")
   hashedPassword String?
   image          String?
   createdAt      DateTime    @default(now())
@@ -146,7 +145,7 @@ model VerificationRequest {
 }
 
 enum Type {
-  buy
+  sale
   rent
 }
 
@@ -154,5 +153,7 @@ enum Property {
   apartment
   house
   condo
+  townhouse
+  commercial
   land
 }

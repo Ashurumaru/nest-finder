@@ -1,6 +1,7 @@
 import { auth, signOut } from '@/auth';
 import Link from 'next/link';
 import Logo from "@/components/Header/Logo";
+import { Button } from "@/components/ui/button";
 
 const Header = async () => {
   const session = await auth();
@@ -12,7 +13,7 @@ const Header = async () => {
   };
 
   return (
-      <header className='bg-white h-24'>
+      <header className='bg-white h-24 border-b border-gray-200'>
         <nav className='h-full flex flex-col justify-between container mx-auto px-4'>
           <div className='flex justify-between items-center'>
             <Logo/>
@@ -21,22 +22,28 @@ const Header = async () => {
             <div className='flex items-center space-x-4 mt-2'>
               {user ? (
                   <form action={logoutAction} className='flex items-center '>
-                    <Link href='/profile' className='bg-blue-500 text-white px-1.5 py-1.5 rounded-lg'>
-                      Профиль
+                    <Link href='/profile'>
+                      <Button variant='primary'>
+                        Профиль
+                      </Button>
                     </Link>
-                    <button
+                    <Button
                         type='submit'
-                        className='bg-red-500 text-white px-1.5 py-1.5 rounded-lg'>
+                        variant='danger'>
                       Выйти
-                    </button>
+                    </Button>
                   </form>
               ) : (
                   <>
-                    <Link href='/post-ad' className='bg-blue-500 text-white px-1.5 py-1.5 rounded-lg'>
-                      + Подать объявление
+                    <Link href='/post-ad'>
+                      <Button variant='primary'>
+                        + Подать объявление
+                      </Button>
                     </Link>
-                    <Link href='/login' className='bg-gray-100 text-blue-500 px-1.5 py-1.5 rounded-lg'>
-                      Войти
+                    <Link href='/login'>
+                      <Button variant='secondary'>
+                        Войти
+                      </Button>
                     </Link>
                   </>
               )}
@@ -48,41 +55,32 @@ const Header = async () => {
             <li>
               <Link
                   href='/rent'
-                  className='relative text-ct-dark-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition hover:underline-button'>
+                  className='relative text-ct-dark-600 px-4 py-2 border-b-4 border-transparent hover:border-gray-400'>
                 Аренда
               </Link>
             </li>
             <li>
               <Link
                   href='/sale'
-                  className='relative text-ct-dark-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition hover:underline-button'>
+                  className='relative text-ct-dark-600 px-4 py-2 border-b-4 border-transparent hover:border-gray-400'>
                 Продажа
               </Link>
             </li>
             <li>
               <Link
                   href='/new-buildings'
-                  className='relative text-ct-dark-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition hover:underline-button'>
+                  className='relative text-ct-dark-600 px-4 py-2 border-b-4 border-transparent hover:border-gray-400'>
                 Новостройки
               </Link>
             </li>
             <li>
               <Link
-                  href='/construction'
-                  className='relative text-ct-dark-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition hover:underline-button'>
-                Строительство
-              </Link>
-            </li>
-            <li>
-              <Link
                   href='/commercial'
-                  className='relative text-ct-dark-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition hover:underline-button'>
+                  className='relative text-ct-dark-600 px-4 py-2 border-b-4 border-transparent hover:border-gray-400'>
                 Коммерческая
               </Link>
             </li>
           </ul>
-
-
         </nav>
       </header>
   );
