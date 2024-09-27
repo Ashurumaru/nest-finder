@@ -11,10 +11,7 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
-    // Форматирование цены
-    const formattedPrice = property.price?.toLocaleString() || "N/A";
-
-    // Определяем источник изображения (Cloudinary или стандартное)
+    const formattedPrice = property.price?.toLocaleString() || "Н/Д"; // "Н/Д" вместо "N/A"
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
 
     return (
@@ -23,7 +20,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                 width={600}
                 height={400}
                 src={imageSrc}
-                alt={property.title || "Default property"}
+                alt={property.title || "Недвижимость"}
                 className="w-full h-auto rounded-t-xl"
             />
             <div className="p-4">
@@ -32,37 +29,37 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                     <h3 className="text-xl font-bold">{property.title}</h3>
                 </div>
                 <h3 className="absolute top-[10px] right-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right">
-                    ${formattedPrice}
+                    {formattedPrice} ₽
                 </h3>
                 <div className="flex justify-center gap-4 text-gray-500 mb-4">
                     {property.numBedrooms && (
                         <p>
                             <FaBed className="inline mr-2" /> {property.numBedrooms}
-                            <span className="md:hidden lg:inline"> Beds</span>
+                            <span className="md:hidden lg:inline"> Спальни</span>
                         </p>
                     )}
                     {property.numBathrooms && (
                         <p>
                             <FaBath className="inline mr-2" /> {property.numBathrooms}
-                            <span className="md:hidden lg:inline"> Baths</span>
+                            <span className="md:hidden lg:inline"> Ванные</span>
                         </p>
                     )}
                     {property.postDetail?.propertySize && (
                         <p>
                             <FaRulerCombined className="inline mr-2" />
-                            {property.postDetail.propertySize} <span className="md:hidden lg:inline"> sqft</span>
+                            {property.postDetail.propertySize} <span className="md:hidden lg:inline"> кв. м</span>
                         </p>
                     )}
                 </div>
                 <div className="flex justify-center gap-4 text-green-900 text-sm mb-4">
                     {property.type === 'rent' && (
                         <p>
-                            <FaMoneyBill className="inline mr-2" /> Rent
+                            <FaMoneyBill className="inline mr-2" /> Аренда
                         </p>
                     )}
                     {property.type === 'sale' && (
                         <p>
-                            <FaMoneyBill className="inline mr-2" /> Sale
+                            <FaMoneyBill className="inline mr-2" /> Продажа
                         </p>
                     )}
                 </div>
@@ -78,7 +75,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                         href={`/properties/${property.id}`}
                         className="h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm"
                     >
-                        Details
+                        Подробнее
                     </Link>
                 </div>
             </div>

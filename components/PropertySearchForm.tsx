@@ -79,34 +79,34 @@ export function PropertySearchForm() {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6 flex flex-col md:flex-row md:space-y-0 items-center justify-between w-full"
+                className="space-y-6 flex flex-col lg:flex-row lg:space-y-0 lg:space-x-4 items-center justify-between w-full"
             >
                 {/* Property Type Combobox */}
                 <FormField
                     control={form.control}
                     name="propertyType"
-                    render={({field}) => (
-                        <FormItem className="flex flex-col w-1/4">
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col w-full lg:w-1/4 mb-4 lg:mb-0">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <FormControl>
                                         <Button
                                             variant="outline"
                                             role="combobox"
-                                            className="w-full justify-between rounded-r-none"
+                                            className="w-full justify-between"
                                         >
                                             {field.value
                                                 ? propertyTypes.find(
                                                     (type) => type.value === field.value
                                                 )?.label
                                                 : "Квартиру в новостройке и вторичке"}
-                                            <CaretSortIcon className="ml-2 h-4 w-4 opacity-50"/>
+                                            <CaretSortIcon className="ml-2 h-4 w-4 opacity-50" />
                                         </Button>
                                     </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-[250px] p-0">
                                     <Command>
-                                        <CommandInput placeholder="Поиск..." className="h-9"/>
+                                        <CommandInput placeholder="Поиск..." className="h-9" />
                                         <CommandList>
                                             <CommandEmpty>Не найдено</CommandEmpty>
                                             <CommandGroup>
@@ -114,7 +114,9 @@ export function PropertySearchForm() {
                                                     <CommandItem
                                                         key={type.value}
                                                         value={type.label}
-                                                        onSelect={() => field.onChange(type.value)}
+                                                        onSelect={() =>
+                                                            field.onChange(type.value)
+                                                        }
                                                     >
                                                         {type.label}
                                                         <CheckIcon
@@ -139,27 +141,28 @@ export function PropertySearchForm() {
                 <FormField
                     control={form.control}
                     name="rooms"
-                    render={({field}) => (
-                        <FormItem className="flex flex-col w-1/4">
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col w-full lg:w-1/4 mb-4 lg:mb-0">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <FormControl>
                                         <Button
                                             variant="outline"
                                             role="combobox"
-                                            className="w-full justify-between rounded-none"
+                                            className="w-full justify-between"
                                         >
                                             {field.value
-                                                ? roomCounts.find((room) => room.value === field.value)
-                                                    ?.label
+                                                ? roomCounts.find(
+                                                    (room) => room.value === field.value
+                                                )?.label
                                                 : "1 - 5 комн."}
-                                            <CaretSortIcon className="ml-2 h-4 w-4 opacity-50"/>
+                                            <CaretSortIcon className="ml-2 h-4 w-4 opacity-50" />
                                         </Button>
                                     </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-[200px] p-0">
                                     <Command>
-                                        <CommandInput placeholder="Поиск..." className="h-9"/>
+                                        <CommandInput placeholder="Поиск..." className="h-9" />
                                         <CommandList>
                                             <CommandEmpty>Не найдено</CommandEmpty>
                                             <CommandGroup>
@@ -167,7 +170,9 @@ export function PropertySearchForm() {
                                                     <CommandItem
                                                         key={room.value}
                                                         value={room.label}
-                                                        onSelect={() => field.onChange(room.value)}
+                                                        onSelect={() =>
+                                                            field.onChange(room.value)
+                                                        }
                                                     >
                                                         {room.label}
                                                         <CheckIcon
@@ -189,17 +194,17 @@ export function PropertySearchForm() {
                 />
 
                 {/* Price Inputs (От and До) */}
-                <div className="flex w-1/4">
+                <div className="flex flex-col lg:flex-row w-full lg:w-1/4 mb-4 lg:mb-0 space-y-4 lg:space-y-0 lg:space-x-4">
                     <FormField
                         control={form.control}
                         name="priceFrom"
-                        render={({field}) => (
-                            <FormItem className="w-1/2">
+                        render={({ field }) => (
+                            <FormItem className="w-full">
                                 <FormControl>
                                     <Input
                                         placeholder="от"
                                         {...field}
-                                        className="rounded-none bg-white text-gray-900 border border-gray-300"
+                                        className="rounded bg-white text-gray-900 border border-gray-300"
                                     />
                                 </FormControl>
                             </FormItem>
@@ -208,13 +213,13 @@ export function PropertySearchForm() {
                     <FormField
                         control={form.control}
                         name="priceTo"
-                        render={({field}) => (
-                            <FormItem className="w-1/2">
+                        render={({ field }) => (
+                            <FormItem className="w-full">
                                 <FormControl>
                                     <Input
                                         placeholder="до"
                                         {...field}
-                                        className="rounded-none bg-white text-gray-900 border border-gray-300"
+                                        className="rounded bg-white text-gray-900 border border-gray-300"
                                     />
                                 </FormControl>
                             </FormItem>
@@ -226,20 +231,18 @@ export function PropertySearchForm() {
                 <FormField
                     control={form.control}
                     name="location"
-                    render={({field}) => (
-                        <FormItem className="flex w-1/4">
+                    render={({ field }) => (
+                        <FormItem className="flex w-full lg:w-1/4 mb-4 lg:mb-0">
                             <FormControl>
                                 <Input
-                                    placeholder="Город, адрес, метро, район, ж/д, шоссе или ЖК"
+                                    placeholder="Город, адрес, район..."
                                     {...field}
-                                    className="rounded-l-none bg-white text-gray-900 border border-gray-300"
+                                    className="rounded bg-white text-gray-900 border border-gray-300"
                                 />
                             </FormControl>
                         </FormItem>
                     )}
                 />
-
-                {/* Action buttons */}
             </form>
             <div className="flex items-center space-x-2 mt-4">
                 <Button variant="outline">Показать на карте</Button>

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-zinc-300",
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
     {
         variants: {
             variant: {
@@ -21,7 +21,10 @@ const buttonVariants = cva(
                 link: "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50",
                 primary:
                     "bg-blue-600 text-white shadow hover:bg-blue-700 focus:ring-blue-500",
-                danger: "bg-red-600 text-white shadow hover:bg-red-700 focus:ring-red-500",
+                danger:
+                    "bg-red-600 text-white shadow hover:bg-red-700 focus:ring-red-500",
+                warning:
+                    "bg-yellow-500 text-black shadow hover:bg-yellow-600 focus:ring-yellow-500",
             },
             size: {
                 default: "h-9 px-4 py-2",
@@ -41,15 +44,17 @@ export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
         VariantProps<typeof buttonVariants> {
     asChild?: boolean;
+    "aria-label"?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
+    ({ className, variant, size, asChild = false, "aria-label": ariaLabel, ...props }, ref) => {
         const Comp = asChild ? Slot : "button";
         return (
             <Comp
                 className={cn(buttonVariants({ variant, size, className }))}
                 ref={ref}
+                aria-label={ariaLabel}
                 {...props}
             />
         );

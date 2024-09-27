@@ -9,13 +9,8 @@ interface FeaturedPropertyCardProps {
 }
 
 const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property }) => {
-    // Форматирование цены
     const formattedPrice = property.price?.toLocaleString() || "N/A";
-
-    // Определяем источник изображения (если нет изображения, используем стандартное)
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
-
-    // Определяем тип недвижимости
     const propertyType = {
         apartment: "Квартира",
         house: "Дом",
@@ -26,7 +21,7 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
     }[property.property] || "Неизвестная недвижимость";
 
     return (
-        <div className="bg-white rounded-xl shadow-md relative flex flex-col md:flex-row">
+        <div className="bg-white rounded-xl shadow-md relative flex flex-col mx-auto md:flex-row h-full">
             <Image
                 src={imageSrc}
                 alt={property.title || "Недвижимость"}
@@ -35,7 +30,7 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
                 height={400}
                 className="object-cover rounded-t-xl md:rounded-tr-none md:rounded-l-xl w-full md:w-2/5"
             />
-            <div className="p-6">
+            <div className="p-6 flex flex-col flex-grow"> {/* flex-grow для заполнения */}
                 <h3 className="text-xl font-bold">{property.title}</h3>
                 <div className="text-gray-600 mb-4 capitalize">{propertyType}</div>
                 <h3 className="absolute top-[10px] left-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right">
@@ -62,11 +57,11 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
                     )}
                 </div>
                 <div className="border border-gray-200 mb-5" />
-                <div className="flex flex-col lg:flex-row justify-between">
+                <div className="flex flex-col lg:flex-row justify-between mt-auto"> {/* mt-auto для выравнивания кнопки внизу */}
                     <div className="flex align-middle gap-2 mb-4 lg:mb-0">
                         <FaMapMarker className="text-lg text-orange-700" />
                         <span className="text-orange-700">
-                            {property.city}, {property.address}
+                            {property.city}
                         </span>
                     </div>
                     <Link
@@ -80,5 +75,6 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
         </div>
     );
 };
+
 
 export default FeaturedPropertyCard;

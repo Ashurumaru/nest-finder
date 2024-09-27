@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import Header from "@/components/Header/Header";
+import Header from "@/components/Header";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 

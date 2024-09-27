@@ -1,4 +1,4 @@
-import Header from '@/components/Header/Header';
+import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import FeaturedProperties from '@/components/FeaturedProperties';
 import InfoBoxes from "@/components/InfoBoxes";
