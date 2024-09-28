@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -8,28 +10,20 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default:
-                    "bg-zinc-900 text-zinc-50 shadow hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90",
-                destructive:
-                    "bg-red-500 text-zinc-50 shadow-sm hover:bg-red-500/90 dark:bg-red-900 dark:text-zinc-50 dark:hover:bg-red-900/90",
-                outline:
-                    "border border-zinc-200 bg-white shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-                secondary:
-                    "bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
-                ghost:
-                    "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-                link: "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50",
-                primary:
-                    "bg-blue-600 text-white shadow hover:bg-blue-700 focus:ring-blue-500",
-                danger:
-                    "bg-red-600 text-white shadow hover:bg-red-700 focus:ring-red-500",
-                warning:
-                    "bg-yellow-500 text-black shadow hover:bg-yellow-600 focus:ring-yellow-500",
+                default: "bg-zinc-900 text-zinc-50 hover:bg-zinc-800 focus:ring-zinc-400",
+                destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+                outline: "border border-zinc-200 bg-white hover:bg-zinc-100 focus:ring-zinc-400",
+                secondary: "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-400",
+                ghost: "hover:bg-zinc-100 focus:ring-zinc-400",
+                link: "text-zinc-900 underline-offset-4 hover:underline",
+                primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+                danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+                warning: "bg-yellow-500 text-black hover:bg-yellow-600 focus:ring-yellow-500",
             },
             size: {
                 default: "h-9 px-4 py-2",
-                sm: "h-8 rounded-md px-3 text-xs",
-                lg: "h-10 rounded-md px-8",
+                sm: "h-8 px-3 text-sm",
+                lg: "h-10 px-6 text-base",
                 icon: "h-9 w-9",
             },
         },
@@ -45,18 +39,44 @@ export interface ButtonProps
         VariantProps<typeof buttonVariants> {
     asChild?: boolean;
     "aria-label"?: string;
+    isLoading?: boolean;
+    icon?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, asChild = false, "aria-label": ariaLabel, ...props }, ref) => {
+    (
+        {
+            className,
+            variant,
+            size,
+            asChild = false,
+            "aria-label": ariaLabel,
+            isLoading = false,
+            icon,
+            children,
+            disabled,
+            ...props
+        },
+        ref
+    ) => {
         const Comp = asChild ? Slot : "button";
         return (
             <Comp
                 className={cn(buttonVariants({ variant, size, className }))}
                 ref={ref}
                 aria-label={ariaLabel}
+                disabled={disabled || isLoading}
                 {...props}
-            />
+            >
+                {isLoading ? (
+                    <span className="loader" />
+                ) : (
+                    <>
+                        {icon && <span className="mr-2">{icon}</span>}
+                        {children}
+                    </>
+                )}
+            </Comp>
         );
     }
 );

@@ -1,7 +1,7 @@
 import React from 'react';
 import InfoBox from "@/components/InfoBox";
 
-const InfoBoxes: React.FC = () => {
+const HomeInfoBoxes: React.FC = () => {
     return (
         <section className="bg-gray-50 py-12">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,4 +57,4 @@ const InfoBoxes: React.FC = () => {
     );
 };
 
-export default InfoBoxes;
+export default HomeInfoBoxes;

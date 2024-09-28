@@ -1,19 +1,21 @@
-import React from 'react';
-import PropertySearchForm from '@/components/PropertySearchForm';
+// components/Hero.tsx
+
+import React from "react";
+import HomePropertySearchForm from "@/components/HomePropertySearchForm";
 
 const Hero: React.FC = () => {
     return (
-        <section className="bg-blue-700 py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-                <div className="text-center">
-                    <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
-                        Найдите свое гнездышко
-                    </h1>
-                    <p className="my-4 text-xl text-white">
-                        Откройте для себя идеальное жилье, которое подходит именно вам.
-                    </p>
+        <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20">
+            <div className="container mx-auto px-4 flex flex-col items-center text-center">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                    Найдите своё гнёздышко
+                </h1>
+                <p className="text-lg md:text-xl mb-8">
+                    Откройте для себя идеальное жильё, которое подходит именно вам.
+                </p>
+                <div className="w-full max-w-3xl">
+                    <HomePropertySearchForm />
                 </div>
-                <PropertySearchForm />
             </div>
         </section>
     );

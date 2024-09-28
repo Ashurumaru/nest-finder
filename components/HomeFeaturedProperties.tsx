@@ -6,7 +6,7 @@ interface FeaturedPropertiesProps {
     properties: Property[];
 }
 
-const FeaturedProperties: React.FC<FeaturedPropertiesProps> = ({ properties }) => {
+const HomeFeaturedProperties: React.FC<FeaturedPropertiesProps> = ({ properties }) => {
     return (
         <section className="bg-blue-50 px-4 pt-6 pb-10">
             <div className="container-xl lg:container m-auto">
@@ -23,4 +23,4 @@ const FeaturedProperties: React.FC<FeaturedPropertiesProps> = ({ properties }) =
     );
 };
 
-export default FeaturedProperties;
+export default HomeFeaturedProperties;

@@ -1,7 +1,6 @@
-import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import FeaturedProperties from '@/components/FeaturedProperties';
-import InfoBoxes from "@/components/InfoBoxes";
+import HomeFeaturedProperties from '@/components/HomeFeaturedProperties';
+import HomeInfoBoxes from "@/components/HomeInfoBoxes";
 import HomeProperties from "@/components/HomeProperties";
 import {getProperties} from "@/utils/getProperties";
 
@@ -10,8 +9,8 @@ export default async function Home() {
     return (
         <>
             <Hero />
-            <InfoBoxes/>
-            <FeaturedProperties properties={data}/>
+            <HomeInfoBoxes/>
+            <HomeFeaturedProperties properties={data}/>
             <HomeProperties/>
         </>
     );
