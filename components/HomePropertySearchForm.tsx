@@ -341,8 +341,8 @@ export function HomePropertySearchForm() {
 
                 {/* Кнопки отправки */}
                 <div className="col-span-1 md:col-span-2 lg:col-span-3 flex items-center space-x-2 mt-4">
-                    <Button variant="outline">Показать на карте</Button>
-                    <Button type="submit">Найти</Button>
+                    <Button variant="secondary">Показать на карте</Button>
+                    <Button variant="primary">Найти</Button>
                 </div>
             </form>
         </Form>
