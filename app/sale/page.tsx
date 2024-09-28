@@ -5,14 +5,15 @@ import InfoBoxes from "@/components/InfoBoxes";
 import HomeProperties from "@/components/HomeProperties";
 import {getProperties} from "@/utils/getProperties";
 
-export default async function Home() {
+export default async function SalePage() {
     const data = await getProperties();
     return (
         <>
+            <Header />
             <Hero />
-            <InfoBoxes/>
             <FeaturedProperties properties={data}/>
             <HomeProperties/>
+            <InfoBoxes/>
         </>
     );
 }
