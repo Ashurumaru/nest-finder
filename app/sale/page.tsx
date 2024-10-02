@@ -57,7 +57,7 @@ export default async function SalePage({ searchParams }: SalePageProps) {
     return (
         <div className="container mx-auto py-6">
             <h1 className="text-3xl font-bold mb-6">Недвижимость на продажу</h1>
-            <PropertyList initialProperties={properties} />
+            <PropertyList initialProperties={properties} propertyType="sale"/>
         </div>
     );
 }

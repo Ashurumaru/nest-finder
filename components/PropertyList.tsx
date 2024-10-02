@@ -8,21 +8,15 @@ import PropertyCard from './PropertyCard';
 import PropertyFilter from './PropertyFilter';
 import { Property } from '@/types/propertyTypes';
 
-interface FiltersState {
-    searchQuery: string;
-    minPrice: string;
-    maxPrice: string;
-    minBedrooms: string;
-    maxBedrooms: string;
-}
-
 interface PropertyListProps {
     initialProperties: Property[];
+    propertyType: 'rent' | 'sale';
 }
 
-export default function PropertyList({ initialProperties }: PropertyListProps) {
+export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {
     const [properties, setProperties] = useState<Property[]>(initialProperties);
     const searchParams = useSearchParams();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -30,14 +24,14 @@ export default function PropertyList({ initialProperties }: PropertyListProps) {
             const res = await fetch('/api/properties', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'rent', ...params }),
+                body: JSON.stringify({ type: propertyType, ...params }),
             });
             const data = await res.json();
             setProperties(data);
         };
 
         fetchProperties();
-    }, [searchParams]);
+    }, [searchParams, propertyType]);
 
     return (
         <>

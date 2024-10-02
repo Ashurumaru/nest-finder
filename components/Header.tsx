@@ -19,14 +19,15 @@ const Header = () => {
     // Дополнительно: перенаправление или обновление страницы
   };
 
-  return (
+  return  (
       <header className="bg-white shadow-md">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-          {/* Логотип */}
-          <Link href="/">
-            <Logo />
-          </Link>
-
+          {/* Используем фиксированную ширину контейнера */}
+          <div className="flex-shrink-0">
+            <Link href="/">
+              <Logo />
+            </Link>
+          </div>
           {/* Десктопное меню */}
           <div className="hidden md:flex items-center space-x-8">
             {/* Ссылки навигации */}
