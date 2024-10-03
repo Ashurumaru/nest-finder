@@ -23,6 +23,10 @@ export interface Property {
     postDetail?: PostDetail; // Связанные детали
     type: 'sale' | 'rent';   // Тип недвижимости: аренда или продажа
     property: 'apartment' | 'house' | 'condo' | 'townhouse' | 'commercial' | 'land'; // Тип собственности
+    views: number;          // Количество просмотров
+    createdAt: string;      // Дата создания
+    updatedAt?: string;     // Дата обновления (необязательное поле)
+    author?: string;        // Автор публикации (например, имя пользователя)
 }
 
 export interface PropertyFilters {
@@ -35,4 +39,6 @@ export interface PropertyFilters {
     maxBedrooms?: number;  // Максимальное количество спален
     minBathrooms?: number; // Минимальное количество ванных комнат
     maxBathrooms?: number; // Максимальное количество ванных комнат
+    createdAtBefore?: string;  // Фильтр по дате создания (до)
+    createdAtAfter?: string;   // Фильтр по дате создания (после)
 }

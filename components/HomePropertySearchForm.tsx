@@ -49,7 +49,6 @@ const roomCounts = [
     { label: "5+ комн.", value: "5+" },
 ];
 
-// Схема валидации с использованием Zod
 const FormSchema = z.object({
     transactionType: z.string({
         required_error: "Пожалуйста, выберите тип сделки.",
@@ -62,9 +61,7 @@ const FormSchema = z.object({
     }),
     priceFrom: z.string().optional(),
     priceTo: z.string().optional(),
-    location: z.string().min(2, {
-        message: "Пожалуйста, введите корректное местоположение.",
-    }),
+    location: z.string().optional(),
 });
 
 export function HomePropertySearchForm() {

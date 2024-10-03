@@ -1,5 +1,3 @@
-// components/PropertyFilter.tsx
-
 'use client';
 
 import React, { useState, ChangeEvent } from 'react';
@@ -7,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export default function PropertyFilter() {
+interface PropertyFilterProps {
+    propertyType: 'rent' | 'sale';
+}
+
+export default function PropertyFilter({ propertyType }: PropertyFilterProps) {
     const router = useRouter();
     const [filters, setFilters] = useState({
         searchQuery: '',
@@ -25,8 +27,16 @@ export default function PropertyFilter() {
     };
 
     const applyFilters = () => {
-        const query = new URLSearchParams(filters).toString();
-        router.push(`/rent?${query}`);
+        const queryParams = {
+            searchQuery: filters.searchQuery,
+            minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+            maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+            minBedrooms: filters.minBedrooms ? Number(filters.minBedrooms) : undefined,
+            maxBedrooms: filters.maxBedrooms ? Number(filters.maxBedrooms) : undefined,
+        };
+
+        const query = new URLSearchParams(queryParams as any).toString();
+        router.push(`/${propertyType}?${query}`);
     };
 
     return (

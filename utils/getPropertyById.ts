@@ -6,6 +6,7 @@ export async function getPropertyById(id: string) {
         where: { id },
         include: {
             postDetail: true, // Включаем детали недвижимости
+            user: true, // Включаем автора (пользователя, который выложил объявление)
         },
     });
 
@@ -13,6 +14,14 @@ export async function getPropertyById(id: string) {
     if (!property) {
         return null;
     }
+
+    // Обновляем количество просмотров при каждом запросе
+    await prisma.post.update({
+        where: { id },
+        data: {
+            views: property.views + 1, // Увеличиваем количество просмотров
+        },
+    });
 
     // Возвращаем только нужные данные
     return {
@@ -26,6 +35,10 @@ export async function getPropertyById(id: string) {
         numBathrooms: property.numBathrooms,
         latitude: property.latitude,
         longitude: property.longitude,
+        views: property.views + 1, // Обновляем количество просмотров
+        createdAt: property.createdAt,
+        updatedAt: property.updatedAt,
+        author: property.user.name, // Автор (имя пользователя)
         postDetail: {
             propertySize: property.postDetail?.propertySize ?? undefined,
             description: property.postDetail?.description ?? undefined,

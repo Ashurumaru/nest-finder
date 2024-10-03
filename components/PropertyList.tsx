@@ -1,5 +1,3 @@
-// components/PropertyList.tsx
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -35,7 +33,7 @@ export default function PropertyList({ initialProperties, propertyType }: Proper
 
     return (
         <>
-            <PropertyFilter />
+            <PropertyFilter propertyType={propertyType} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {properties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
