@@ -49,10 +49,10 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
                             <span className="md:hidden lg:inline">Ванные</span>
                         </p>
                     )}
-                    {property.postDetail?.propertySize && (
+                    {property?.propertySize && (
                         <p>
                             <FaRulerCombined className="inline mr-2" />
-                            {property.postDetail.propertySize} <span className="md:hidden lg:inline">кв. фут</span>
+                            {property.propertySize} <span className="md:hidden lg:inline">кв. фут</span>
                         </p>
                     )}
                 </div>

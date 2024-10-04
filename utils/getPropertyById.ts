@@ -5,7 +5,6 @@ export async function getPropertyById(id: string) {
     const property = await prisma.post.findUnique({
         where: { id },
         include: {
-            postDetail: true, // Включаем детали недвижимости
             user: true, // Включаем автора (пользователя, который выложил объявление)
         },
     });
@@ -39,16 +38,14 @@ export async function getPropertyById(id: string) {
         createdAt: property.createdAt,
         updatedAt: property.updatedAt,
         author: property.user.name, // Автор (имя пользователя)
-        postDetail: {
-            propertySize: property.postDetail?.propertySize ?? undefined,
-            description: property.postDetail?.description ?? undefined,
-            utilitiesIncluded: property.postDetail?.utilitiesIncluded ?? undefined,
-            petPolicy: property.postDetail?.petPolicy ?? undefined,
-            incomeRequirement: property.postDetail?.incomeRequirement ?? undefined,
-            schoolDistance: property.postDetail?.schoolDistance ?? undefined,
-            busStopDistance: property.postDetail?.busStopDistance ?? undefined,
-            restaurantDistance: property.postDetail?.restaurantDistance ?? undefined,
-        },
+        description: property.description ?? undefined,
+        propertySize: property.propertySize ?? undefined,
+        utilitiesIncluded: property.utilitiesIncluded ?? undefined,
+        petPolicy: property.petPolicy ?? undefined,
+        incomeRequirement: property.incomeRequirement ?? undefined,
+        schoolDistance: property.schoolDistance ?? undefined,
+        busStopDistance: property.busStopDistance ?? undefined,
+        restaurantDistance: property.restaurantDistance ?? undefined,
         type: property.type,
         property: property.property,
     };

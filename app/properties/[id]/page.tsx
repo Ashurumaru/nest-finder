@@ -117,7 +117,7 @@ export default function PropertyPage() {
                         </div>
                         <div className="flex items-center text-gray-600">
                             <FaRulerCombined className="inline mr-2" />
-                            <p>{property.postDetail?.propertySize ? `${property.postDetail?.propertySize} м²` : 'Нет данных о размере'}</p>
+                            <p>{property?.propertySize ? `${property?.propertySize} м²` : 'Нет данных о размере'}</p>
                         </div>
                     </div>
 
@@ -139,7 +139,7 @@ export default function PropertyPage() {
 
                     {showContacts && (
                         <div className="mt-4">
-                            <p>Телефон: {property.postDetail?.incomeRequirement || "Не указано"}</p>
+                            <p>Телефон: {property?.incomeRequirement || "Не указано"}</p>
                             <p>Email: example@mail.com</p> {/* Здесь замените на реальный email */}
                         </div>
                     )}
@@ -162,7 +162,7 @@ export default function PropertyPage() {
             <section className="bg-white p-6 shadow-lg rounded-lg mt-6">
                 <h2 className="text-2xl font-bold mb-4">Описание</h2>
                 <p className="text-gray-700 leading-relaxed">
-                    {property.postDetail?.description || "Описание отсутствует"}
+                    {property?.description || "Описание отсутствует"}
                 </p>
             </section>
         </div>

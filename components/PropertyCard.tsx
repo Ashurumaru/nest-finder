@@ -51,10 +51,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                             <FaBath className="inline mr-2" /> {property.numBathrooms}
                         </p>
                     )}
-                    {property.postDetail?.propertySize && (
+                    {property.propertySize && (
                         <p className="flex items-center">
                             <FaRulerCombined className="inline mr-2" />
-                            {property.postDetail.propertySize} кв.м
+                            {property.propertySize} кв.м
                         </p>
                     )}
                 </div>

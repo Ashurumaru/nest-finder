@@ -1,6 +1,5 @@
 import prisma from "@/prisma/prisma";
-import {PropertyFilters} from "@/types/propertyTypes";
-
+import { PropertyFilters } from "@/types/propertyTypes";
 
 export async function getProperties(filters: PropertyFilters = {}) {
     const {
@@ -33,7 +32,7 @@ export async function getProperties(filters: PropertyFilters = {}) {
             { title: { contains: searchQuery, mode: "insensitive" } },
             { address: { contains: searchQuery, mode: "insensitive" } },
             { city: { contains: searchQuery, mode: "insensitive" } },
-            { postDetail: { description: { contains: searchQuery, mode: "insensitive" } } },
+            { description: { contains: searchQuery, mode: "insensitive" } }, // Теперь поиск по описанию идет через поле description
         ];
     }
 
@@ -64,9 +63,6 @@ export async function getProperties(filters: PropertyFilters = {}) {
     // Запрос к базе данных с учётом фильтров
     const properties = await prisma.post.findMany({
         where: whereClause,
-        include: {
-            postDetail: true,
-        },
     });
 
     // Возвращаем только нужные данные
@@ -81,11 +77,19 @@ export async function getProperties(filters: PropertyFilters = {}) {
         numBathrooms: property.numBathrooms,
         latitude: property.latitude,
         longitude: property.longitude,
-        postDetail: {
-            propertySize: property.postDetail?.propertySize ?? undefined,
-            description: property.postDetail?.description ?? undefined,
-        },
+        description: property.description,  // Теперь описание берётся напрямую из Post
+        propertySize: property.propertySize, // Размер недвижимости
+        utilitiesIncluded: property.utilitiesIncluded, // Включенные услуги
+        petPolicy: property.petPolicy, // Политика по животным
+        incomeRequirement: property.incomeRequirement, // Требование к доходу
+        schoolDistance: property.schoolDistance, // Расстояние до школы
+        busStopDistance: property.busStopDistance, // Расстояние до автобусной остановки
+        restaurantDistance: property.restaurantDistance, // Расстояние до ресторанов
         type: property.type,
         property: property.property,
+        views: property.views, // Количество просмотров
+        createdAt: property.createdAt.toISOString(),
+        updatedAt: property.updatedAt?.toISOString(),
+        userId: property.userId, // ID пользователя
     }));
 }

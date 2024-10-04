@@ -1,35 +1,51 @@
 'use client';
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import { signOut } from "next-auth/react";
 import AccountSection from './AccountSection';
 import MyPropertiesSection from './MyPropertiesSection';
 import FavoritesSection from './FavoritesSection';
 
 export default function ProfileClient({ user }: { user: any }) {
-    const [selectedMenu, setSelectedMenu] = useState("account");
+    const [selectedMenu, setSelectedMenu] = useState<string>("account");
+
+    // Функция для переключения вкладок и обновления фрагмента URL
+    const handleMenuSelect = (key: string) => {
+        setSelectedMenu(key);
+        window.location.hash = key; // Обновляем фрагмент URL
+    };
+
+    // При загрузке компонента проверяем фрагмент URL
+    useEffect(() => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash && ["account", "my-properties", "favorites"].includes(hash)) {
+            setSelectedMenu(hash);
+        }
+    }, []);
 
     const handleSignOut = async () => {
         await signOut();
     };
 
     const menuItems = [
-        { key: "account", label: "Мой аккаунт", content: <AccountSection user={user} /> },
+        { key: "account", label: "Мой аккаунт", content: user?.id ? <AccountSection userId={user.id} /> : <p>Пользователь не найден</p> },
         { key: "my-properties", label: "Моя недвижимость", content: user?.id ? <MyPropertiesSection userId={user.id} /> : <p>Пользователь не найден</p> },
         { key: "favorites", label: "Мое избранное", content: user?.id ? <FavoritesSection userId={user.id} /> : <p>Пользователь не найден</p> },
     ];
 
     return (
-        <section className="min-h-screen bg-gray-100 p-6">
-            <div className="max-w-7xl mx-auto flex">
-                <aside className="w-1/4 bg-white p-4 rounded-lg shadow-md">
+        <section className="min-h-screen bg-gray-100 p-4 md:p-6">
+            <div
+                className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 items-start"> {/* Добавлено items-start для выравнивания */}
+                {/* Сайдбар */}
+                <aside className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
                     <div className="flex flex-col items-center mb-6">
                         <Image
                             src={user?.image ? user.image : "/images/default.png"}
                             alt={`profile photo of ${user?.name}`}
-                            width={80}
-                            height={80}
+                            width={100}
+                            height={100}
                             className="rounded-full"
                         />
                         <p className="mt-4 text-gray-700 font-semibold">ID {user?.id}</p>
@@ -38,8 +54,8 @@ export default function ProfileClient({ user }: { user: any }) {
                         {menuItems.map((item) => (
                             <li
                                 key={item.key}
-                                className={`cursor-pointer px-4 py-2 rounded-md ${selectedMenu === item.key ? "bg-blue-100" : "hover:bg-gray-100"}`}
-                                onClick={() => setSelectedMenu(item.key)}
+                                className={`cursor-pointer px-4 py-2 rounded-md text-center ${selectedMenu === item.key ? "bg-blue-100 text-blue-700 font-bold" : "hover:bg-gray-100 text-gray-600"}`}
+                                onClick={() => handleMenuSelect(item.key)}
                             >
                                 {item.label}
                             </li>
@@ -47,7 +63,7 @@ export default function ProfileClient({ user }: { user: any }) {
                         <li className="mt-8">
                             <button
                                 onClick={handleSignOut}
-                                className="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600"
+                                className="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 transition duration-150 ease-in-out"
                             >
                                 Выйти
                             </button>
@@ -55,7 +71,8 @@ export default function ProfileClient({ user }: { user: any }) {
                     </ul>
                 </aside>
 
-                <main className="w-3/4 bg-white p-6 rounded-lg shadow-md ml-6">
+                {/* Основной контент */}
+                <main className="w-full md:w-3/4 bg-white p-4 md:p-6 rounded-lg shadow-md flex-grow">
                     {menuItems.find((item) => item.key === selectedMenu)?.content}
                 </main>
             </div>
