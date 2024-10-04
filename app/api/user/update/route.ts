@@ -36,7 +36,7 @@ export async function PUT(request: Request) {
             // Если у пользователя уже есть аватар, удалим старое изображение
             if (user.image) {
                 const publicId = user.image.split('/').pop()?.split('.')[0]; // Извлекаем publicId
-                await deleteImage(publicId as string); // Удаляем старое изображение
+                // await deleteImage(publicId as string); // Удаляем старое изображение
             }
 
             // Загрузка аватара в Cloudinary
