@@ -36,10 +36,10 @@ model Post {
   imageUrls        String[]
   address          String
   city             String
-  numBedrooms      Int
-  numBathrooms     Int
-  latitude         Decimal
-  longitude        Decimal
+  numBedrooms      Int?
+  numBathrooms     Int?
+  latitude         Decimal?
+  longitude        Decimal?
   type             Type
   property         Property
   description      String?
@@ -51,17 +51,17 @@ model Post {
   floorNumber      Int?
   totalFloors      Int?
   heatingType      HeatingType?
-  parking          Boolean      @default(false)
+  parking          Boolean?
   parkingType      ParkingType?
-  hasElevator      Boolean      @default(false)
-  furnished        Boolean      @default(false)
+  hasElevator      Boolean?
+  furnished        Boolean?
   hoaFees          Decimal?
   lotSize          Float?
-  basement         Boolean      @default(false)
-  balcony          Boolean      @default(false)
-  airConditioning  Boolean      @default(false)
-  internetIncluded Boolean      @default(false)
-  smokingAllowed   Boolean      @default(false)
+  basement         Boolean?
+  balcony          Boolean?
+  airConditioning  Boolean?
+  internetIncluded Boolean?
+  smokingAllowed   Boolean?
   moveInDate       DateTime?
   leaseTerm        LeaseTerm?
   createdAt        DateTime     @default(now())

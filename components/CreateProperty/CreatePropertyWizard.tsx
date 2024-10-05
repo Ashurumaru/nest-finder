@@ -102,7 +102,14 @@ const CreatePropertyWizard = () => {
                 // Например, router.push('/properties');
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.message || 'Ошибка при создании объявления');
+                if (errorData.errors) {
+                    const fieldErrors = errorData.errors.fieldErrors as Record<string, string[]>;
+                    Object.entries(fieldErrors).forEach(([field, errors]) => {
+                        errors.forEach((error) => toast.error(`${field}: ${error}`));
+                    });
+                } else {
+                    toast.error(errorData.message || 'Ошибка при создании объявления');
+                }
             }
         } catch (error) {
             console.error('Ошибка при создании объявления:', error);
