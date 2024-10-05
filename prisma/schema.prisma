@@ -30,32 +30,46 @@ model User {
 }
 
 model Post {
-  id                 String      @id @default(uuid())
-  title              String
-  price              Int
-  imageUrls          String[]
-  address            String
-  city               String
-  numBedrooms        Int
-  numBathrooms       Int
-  latitude           Float
-  longitude          Float
-  type               Type
-  property           Property
-  description        String?
-  utilitiesIncluded  String?
-  petPolicy          String?
-  incomeRequirement  String?
-  propertySize       Int?
-  schoolDistance     Int?
-  busStopDistance    Int?
-  restaurantDistance Int?
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @default(now()) @updatedAt
-  views              Int         @default(0)
-  user               User        @relation(fields: [userId], references: [id])
-  userId             String
-  savedPosts         SavedPost[]
+  id               String       @id @default(uuid())
+  title            String
+  price            Decimal
+  imageUrls        String[]
+  address          String
+  city             String
+  numBedrooms      Int
+  numBathrooms     Int
+  latitude         Decimal
+  longitude        Decimal
+  type             Type
+  property         Property
+  description      String?
+  petPolicy        PetPolicy?
+  propertySize     Float?
+  schoolDistance   Float?
+  busStopDistance  Float?
+  yearBuilt        Int?
+  floorNumber      Int?
+  totalFloors      Int?
+  heatingType      HeatingType?
+  parking          Boolean      @default(false)
+  parkingType      ParkingType?
+  hasElevator      Boolean      @default(false)
+  furnished        Boolean      @default(false)
+  hoaFees          Decimal?
+  lotSize          Float?
+  basement         Boolean      @default(false)
+  balcony          Boolean      @default(false)
+  airConditioning  Boolean      @default(false)
+  internetIncluded Boolean      @default(false)
+  smokingAllowed   Boolean      @default(false)
+  moveInDate       DateTime?
+  leaseTerm        LeaseTerm?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now()) @updatedAt
+  views            Int          @default(0)
+  user             User         @relation(fields: [userId], references: [id])
+  userId           String
+  savedPosts       SavedPost[]
 }
 
 model SavedPost {
@@ -153,4 +167,34 @@ enum Property {
   townhouse
   commercial
   land
+}
+
+enum HeatingType {
+  none
+  gas
+  electric
+  solar
+  other
+}
+
+enum ParkingType {
+  garage
+  street
+  assigned
+  covered
+  valet
+}
+
+enum LeaseTerm {
+  monthToMonth
+  sixMonths
+  oneYear
+  twoYears
+  other
+}
+
+enum PetPolicy {
+  notAllowed
+  allowed
+  allowedWithRestrictions
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-import { uploadAvatar, deleteImage } from '@/lib/cloudinary';
 import bcrypt from 'bcryptjs';
+import {uploadAvatar} from "@/lib/cloudinaryServer";
 
 export async function PUT(request: Request) {
     const body = await request.json();

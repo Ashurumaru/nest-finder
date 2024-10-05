@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 import PropertyCardProfile from '@/components/PropertyCardProfile';
 
 interface FavoritesSectionProps {
@@ -9,7 +9,7 @@ interface FavoritesSectionProps {
 }
 
 export default function FavoritesSection({ userId }: FavoritesSectionProps) {
-    const [favorites, setFavorites] = useState<Property[]>([]);
+    const [favorites, setFavorites] = useState<PostData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 

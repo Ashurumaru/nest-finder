@@ -4,15 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PropertyCard from './PropertyCard';
 import PropertyFilter from './PropertyFilter';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 
 interface PropertyListProps {
-    initialProperties: Property[];
+    initialProperties: PostData[];
     propertyType: 'rent' | 'sale';
 }
 
 export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {
-    const [properties, setProperties] = useState<Property[]>(initialProperties);
+    const [properties, setProperties] = useState<PostData[]>(initialProperties);
     const searchParams = useSearchParams();
     const router = useRouter();
 

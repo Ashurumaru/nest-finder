@@ -2,10 +2,10 @@ import Link from "next/link";
 import React from "react";
 import { FaBed, FaBath, FaRulerCombined, FaMapMarker, FaMoneyBill } from "react-icons/fa";
 import Image from "next/image";
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 
 interface FeaturedPropertyCardProps {
-    property: Property;
+    property: PostData;
 }
 
 const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property }) => {

@@ -11,12 +11,12 @@ import {
     FaMapMarkerAlt,
     FaTag,
 } from 'react-icons/fa';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 interface PropertyCardProps {
-    property: Property;
+    property: PostData;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {

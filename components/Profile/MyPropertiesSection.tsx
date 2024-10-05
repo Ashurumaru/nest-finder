@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 import PropertyCardProfile from "@/components/PropertyCardProfile";
 
 interface MyPropertiesSectionProps {
@@ -9,7 +9,7 @@ interface MyPropertiesSectionProps {
 }
 
 export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps) {
-    const [properties, setProperties] = useState<Property[]>([]);
+    const [properties, setProperties] = useState<PostData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 

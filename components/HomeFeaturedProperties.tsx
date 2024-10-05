@@ -1,9 +1,9 @@
 import React from 'react';
 import FeaturedPropertyCard from './FeaturedPropertyCard';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 
 interface FeaturedPropertiesProps {
-    properties: Property[];
+    properties: PostData[];
 }
 
 const HomeFeaturedProperties: React.FC<FeaturedPropertiesProps> = ({ properties }) => {

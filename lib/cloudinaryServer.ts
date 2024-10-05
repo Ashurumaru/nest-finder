@@ -1,3 +1,5 @@
+// lib/cloudinaryServer.ts
+
 import { v2 as cloudinary } from 'cloudinary';
 
 // Настройка Cloudinary с использованием переменных окружения
@@ -7,12 +9,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Функция для загрузки изображений
+// Функция для загрузки изображений на сервере (если требуется)
 export const uploadAvatar = async (filePath: string, folder: string) => {
     try {
         const result = await cloudinary.uploader.upload(filePath, {
             folder,
-            transformation: [{ width: 150, height: 150, crop: 'fill' }], // Пример трансформации
+            transformation: [{ width: 150, height: 150, crop: 'fill' }],
         });
 
         return result;

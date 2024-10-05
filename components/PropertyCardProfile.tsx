@@ -11,7 +11,7 @@ import {
     FaEdit,
     FaTrash,
 } from 'react-icons/fa';
-import { Property } from '@/types/propertyTypes';
+import { PostData } from '@/types/propertyTypes';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface PropertyCardProps {
-    property: Property;
+    property: PostData;
     isOwnProperty?: boolean; // Флаг, указывающий, своя ли это недвижимость или избранное
     onDelete: (id: string) => void; // Логика удаления
 }
