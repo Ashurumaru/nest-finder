@@ -6,7 +6,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer"; // Добавляем футер
+import Footer from "@/components/Footer";
 import React from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
