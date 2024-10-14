@@ -18,7 +18,7 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
         townhouse: "Таунхаус",
         commercial: "Коммерческая недвижимость",
         land: "остров"
-    }[property.property] || "Неизвестная недвижимость";
+    }[property.property] || "Неизвестная недвижимость!";
 
     return (
         <div className="bg-white rounded-xl shadow-md relative flex flex-col mx-auto md:flex-row h-full">

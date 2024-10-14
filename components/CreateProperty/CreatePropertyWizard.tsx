@@ -19,6 +19,7 @@ import Step5Review from './Step5Review';
 import { uploadImageToCloudinary } from '@/lib/cloudinaryClient';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+import {router} from "next/client";
 
 const steps: Array<{
     component: React.FC;
@@ -100,8 +101,7 @@ const CreatePropertyWizard = () => {
             });
 
             if (response.ok) {
-                // Перенаправление после успешного создания
-                // Например, router.push('/properties');
+                router.push('/profile#my-properties');
             } else {
                 const errorData = await response.json();
                 if (errorData.errors) {
