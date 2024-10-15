@@ -1,120 +1,45 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { PostData } from "@/types/propertyTypes";
-import ImageCarousel from "@/components/ImageCarousel";
+import {PostData} from "@/types/propertyTypes";
 import {
-    FaMapMarkerAlt,
-    FaBed,
     FaBath,
-    FaRulerCombined,
-    FaHeart,
-    FaShareAlt,
-    FaEye,
+    FaBed,
+    FaBuilding,
     FaCar,
+    FaCouch,
+    FaEye,
     FaFire,
     FaHome,
-    FaCouch,
-    FaWind,
-    FaBuilding,
+    FaMapMarkerAlt,
+    FaRulerCombined,
+    FaWind
 } from "react-icons/fa";
-import { MdElevator, MdOutlineBalcony } from "react-icons/md";
-import { FiCopy } from "react-icons/fi";
-import {auth} from "@/auth";
+import {MdElevator, MdOutlineBalcony} from "react-icons/md";
+import ShareButton from "@/components/ShareButton";
+import {formatDate} from "@/utils/formatDate";
+import dynamic from 'next/dynamic';
 
-export default function PropertyPage() {
-    const { id } = useParams();
-    const [property, setProperty] = useState<PostData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [isFavorite, setIsFavorite] = useState(false);
-    const [showContacts, setShowContacts] = useState(false);
-    const [authChecked, setAuthChecked] = useState(false);
-    const router = useRouter();
+const ImageCarousel = dynamic(() => import('@/components/ImageCarousel'));
+const FavoriteButton = dynamic(() => import('@/components/FavoriteButton'));
 
-    useEffect(() => {
-        const fetchProperty = async () => {
-            try {
-                const res = await fetch(`/api/properties/${id}`, {
-                    method: "GET",
-                });
+// Функция для получения данных о недвижимости на сервере
+async function fetchProperty(id: string): Promise<PostData | null> {
+    const res = await fetch(`${process.env.API_URL}/api/properties/${id}`);
+    if (!res.ok) return null;
+    return await res.json();
+}
 
-                if (!res.ok) {
-                    throw new Error("Failed to fetch property");
-                }
+// Функция для проверки, является ли объект избранным
+async function fetchIsFavorite(id: string): Promise<boolean> {
+    const res = await fetch(`${process.env.API_URL}/api/saved-properties/${id}/is-favorite`);
+    if (!res.ok) return false;
+    const { isFavorite } = await res.json();
+    return isFavorite;
+}
 
-                const data: PostData = await res.json();
-                setProperty(data);
-
-                // Проверяем, является ли объект избранным для авторизованного пользователя
-                const favoriteRes = await fetch(`/api/saved-properties/${id}/is-favorite`, {
-                    method: "GET",
-                });
-
-                if (favoriteRes.ok) {
-                    const { isFavorite } = await favoriteRes.json();
-                    setIsFavorite(isFavorite);
-                }
-            } catch (error) {
-                console.error("Error fetching property:", error);
-            } finally {
-                setLoading(false);
-                setAuthChecked(true);
-            }
-        };
-
-        fetchProperty();
-    }, [id]);
-
-    const handleFavoriteToggle = async () => {
-        try {
-            if (!authChecked) return;
-
-            const res = await fetch('/api/auth/check-session', { method: 'GET' });
-            const session = await res.json();
-
-            if (!session?.user) {
-                router.push('/api/auth/signin');
-                return;
-            }
-
-            if (isFavorite) {
-                await fetch(`/api/saved-properties/${id}`, { method: "DELETE" });
-                setIsFavorite(false);
-            } else {
-                await fetch(`/api/saved-properties/${id}`, { method: "POST" });
-                setIsFavorite(true);
-            }
-        } catch (error) {
-            console.error("Ошибка при добавлении/удалении из избранного:", error);
-        }
-    };
-
-    const handleShare = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: property?.title,
-                text: `Посмотрите объект недвижимости: ${property?.title}`,
-                url: window.location.href,
-            });
-        } else {
-            navigator.clipboard.writeText(window.location.href);
-            alert("Ссылка скопирована!");
-        }
-    };
-
-    const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
-
-    if (loading) {
-        return <p className="text-center text-xl mt-10">Загрузка...</p>;
-    }
+export default async function PropertyPage({ params }: { params: { id: string } }) {
+    const [property, isFavorite] = await Promise.all([
+        fetchProperty(params.id),
+        fetchIsFavorite(params.id),
+    ]);
 
     if (!property) {
         return (
@@ -138,24 +63,8 @@ export default function PropertyPage() {
                     </div>
                 </div>
                 <div className="flex items-center mt-4 md:mt-0">
-                    {/* Кнопка "Избранное" */}
-                    <button
-                        onClick={handleFavoriteToggle}
-                        className="text-red-500 focus:outline-none mr-4"
-                    >
-                        {isFavorite ? (
-                            <FaHeart className="text-2xl" />
-                        ) : (
-                            <FaHeart className="text-2xl text-gray-400" />
-                        )}
-                    </button>
-                    {/* Кнопка "Поделиться" */}
-                    <button
-                        onClick={handleShare}
-                        className="text-blue-500 focus:outline-none"
-                    >
-                        <FaShareAlt className="text-2xl" />
-                    </button>
+                    <FavoriteButton isFavorite={isFavorite} id={params.id} />
+                    <ShareButton title={property.title} />
                 </div>
             </div>
 
@@ -275,7 +184,7 @@ export default function PropertyPage() {
                         <p className="text-gray-700">
                             Размещено пользователем:{" "}
                             <strong>
-                                {property.user && property.user.name && property.user.surname
+                                {property.user?.name && property.user?.surname
                                     ? `${property.user.name} ${property.user.surname}`
                                     : "Неизвестно"}
                             </strong>
@@ -301,47 +210,10 @@ export default function PropertyPage() {
 
                         {/* Кнопка "Показать контакты" */}
                         <button
-                            onClick={() => setShowContacts(!showContacts)}
                             className="bg-green-500 w-full text-white px-4 py-2 rounded-lg flex items-center justify-center mb-4 hover:bg-green-600 transition"
                         >
                             Показать контакты
                         </button>
-
-                        {showContacts && (
-                            <div className="mt-4">
-                                {property.user?.phoneNumber && (
-                                    <div className="flex items-center text-gray-700 mb-2">
-                                        <p>Телефон: {property.user.phoneNumber}</p>
-                                        <button
-                                            onClick={() => {
-                                                if (property.user?.phoneNumber) {
-                                                    navigator.clipboard.writeText(property.user.phoneNumber);
-                                                }
-                                            }}
-                                            className="ml-2 text-gray-500 hover:text-gray-700"
-                                        >
-                                            <FiCopy />
-                                        </button>
-                                    </div>
-                                )}
-
-                                {property.user?.email && (
-                                    <div className="flex items-center text-gray-700">
-                                        <p>Email: {property.user.email}</p>
-                                        <button
-                                            onClick={() => {
-                                                if (property.user?.email) {
-                                                    navigator.clipboard.writeText(property.user.email);
-                                                }
-                                            }}
-                                            className="ml-2 text-gray-500 hover:text-gray-700"
-                                        >
-                                            <FiCopy />
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        )}
 
                         {/* Количество просмотров */}
                         <div className="flex items-center text-gray-600 mt-4">
