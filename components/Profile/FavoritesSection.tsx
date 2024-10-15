@@ -13,6 +13,7 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Запрос избранных постов при загрузке компонента
     useEffect(() => {
         const fetchFavorites = async () => {
             try {
@@ -21,7 +22,7 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
                     throw new Error('Ошибка при загрузке избранных постов');
                 }
                 const data = await response.json();
-                setFavorites(data.map((savedPost: any) => savedPost.post)); // Извлекаем посты
+                setFavorites(data.map((savedPost: any) => savedPost.post));
             } catch (err) {
                 if (err instanceof Error) {
                     setError(err.message);
@@ -36,8 +37,27 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
         fetchFavorites();
     }, [userId]);
 
+    // Логика для удаления поста из избранного
     const handleRemoveFavorite = async (propertyId: string) => {
-        console.log(`Удаление из избранного: ${propertyId}`);
+        try {
+            const response = await fetch(`/api/saved-properties/${propertyId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при удалении из избранного');
+            }
+
+            // Обновляем список избранных постов после удаления
+            setFavorites((prevFavorites) =>
+                prevFavorites.filter((post) => post.id !== propertyId)
+            );
+        } catch (error) {
+            console.error(`Ошибка при удалении поста ${propertyId} из избранного:`, error);
+            setError('Не удалось удалить пост из избранного');
+        }
     };
 
     if (loading) {
@@ -55,9 +75,14 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Мое избранное</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-4">
                 {favorites.map((post) => (
-                    <PropertyCardProfile  key={post.id} property={post}  isOwnProperty={false}  onDelete={handleRemoveFavorite}/>
+                    <PropertyCardProfile
+                        key={post.id}
+                        property={post}
+                        isOwnProperty={false}
+                        onDelete={() => handleRemoveFavorite(post.id)}
+                    />
                 ))}
             </div>
         </div>

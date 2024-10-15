@@ -8,13 +8,13 @@ export default function AccountSection({ userId }: { userId: string }) {
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [phoneNumber, setPhone] = useState<string>(''); // Добавляем состояние для номера телефона
+    const [phoneNumber, setPhone] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [image, setImage] = useState<string | null>(null); // Храним base64 строку аватара
+    const [image, setImage] = useState<string | null>(null);
     const [error, setError] = useState<string>('');
-    const [success, setSuccess] = useState<string>(''); // Для отображения сообщения об успехе
+    const [success, setSuccess] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const [isFetching, setIsFetching] = useState<boolean>(true); // Для индикации загрузки данных
+    const [isFetching, setIsFetching] = useState<boolean>(true);
 
     useEffect(() => {
         // Загружаем данные пользователя при монтировании компонента

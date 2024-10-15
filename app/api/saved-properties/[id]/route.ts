@@ -2,39 +2,62 @@
 
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
+import { auth } from '@/auth';
 
-export async function POST(request: Request, { params }: { params: { postId: string } }) {
-    const { userId } = await request.json();
+// Добавление в избранное
+export async function POST(request: Request, { params }: { params: { id: string } }) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+    const postId = params.id;
+
+    if (!postId) {
+        throw new Error("Post ID is missing.");
+    }
 
     try {
         const savedPost = await prisma.savedPost.create({
             data: {
                 userId,
-                postId: params.postId,
+                postId,
             },
         });
 
         return NextResponse.json(savedPost);
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to save post' }, { status: 500 });
+        console.error('Ошибка при добавлении в избранное:', error);
+        return NextResponse.json({ error: 'Не удалось добавить в избранное' }, { status: 500 });
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { postId: string } }) {
-    const { userId } = await request.json();
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+    const postId = params.id;
+
+    if (!postId) {
+        throw new Error("Post ID is missing.");
+    }
 
     try {
         await prisma.savedPost.delete({
             where: {
-                userId_postId: {
-                    userId,
-                    postId: params.postId,
-                },
+                userId_postId: { userId, postId },
             },
         });
 
-        return NextResponse.json({ message: 'Post removed from saved' });
+        return NextResponse.json({ success: true });
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to remove post from saved' }, { status: 500 });
+        console.error('Ошибка при удалении из избранного:', error);
+        return NextResponse.json({ error: 'Не удалось удалить из избранного' }, { status: 500 });
     }
 }

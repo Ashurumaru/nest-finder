@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PostData } from "@/types/propertyTypes";
 import ImageCarousel from "@/components/ImageCarousel";
 import {
@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa";
 import { MdElevator, MdOutlineBalcony } from "react-icons/md";
 import { FiCopy } from "react-icons/fi";
+import {auth} from "@/auth";
 
 export default function PropertyPage() {
     const { id } = useParams();
@@ -28,6 +29,8 @@ export default function PropertyPage() {
     const [loading, setLoading] = useState(true);
     const [isFavorite, setIsFavorite] = useState(false);
     const [showContacts, setShowContacts] = useState(false);
+    const [authChecked, setAuthChecked] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -42,19 +45,49 @@ export default function PropertyPage() {
 
                 const data: PostData = await res.json();
                 setProperty(data);
+
+                // Проверяем, является ли объект избранным для авторизованного пользователя
+                const favoriteRes = await fetch(`/api/saved-properties/${id}/is-favorite`, {
+                    method: "GET",
+                });
+
+                if (favoriteRes.ok) {
+                    const { isFavorite } = await favoriteRes.json();
+                    setIsFavorite(isFavorite);
+                }
             } catch (error) {
                 console.error("Error fetching property:", error);
             } finally {
                 setLoading(false);
+                setAuthChecked(true);
             }
         };
 
         fetchProperty();
     }, [id]);
 
-    const handleFavoriteToggle = () => {
-        setIsFavorite(!isFavorite);
-        // Здесь может быть логика для добавления/удаления из избранного через API
+    const handleFavoriteToggle = async () => {
+        try {
+            if (!authChecked) return;
+
+            const res = await fetch('/api/auth/check-session', { method: 'GET' });
+            const session = await res.json();
+
+            if (!session?.user) {
+                router.push('/api/auth/signin');
+                return;
+            }
+
+            if (isFavorite) {
+                await fetch(`/api/saved-properties/${id}`, { method: "DELETE" });
+                setIsFavorite(false);
+            } else {
+                await fetch(`/api/saved-properties/${id}`, { method: "POST" });
+                setIsFavorite(true);
+            }
+        } catch (error) {
+            console.error("Ошибка при добавлении/удалении из избранного:", error);
+        }
     };
 
     const handleShare = () => {
@@ -143,60 +176,58 @@ export default function PropertyPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {property.numBedrooms !== undefined && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaBed className="inline mr-2 text-blue-500"/>
+                                    <FaBed className="inline mr-2 text-blue-500" />
                                     <p>{property.numBedrooms} Спальни</p>
                                 </div>
                             )}
                             {property.numBathrooms !== undefined && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaBath className="inline mr-2 text-blue-500"/>
+                                    <FaBath className="inline mr-2 text-blue-500" />
                                     <p>{property.numBathrooms} Ванные комнаты</p>
                                 </div>
                             )}
                             {property.propertySize && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaRulerCombined className="inline mr-2 text-blue-500"/>
+                                    <FaRulerCombined className="inline mr-2 text-blue-500" />
                                     <p>{property.propertySize} м²</p>
                                 </div>
                             )}
                             {property.floorNumber !== undefined && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaBuilding className="inline mr-2 text-blue-500"/>
+                                    <FaBuilding className="inline mr-2 text-blue-500" />
                                     <p>
                                         Этаж: {property.floorNumber}
-                                        {property.totalFloors
-                                            ? ` из ${property.totalFloors}`
-                                            : ""}
+                                        {property.totalFloors ? ` из ${property.totalFloors}` : ""}
                                     </p>
                                 </div>
                             )}
                             {property.hasElevator && (
                                 <div className="flex items-center text-gray-700">
-                                    <MdElevator className="inline mr-2 text-blue-500"/>
+                                    <MdElevator className="inline mr-2 text-blue-500" />
                                     <p>Есть лифт</p>
                                 </div>
                             )}
                             {property.heatingType && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaFire className="inline mr-2 text-blue-500"/>
+                                    <FaFire className="inline mr-2 text-blue-500" />
                                     <p>Отопление: {property.heatingType}</p>
                                 </div>
                             )}
                             {property.parking && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaCar className="inline mr-2 text-blue-500"/>
+                                    <FaCar className="inline mr-2 text-blue-500" />
                                     <p>Парковка: {property.parkingType || "Есть"}</p>
                                 </div>
                             )}
                             {property.property && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaHome className="inline mr-2 text-blue-500"/>
+                                    <FaHome className="inline mr-2 text-blue-500" />
                                     <p>Тип недвижимости: {property.property}</p>
                                 </div>
                             )}
                             {property.type && (
                                 <div className="flex items-center text-gray-700">
-                                    <FaBuilding className="inline mr-2 text-blue-500"/>
+                                    <FaBuilding className="inline mr-2 text-blue-500" />
                                     <p>Тип сделки: {property.type}</p>
                                 </div>
                             )}
@@ -212,31 +243,28 @@ export default function PropertyPage() {
                     </section>
 
                     {/* Удобства и особенности */}
-                    {(property.furnished ||
-                        property.airConditioning ||
-                        property.balcony) && (
+                    {(property.furnished || property.airConditioning || property.balcony) && (
                         <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                             <h2 className="text-2xl font-semibold mb-4">Удобства и особенности</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {property.furnished && (
                                     <div className="flex items-center text-gray-700">
-                                        <FaCouch className="inline mr-2 text-blue-500"/>
+                                        <FaCouch className="inline mr-2 text-blue-500" />
                                         <p>Меблированная</p>
                                     </div>
                                 )}
                                 {property.airConditioning && (
                                     <div className="flex items-center text-gray-700">
-                                        <FaWind className="inline mr-2 text-blue-500"/>
+                                        <FaWind className="inline mr-2 text-blue-500" />
                                         <p>Кондиционер</p>
                                     </div>
                                 )}
                                 {property.balcony && (
                                     <div className="flex items-center text-gray-700">
-                                        <MdOutlineBalcony className="inline mr-2 text-blue-500"/>
+                                        <MdOutlineBalcony className="inline mr-2 text-blue-500" />
                                         <p>Балкон/Терраса</p>
                                     </div>
                                 )}
-                                {/* Добавьте другие удобства при необходимости */}
                             </div>
                         </section>
                     )}
@@ -253,7 +281,6 @@ export default function PropertyPage() {
                             </strong>
                         </p>
                     </section>
-
                 </div>
 
                 {/* Боковая панель с ценой и контактами */}
@@ -268,10 +295,9 @@ export default function PropertyPage() {
                             {property.updatedAt && property.updatedAt !== property.createdAt ? (
                                 <p>Изменено: {formatDate(property.updatedAt)}</p>
                             ) : (
-                                <p>Добавлено: {formatDate(property.createdAt ?? '')}</p>
+                                <p>Добавлено: {formatDate(property.createdAt ?? "")}</p>
                             )}
                         </div>
-
 
                         {/* Кнопка "Показать контакты" */}
                         <button
@@ -319,7 +345,7 @@ export default function PropertyPage() {
 
                         {/* Количество просмотров */}
                         <div className="flex items-center text-gray-600 mt-4">
-                            <FaEye className="inline mr-2"/>
+                            <FaEye className="inline mr-2" />
                             <p>{property.views || 0} просмотров</p>
                         </div>
                     </div>
