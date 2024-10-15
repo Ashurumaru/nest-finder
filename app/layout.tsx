@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from 'nextjs-toploader';
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
       <html lang="ru" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+      <NextTopLoader showSpinner={false} />
       <SessionProvider>
         <Header />
         <main className="flex-grow">{children}</main>

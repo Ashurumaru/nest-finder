@@ -15,6 +15,7 @@ const buttonVariants = cva(
                 primary: "bg-blue-700 text-white hover:bg-blue-800 active:bg-blue-900 focus-visible:ring-blue-600",
                 danger: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500",
                 warning: "bg-yellow-500 text-white hover:bg-yellow-600 active:bg-yellow-700 focus-visible:ring-yellow-400",
+                ghost: 'hover:bg-accent hover:text-accent-foreground',
             },
             size: {
                 default: "h-9 px-4 py-2",
