@@ -25,15 +25,15 @@ interface PieGraphData {
 
 interface PieGraphProps {
     data: PieGraphData[];
+    colors?: string[];
 }
 
-export const PieGraph: React.FC<PieGraphProps> = ({ data }) => {
-    const COLORS = ['#0088FE', '#FF8042']; // Цвета для типов сделок
-
+export const PieGraph: React.FC<PieGraphProps> = ({ data, colors = ['#0088FE', '#FF8042'] }) => {
     const total = useMemo(() => {
         return data.reduce((acc, curr) => acc + curr.count, 0);
     }, [data]);
 
+    // Если данных нет, выводим сообщение
     if (!data || data.length === 0) {
         return (
             <Card>
@@ -76,7 +76,7 @@ export const PieGraph: React.FC<PieGraphProps> = ({ data }) => {
                             {data.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fill={COLORS[index % COLORS.length]}
+                                    fill={colors[index % colors.length]}
                                 />
                             ))}
                         </Pie>
@@ -88,8 +88,7 @@ export const PieGraph: React.FC<PieGraphProps> = ({ data }) => {
                     Всего: {total.toLocaleString()}
                 </p>
             </CardContent>
-            <CardFooter className="flex-col gap-2 text-sm">
-            </CardFooter>
+            <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
         </Card>
     );
 };

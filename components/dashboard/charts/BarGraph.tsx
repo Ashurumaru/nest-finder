@@ -24,14 +24,16 @@ interface BarGraphData {
 
 interface BarGraphProps {
     data: BarGraphData[];
+    barColor?: string;
 }
 
-export const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
-    const total = useMemo(
-        () => data.reduce((acc, curr) => acc + curr.count, 0),
-        [data]
-    );
+export const BarGraph: React.FC<BarGraphProps> = ({ data, barColor = '#8884d8' }) => {
+    const total = useMemo(() => {
+        if (!data || data.length === 0) return 0;
+        return data.reduce((acc, curr) => acc + curr.count, 0);
+    }, [data]);
 
+    // Если данных нет, возвращаем сообщение
     if (!data || data.length === 0) {
         return (
             <Card>
@@ -65,7 +67,7 @@ export const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
                         <Tooltip />
-                        <Bar dataKey="count" fill="#8884d8" />
+                        <Bar dataKey="count" fill={barColor} />
                     </BarChart>
                 </ResponsiveContainer>
                 <p className="text-center mt-2 text-sm text-muted-foreground">

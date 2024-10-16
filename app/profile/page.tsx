@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import ProfileClient from "@/components/Profile/ProfileClient";
+import ProfileClient from "@/components/profile/ProfileClient";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import FeaturedPropertyCard from './FeaturedPropertyCard';
+import FeaturedPropertyCard from '../FeaturedPropertyCard';
 import { PostData } from '@/types/propertyTypes';
 
 interface FeaturedPropertiesProps {

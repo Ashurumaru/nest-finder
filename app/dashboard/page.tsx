@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { BarGraph } from '@/components/Dashboard/charts/BarGraph';
-import { PieGraph } from '@/components/Dashboard/charts/PieGraph';
-import PageContainer from '@/components/Dashboard/layout/PageContainer';
+import { BarGraph } from '@/components/dashboard/charts/BarGraph';
+import { PieGraph } from '@/components/dashboard/charts/PieGraph';
+import PageContainer from '@/components/dashboard/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarDateRangePicker } from '@/components/Dashboard/DateRangePicker';
+import { CalendarDateRangePicker } from '@/components/dashboard/DateRangePicker';
 import { BarGraphData, PieGraphData } from '@/types/metricTypes';
 import { DateRange } from 'react-day-picker';
-import { MetricCard } from '@/components/Dashboard/MetricCard';
+import { MetricCard } from '@/components/dashboard/MetricCard';
 
 export default function DashboardPage() {
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);

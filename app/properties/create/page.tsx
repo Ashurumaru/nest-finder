@@ -1,5 +1,5 @@
 import React from 'react';
-import CreatePropertyWizard from '@/components/CreateProperty/CreatePropertyWizard';
+import CreatePropertyWizard from '@/components/create-property/CreatePropertyWizard';
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 

@@ -1,7 +1,7 @@
 // components/Hero.tsx
 
 import React from "react";
-import HomePropertySearchForm from "@/components/HomePropertySearchForm";
+import HomePropertySearchForm from "@/components/home/HomePropertySearchForm";
 
 const Hero: React.FC = () => {
     return (

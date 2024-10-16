@@ -1,18 +1,23 @@
-import Header from '@/components/Dashboard/layout/Header';
-import Sidebar from '@/components/Dashboard/layout/Sidebar';
+import dynamic from 'next/dynamic';
 import NextTopLoader from "nextjs-toploader";
-import { SessionProvider } from "next-auth/react";
 import type { Metadata } from 'next';
-import AdminGuard from '@/components/AdminGuard';
 import React from "react";
+
+const Sidebar = dynamic(() => import('@/components/dashboard/layout/Sidebar'), {
+    ssr: false,
+});
+
+const AdminGuard = dynamic(() => import('@/components/admin/AdminGuard'), {
+    ssr: false,
+});
 
 export const metadata: Metadata = {
     title: 'Admin Dashboard',
-    description: 'Not for users'
+    description: 'Not for users',
 };
 
 export default function DashboardLayout({
-                                            children
+                                            children,
                                         }: {
     children: React.ReactNode;
 }) {
@@ -22,7 +27,7 @@ export default function DashboardLayout({
             <AdminGuard>
                 <Sidebar />
                 <main className="w-full flex-1 overflow-hidden">
-                        {children}
+                    {children}
                 </main>
             </AdminGuard>
         </div>

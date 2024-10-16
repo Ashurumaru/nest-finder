@@ -15,14 +15,8 @@ export const navItems: NavItem[] = [
     },
     {
         title: 'Posts',
-        href: '/dashboard/employee',
-        icon: 'employee',
-        label: 'employee'
-    },
-    {
-        title: 'Employee',
-        href: '/dashboard/employee',
-        icon: 'employee',
-        label: 'employee'
+        href: '/dashboard/post',
+        icon: 'post',
+        label: 'post'
     },
 ];
