@@ -1,34 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { BarGraph } from '@/components/Dashboard/charts/bar-graph';
-import { PieGraph } from '@/components/Dashboard/charts/pie-graph';
-import PageContainer from '@/components/Dashboard/layout/page-container';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { BarGraph } from '@/components/Dashboard/charts/BarGraph';
+import { PieGraph } from '@/components/Dashboard/charts/PieGraph';
+import PageContainer from '@/components/Dashboard/layout/PageContainer';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarDateRangePicker } from '@/components/Dashboard/date-range-picker';
+import { CalendarDateRangePicker } from '@/components/Dashboard/DateRangePicker';
 import { BarGraphData, PieGraphData } from '@/types/metricTypes';
 import { DateRange } from 'react-day-picker';
+import { MetricCard } from '@/components/Dashboard/MetricCard';
 
 export default function DashboardPage() {
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
-    const [saleListings, setSaleListings] = useState<number>(0);
-    const [rentalListings, setRentalListings] = useState<number>(0);
-    const [authorizedUsers, setAuthorizedUsers] = useState<number>(0);
-    const [postViews, setPostViews] = useState<number>(0);
-    const [barData, setBarData] = useState<BarGraphData[]>([]);
-    const [pieData, setPieData] = useState<PieGraphData[]>([]);
+    const [metrics, setMetrics] = useState({
+        saleListings: 0,
+        rentalListings: 0,
+        authorizedUsers: 0,
+        postViews: 0,
+        barData: [] as BarGraphData[],
+        pieData: [] as PieGraphData[],
+    });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Оптимизация рендеринга графиков с помощью useMemo
+    const barDataMemo = useMemo(() => metrics.barData, [metrics.barData]);
+    const pieDataMemo = useMemo(() => metrics.pieData, [metrics.pieData]);
+
     // Функция для получения метрик
-    const fetchMetrics = async () => {
+    const fetchMetrics = useCallback(async () => {
         setLoading(true);
         setError(null);
 
@@ -53,7 +54,6 @@ export default function DashboardPage() {
                 fetch(`/api/metrics/pieGraphData?${params.toString()}`),
             ]);
 
-            // Проверка успешности запросов
             if (
                 !saleRes.ok ||
                 !rentalRes.ok ||
@@ -65,7 +65,6 @@ export default function DashboardPage() {
                 throw new Error('Ошибка при загрузке данных');
             }
 
-            // Парсинг ответов
             const saleData = await saleRes.json();
             const rentalData = await rentalRes.json();
             const usersData = await usersRes.json();
@@ -73,30 +72,31 @@ export default function DashboardPage() {
             const barGraphData = await barRes.json();
             const pieGraphData = await pieRes.json();
 
-            // Обновление состояний
-            setSaleListings(saleData.count);
-            setRentalListings(rentalData.count);
-            setAuthorizedUsers(usersData.count);
-            setPostViews(viewsData.count);
-            setBarData(barGraphData.data || []);
-            setPieData(pieGraphData.data || []);
+            setMetrics({
+                saleListings: saleData.count,
+                rentalListings: rentalData.count,
+                authorizedUsers: usersData.count,
+                postViews: viewsData.count,
+                barData: barGraphData.data || [],
+                pieData: pieGraphData.data || [],
+            });
         } catch (error: any) {
             console.error('Ошибка при получении метрик:', error);
             setError(error.message || 'Неизвестная ошибка');
         } finally {
             setLoading(false);
         }
-    };
+    }, [dateRange]);
 
     // Загрузка метрик при изменении диапазона дат
     useEffect(() => {
         fetchMetrics();
-    }, [dateRange]);
+    }, [dateRange, fetchMetrics]);
 
     // Обработчик изменения диапазона дат
-    const handleDateChange = (range: DateRange | undefined) => {
+    const handleDateChange = useCallback((range: DateRange | undefined) => {
         setDateRange(range);
-    };
+    }, []);
 
     return (
         <PageContainer scrollable>
@@ -129,10 +129,9 @@ export default function DashboardPage() {
                     <TabsContent value="overview" className="space-y-4">
                         {/* Карточки с метриками */}
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            {/* Количество объявлений на продажу */}
                             <MetricCard
                                 title="Объявлений на продажу"
-                                count={saleListings}
+                                count={metrics.saleListings}
                                 description="Обновлено на основе выбранного диапазона дат"
                                 icon={
                                     <svg
@@ -150,10 +149,9 @@ export default function DashboardPage() {
                                 }
                             />
 
-                            {/* Количество объявлений на аренду */}
                             <MetricCard
                                 title="Объявлений на аренду"
-                                count={rentalListings}
+                                count={metrics.rentalListings}
                                 description="Обновлено на основе выбранного диапазона дат"
                                 icon={
                                     <svg
@@ -173,10 +171,9 @@ export default function DashboardPage() {
                                 }
                             />
 
-                            {/* Количество авторизованных пользователей */}
                             <MetricCard
                                 title="Авторизованных пользователей"
-                                count={authorizedUsers}
+                                count={metrics.authorizedUsers}
                                 description="Обновлено на основе выбранного диапазона дат"
                                 icon={
                                     <svg
@@ -196,10 +193,9 @@ export default function DashboardPage() {
                                 }
                             />
 
-                            {/* Количество просмотров постов */}
                             <MetricCard
                                 title="Просмотров постов"
-                                count={postViews}
+                                count={metrics.postViews}
                                 description="Обновлено на основе выбранного диапазона дат"
                                 icon={
                                     <svg
@@ -220,14 +216,11 @@ export default function DashboardPage() {
 
                         {/* Графики */}
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-                            {/* График распределения объявлений по датам */}
                             <div className="col-span-4">
-                                <BarGraph data={barData} />
+                                <BarGraph data={barDataMemo} />
                             </div>
-
-                            {/* График распределения типов сделок */}
                             <div className="col-span-3">
-                                <PieGraph data={pieData} />
+                                <PieGraph data={pieDataMemo} />
                             </div>
                         </div>
                     </TabsContent>
@@ -236,23 +229,3 @@ export default function DashboardPage() {
         </PageContainer>
     );
 }
-
-interface MetricCardProps {
-    title: string;
-    count: number;
-    description: string;
-    icon: React.ReactNode;
-}
-
-const MetricCard: React.FC<MetricCardProps> = ({ title, count, description, icon }) => (
-    <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-            {icon}
-        </CardHeader>
-        <CardContent>
-            <div className="text-2xl font-bold">{count.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">{description}</p>
-        </CardContent>
-    </Card>
-);

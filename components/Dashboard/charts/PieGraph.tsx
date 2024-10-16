@@ -89,7 +89,6 @@ export const PieGraph: React.FC<PieGraphProps> = ({ data }) => {
                 </p>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                {/* Дополнительный контент в футере при необходимости */}
             </CardFooter>
         </Card>
     );

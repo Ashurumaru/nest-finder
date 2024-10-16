@@ -17,6 +17,7 @@ model User {
   hashedPassword String?
   image          String?
   phoneNumber    String?
+  role           Role        @default(user)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   posts          Post[]
@@ -197,4 +198,9 @@ enum PetPolicy {
   notAllowed
   allowed
   allowedWithRestrictions
+}
+
+enum Role {
+  user
+  admin
 }
