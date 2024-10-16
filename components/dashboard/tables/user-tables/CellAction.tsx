@@ -23,16 +23,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
 
   const onConfirm = async () => {
-    // Логика удаления пользователя или выполнения другой операции
     setLoading(true);
     try {
-      // Добавьте ваш код для удаления пользователя
+      const response = await fetch(`/api/user/${data.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+
+      router.refresh();
     } catch (error) {
       console.error('Ошибка при удалении пользователя:', error);
     } finally {
       setLoading(false);
       setOpen(false);
     }
+  };
+
+  const onEdit = () => {
+    router.push(`/dashboard/user/${data.id}`);
   };
 
   return (
@@ -53,9 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-            <DropdownMenuItem
-                onClick={() => router.push(`/dashboard/user/${data.id}`)}
-            >
+            <DropdownMenuItem onClick={onEdit}>
               <Edit className="mr-2 h-4 w-4" /> Update
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setOpen(true)}>

@@ -30,6 +30,11 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => row.original.name
   },
   {
+    accessorKey: 'surname',
+    header: 'Surname',
+    cell: ({ row }) => row.original.surname || 'N/A'
+  },
+  {
     accessorKey: 'email',
     header: 'Email',
     cell: ({ row }) => row.original.email
@@ -43,6 +48,15 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: 'phoneNumber',
     header: 'Phone Number',
     cell: ({ row }) => row.original.phoneNumber || 'N/A'
+  },
+  {
+    accessorKey: 'image',
+    header: 'Image',
+    cell: ({ row }) => (
+        row.original.image ? (
+            <img src={row.original.image} alt="User image" className="w-8 h-8 rounded-full" />
+        ) : 'N/A'
+    )
   },
   {
     accessorKey: 'createdAt',

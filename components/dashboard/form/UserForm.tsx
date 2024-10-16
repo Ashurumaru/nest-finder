@@ -27,12 +27,14 @@ import * as z from 'zod';
 import { User } from '@/types/userTypes';
 import { useToast } from '@/hooks/useToast';
 
-// Схема валидации для пользователя
+// Схема валидации для всех полей пользователя
 const formSchema = z.object({
     name: z.string().min(3, { message: 'Name must be at least 3 characters' }),
+    surname: z.string().optional(),
     email: z.string().email({ message: 'Invalid email address' }),
     phoneNumber: z.string().optional(),
     role: z.enum(['user', 'admin'], { message: 'Please select a valid role' }),
+    image: z.string().url().optional(),
 });
 
 type UserFormValues = z.infer<typeof formSchema>;
@@ -48,7 +50,6 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
-    // Мемоизация заголовков и текстов для формы
     const title = useMemo(
         () => (initialData ? 'Edit user' : 'Create user'),
         [initialData]
@@ -66,19 +67,22 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
         [initialData]
     );
 
-    // Преобразуем null к undefined для корректной работы с react-hook-form
     const defaultValues: UserFormValues = initialData
         ? {
             name: initialData.name,
+            surname: initialData.surname ?? undefined,
             email: initialData.email,
-            phoneNumber: initialData.phoneNumber ?? undefined, // Преобразуем null в undefined
-            role: initialData.role as 'user' | 'admin', // Преобразуем в нужный тип
+            phoneNumber: initialData.phoneNumber ?? undefined,
+            role: initialData.role as 'user' | 'admin',
+            image: initialData.image ?? undefined,
         }
         : {
             name: '',
+            surname: undefined,
             email: '',
             phoneNumber: undefined,
             role: 'user',
+            image: undefined,
         };
 
     const form = useForm<UserFormValues>({
@@ -91,22 +95,29 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
         try {
             if (initialData) {
                 // Запрос на обновление данных пользователя
-                // await axios.put(`/api/users/${initialData.id}`, data);
+                await fetch(`/api/user/${initialData.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
             } else {
                 // Запрос на создание нового пользователя
-                // await axios.post(`/api/users`, data);
+                await fetch(`/api/user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
             }
-            router.refresh();
-            router.push(`/dashboard/users`);
             toast({
-                title: 'Success',
+                title: 'Успех',
                 description: toastMessage,
             });
-        } catch (error: any) {
+            router.push('/dashboard/user');
+        } catch (error) {
             toast({
                 variant: 'destructive',
-                title: 'Uh oh! Something went wrong.',
-                description: 'There was a problem with your request.',
+                title: 'Ошибка',
+                description: 'Произошла ошибка при сохранении данных.',
             });
         } finally {
             setLoading(false);
@@ -116,15 +127,16 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
     const onDelete = async () => {
         setLoading(true);
         try {
-            // Запрос на удаление пользователя
-            // await axios.delete(`/api/users/${params.userId}`);
-            router.refresh();
-            router.push(`/dashboard/users`);
-        } catch (error: any) {
+            await fetch(`/api/user/${params.userId}`, {
+                method: 'DELETE',
+            });
+            toast({ title: 'Пользователь удален' });
+            router.push('/dashboard/user');
+        } catch (error) {
             toast({
                 variant: 'destructive',
-                title: 'Uh oh! Something went wrong.',
-                description: 'Could not delete user.',
+                title: 'Ошибка',
+                description: 'Ошибка при удалении пользователя.',
             });
         } finally {
             setLoading(false);
@@ -164,6 +176,23 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
                                         <Input
                                             disabled={loading}
                                             placeholder="User name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="surname"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Surname</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={loading}
+                                            placeholder="User surname"
                                             {...field}
                                         />
                                     </FormControl>
@@ -230,6 +259,23 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
                                             <SelectItem value="admin">Admin</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Image URL</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={loading}
+                                            placeholder="Image URL"
+                                            {...field}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

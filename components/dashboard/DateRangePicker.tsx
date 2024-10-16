@@ -74,3 +74,5 @@ export const CalendarDateRangePicker = React.memo(
         );
     }
 );
+
+CalendarDateRangePicker.displayName = 'CalendarDateRangePicker';

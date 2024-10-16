@@ -11,7 +11,7 @@ import { Fragment } from 'react';
 
 type BreadcrumbItemProps = {
   title: string;
-  link: string;
+  link?: string;
 };
 
 export function Breadcrumbs({ items }: { items: BreadcrumbItemProps[] }) {

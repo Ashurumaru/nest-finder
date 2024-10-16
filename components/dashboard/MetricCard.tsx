@@ -24,3 +24,5 @@ export const MetricCard: React.FC<MetricCardProps> = React.memo(({ title, count,
         </Card>
     );
 });
+
+MetricCard.displayName = 'MetricCard';

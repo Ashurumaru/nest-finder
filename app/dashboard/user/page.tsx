@@ -6,21 +6,25 @@ import {UserClient} from "@/components/dashboard/tables/user-tables/Client";
 const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
 
 async function fetchUsers(): Promise<User[]> {
-    const res = await fetch(`${process.env.API_URL}/api/user`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-    });
+    try {
+        const res = await fetch(`${process.env.API_URL}/api/user`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store',
+        });
 
-    if (!res.ok) {
-        console.error('Ошибка при получении данных пользователей');
+        if (!res.ok) {
+            throw new Error('Ошибка при получении данных пользователей');
+        }
+
+        const users = await res.json();
+        return users;
+    } catch (error) {
+        console.error(error);
         return [];
     }
-
-    return await res.json();
 }
+
 
 export default async function UserPage() {
     const users = await fetchUsers();
