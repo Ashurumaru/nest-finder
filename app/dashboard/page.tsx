@@ -3,15 +3,17 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { BarGraph } from '@/components/dashboard/charts/BarGraph';
 import { PieGraph } from '@/components/dashboard/charts/PieGraph';
-import PageContainer from '@/components/dashboard/layout/PageContainer';
+import PageContainer from '@/components/dashboard/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarDateRangePicker } from '@/components/dashboard/DateRangePicker';
+import { CalendarDateRangePicker } from '@/components/ui/date-range-picker';
 import { BarGraphData, PieGraphData } from '@/types/metricTypes';
 import { DateRange } from 'react-day-picker';
 import { MetricCard } from '@/components/dashboard/MetricCard';
+import {useSession} from "next-auth/react";
 
 export default function DashboardPage() {
+    const { data: session, status } = useSession();
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
     const [metrics, setMetrics] = useState({
         saleListings: 0,
@@ -104,7 +106,7 @@ export default function DashboardPage() {
                 {/* Заголовок и Календарь */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-2 md:space-y-0">
                     <h2 className="text-2xl font-bold tracking-tight">
-                        Привет, добро пожаловать обратно 👋
+                        Привет, {session?.user?.name} 👋
                     </h2>
                     <div className="flex items-center space-x-2">
                         <CalendarDateRangePicker date={dateRange} onChange={handleDateChange} />

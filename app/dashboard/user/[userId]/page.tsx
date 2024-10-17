@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { UserForm } from '@/components/dashboard/form/UserForm';
 import { User } from '@/types/userTypes';
 
-const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
+const PageContainer = dynamic(() => import('@/components/dashboard/PageContainer'));
 
 async function fetchUser(userId: string): Promise<User | null> {
     try {

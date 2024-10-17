@@ -51,7 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
-          randomKey: 'Hey cool',
+          role: user.role,
         };
       },
     }),
@@ -77,7 +77,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           ...token,
           id: u.id,
-          randomKey: u.randomKey,
+          role: u.role,
         };
       }
       return token;
@@ -90,7 +90,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: string;
           name: string;
           email: string;
-          randomKey?: string;
+          role: string;
         };
       };
 
@@ -100,7 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user: {
             ...session.user,
             id: token.id as string,
-            randomKey: token.randomKey,
+            role: token.role,
           },
         };
       }
@@ -111,7 +111,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         user: {
           ...session.user,
           id: user?.id ?? "",
-          randomKey: user?.randomKey ?? "",
         },
       };
     },

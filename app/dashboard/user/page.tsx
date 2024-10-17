@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
 import { User } from '@/types/userTypes';
 import {Breadcrumbs} from "@/components/dashboard/Breadcrumbs";
-import {UserClient} from "@/components/dashboard/tables/user-tables/Client";
+import {UserClient} from "@/components/dashboard/tables/user-table/client";
 
-const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
+const PageContainer = dynamic(() => import('@/components/dashboard/PageContainer'));
 
 async function fetchUsers(): Promise<User[]> {
     try {

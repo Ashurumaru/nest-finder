@@ -1,25 +1,34 @@
-// components/NotFoundPage.tsx
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
+import { FaExclamationTriangle } from 'react-icons/fa';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-const NotFoundPage: React.FC = () => {
+export default function NotFound() {
+    const router = useRouter();
+
     return (
-        <section className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="text-center p-8">
-                <FaExclamationTriangle className="text-yellow-500 text-6xl mb-4 mx-auto" />
-                <h1 className="text-3xl font-bold mb-2">Страница не найдена</h1>
+                <span className="bg-blue-400 bg-clip-text text-[10rem] font-extrabold leading-none text-transparent mb-4">
+                    404
+                </span>
+                <h1 className="text-3xl font-bold mb-4">Страница не найдена</h1>
                 <p className="text-gray-600 mb-6">
-                    К сожалению, страница, которую вы ищете, не существует.
+                    Извините, страница, которую вы ищете, не существует или была перемещена.
                 </p>
-                <Link href="/">
-                    <Button variant="primary">Вернуться на главную</Button>
-                </Link>
+                <div className="flex justify-center gap-4">
+                    <Button onClick={() => router.back()} variant="default" size="lg">
+                        Вернуться назад
+                    </Button>
+                    <Link href="/">
+                        <Button variant="outline" size="lg">
+                            На главную
+                        </Button>
+                    </Link>
+                </div>
             </div>
-        </section>
+        </div>
     );
-};
-
-export default NotFoundPage;
+}

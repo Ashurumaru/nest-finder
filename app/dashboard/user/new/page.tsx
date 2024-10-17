@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { UserForm } from '@/components/dashboard/form/UserForm';
 
-const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
+const PageContainer = dynamic(() => import('@/components/dashboard/PageContainer'));
 
 export default function CreateUserPage() {
     const breadcrumbItems = useMemo(() => [

@@ -1,28 +1,32 @@
-"use client";
+'use client';
 
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import Logo from "@/components/Logo";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import Image from "next/image";
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { useState } from 'react';
+import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import Logo from '@/components/Logo';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const { data: session, status } = useSession();
-  const user = session?.user;
-  const [menuOpen, setMenuOpen] = useState(false); // Состояние для мобильного меню
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleSignOut = async () => {
-    await signOut();
-    // Дополнительно: перенаправление или обновление страницы
-  };
-
-  if (status === "loading") {
+  if (status === 'loading') {
     return <p>Загрузка...</p>;
   }
+
+  const isAdmin = session?.user?.role === 'admin';
 
   return (
       <header className="bg-white shadow-md">
@@ -50,71 +54,52 @@ const Header = () => {
 
             {/* Действия пользователя */}
             <div className="flex items-center space-x-4">
-              {user ? (
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <Menu.Button className="flex items-center">
-                        <Image
-                            src={user.image || "/images/default.png"}
-                            alt={`Profile picture of ${user.name}`}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                        />
-                      </Menu.Button>
-                    </div>
-
-                    <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none z-50">
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                                <Link
-                                    href="/profile"
-                                    className={`${
-                                        active ? "bg-gray-100" : ""
-                                    } flex items-center px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  Профиль
-                                </Link>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                                <Link
-                                    href="/properties/create"
-                                    className={`${
-                                        active ? "bg-gray-100" : ""
-                                    } flex items-center px-4 py-2 text-sm text-gray-700`}
-                                >
-                                  Добавить недвижимость
-                                </Link>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                                <button
-                                    onClick={handleSignOut}
-                                    className={`${
-                                        active ? "bg-gray-100" : ""
-                                    } w-full flex items-center px-4 py-2 text-sm text-red-600`}
-                                >
-                                  Выйти
-                                </button>
-                            )}
-                          </Menu.Item>
+              {session?.user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                              src={session.user?.image ?? '/images/default.png'}
+                              alt={session.user?.name ?? 'User'}
+                          />
+                          <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {session.user?.name}
+                          </p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {session.user?.email}
+                          </p>
                         </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <Link href="/profile">Профиль</Link>
+                          <DropdownMenuShortcut></DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href="/properties/create">Добавить недвижимость</Link>
+                        </DropdownMenuItem>
+                        {isAdmin && (
+                            <DropdownMenuItem>
+                              <Link href="/dashboard">Панель управления</Link>
+                            </DropdownMenuItem>
+                        )}
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => signOut()}>
+                        Выйти
+                        <DropdownMenuShortcut></DropdownMenuShortcut>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
               ) : (
                   <>
                     <Link href="/properties/create">
@@ -154,48 +139,68 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/sale"
-                          className="block text-gray-700 hover"
-                          onClick={() => setMenuOpen(false)}
+                    <Link
+                        href="/sale"
+                        className="block text-gray-700 hover:text-blue-600"
+                        onClick={() => setMenuOpen(false)}
                     >
                       Продажа
                     </Link>
                   </li>
+                  {isAdmin && (
+                      <li>
+                        <Link
+                            href="/dashboard"
+                            className="block text-gray-700 hover:text-blue-600"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                          Панель управления
+                        </Link>
+                      </li>
+                  )}
                 </ul>
                 <div className="space-y-2">
-                  {user ?
-                      (
-                          <>
+                  {session?.user ? (
+                      <>
                         <Link href="/profile">
-                          <Button variant="outline"
-                                  className="w-full"
-                                  onClick={() => setMenuOpen(false)}>
+                          <Button
+                              variant="outline"
+                              className="w-full"
+                              onClick={() => setMenuOpen(false)}
+                          >
                             Профиль
                           </Button>
                         </Link>
                         <Link href="/properties/create">
-                          <Button className="w-full"
-                                  onClick={() => setMenuOpen(false)}>
+                          <Button
+                              className="w-full"
+                              onClick={() => setMenuOpen(false)}
+                          >
                             Добавить недвижимость
                           </Button>
                         </Link>
-                        <Button variant="destructive"
-                                className="w-full"
-                                onClick={() => { setMenuOpen(false); handleSignOut(); }} >
+                        <Button
+                            variant="destructive"
+                            className="w-full"
+                            onClick={() => {
+                              setMenuOpen(false);
+                              signOut();
+                            }}
+                        >
                           Выйти
                         </Button>
-                          </>
-                      ) : (
-                          <>
-                            <Link href="/login">
-                              <Button variant="outline"
-                                      className="w-full"
-                                      onClick={() => setMenuOpen(false)} >
-                                Войти
-                              </Button>
-                            </Link>
-                          </>
-                      )}
+                      </>
+                  ) : (
+                      <Link href="/login">
+                        <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                          Войти
+                        </Button>
+                      </Link>
+                  )}
                 </div>
               </div>
             </div>

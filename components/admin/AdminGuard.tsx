@@ -1,29 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { checkAdmin } from '@/utils/checkAdmin';
+import { useSession } from 'next-auth/react';
 
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
+    const { data: session, status } = useSession();
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        const verifyAdmin = async () => {
-            const adminStatus = await checkAdmin();
-            if (!adminStatus) {
-                window.location.href = '/';
-            } else {
-                setIsAdmin(true);
-                setLoading(false);
-            }
-        };
+        if (status === 'loading') {
+            return;
+        }
 
-        verifyAdmin();
-    }, []);
+        if (session?.user?.role === 'admin') {
+            setIsAdmin(true);
+        }
+
+        setLoading(false);
+    }, [session, status]);
 
     if (loading) {
         return <p>Загрузка...</p>;
     }
 
-    return <>{isAdmin && children}</>;
+    if (!isAdmin) {
+        window.location.href = '/';
+        return null;
+    }
+
+    return <>{children}</>;
 }
