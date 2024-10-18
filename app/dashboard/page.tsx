@@ -26,11 +26,9 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Оптимизация рендеринга графиков с помощью useMemo
     const barDataMemo = useMemo(() => metrics.barData, [metrics.barData]);
     const pieDataMemo = useMemo(() => metrics.pieData, [metrics.pieData]);
 
-    // Функция для получения метрик
     const fetchMetrics = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -90,12 +88,10 @@ export default function DashboardPage() {
         }
     }, [dateRange]);
 
-    // Загрузка метрик при изменении диапазона дат
     useEffect(() => {
         fetchMetrics();
     }, [dateRange, fetchMetrics]);
 
-    // Обработчик изменения диапазона дат
     const handleDateChange = useCallback((range: DateRange | undefined) => {
         setDateRange(range);
     }, []);
@@ -103,7 +99,6 @@ export default function DashboardPage() {
     return (
         <PageContainer scrollable>
             <div className="space-y-2">
-                {/* Заголовок и Календарь */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-2 md:space-y-0">
                     <h2 className="text-2xl font-bold tracking-tight">
                         Привет, {session?.user?.name} 👋
@@ -116,14 +111,12 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Обработка ошибок */}
                 {error && (
                     <div className="bg-red-100 text-red-700 p-4 rounded mb-6">
                         {error}
                     </div>
                 )}
 
-                {/* Вкладки */}
                 <Tabs defaultValue="overview" className="space-y-4">
                     <TabsList>
                         <TabsTrigger value="overview">Аналитика</TabsTrigger>

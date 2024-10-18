@@ -37,7 +37,24 @@ export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps
     }, [userId]);
 
     const handleDeleteProperty = async (propertyId: string) => {
-        console.log(`Удаление недвижимости с ID: ${propertyId}`);
+        try {
+            const response = await fetch(`/api/properties/${propertyId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при удалении недвижимости');
+            }
+
+            // Убираем удалённую недвижимость из списка
+            setProperties(prevProperties =>
+                prevProperties.filter(property => property.id !== propertyId)
+            );
+
+            console.log(`Недвижимость с ID ${propertyId} успешно удалена`);
+        } catch (err) {
+            console.error('Ошибка при удалении недвижимости:', err);
+        }
     };
 
     if (loading) {
@@ -57,7 +74,12 @@ export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps
             <h2 className="text-2xl font-bold mb-4">Моя недвижимость</h2>
             <div className="space-y-4">
                 {properties.map((property) => (
-                    <PropertyCardProfile  key={property.id} property={property} isOwnProperty={true} onDelete={handleDeleteProperty}/>
+                    <PropertyCardProfile
+                        key={property.id}
+                        property={property}
+                        isOwnProperty={true}
+                        onDelete={handleDeleteProperty}
+                    />
                 ))}
             </div>
         </div>

@@ -51,7 +51,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
 
     return (
         <div className="container mx-auto py-6 px-4">
-            {/* Название и основная информация */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
                     <h1 className="text-3xl font-bold mb-2">{property.title}</h1>
@@ -68,18 +67,14 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                 </div>
             </div>
 
-            {/* Галерея изображений */}
             {property.imageUrls && property.imageUrls.length > 0 && (
                 <div className="mb-6">
                     <ImageCarousel images={property.imageUrls} />
                 </div>
             )}
 
-            {/* Основная информация */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Описание и дополнительная информация */}
                 <div className="lg:col-span-2">
-                    {/* Основные характеристики */}
                     <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                         <h2 className="text-2xl font-semibold mb-4">Основные характеристики</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -143,7 +138,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                         </div>
                     </section>
 
-                    {/* Описание */}
                     <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                         <h2 className="text-2xl font-semibold mb-4">Описание</h2>
                         <p className="text-gray-700 leading-relaxed">
@@ -151,7 +145,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                         </p>
                     </section>
 
-                    {/* Удобства и особенности */}
                     {(property.furnished || property.airConditioning || property.balcony) && (
                         <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                             <h2 className="text-2xl font-semibold mb-4">Удобства и особенности</h2>
@@ -178,7 +171,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                         </section>
                     )}
 
-                    {/* Автор объявления */}
                     <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                         <h2 className="text-2xl font-semibold mb-4">Автор объявления</h2>
                         <p className="text-gray-700">
@@ -192,14 +184,12 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                     </section>
                 </div>
 
-                {/* Боковая панель с ценой и контактами */}
                 <div>
                     <div className="bg-white p-6 shadow-md rounded-lg mb-6 sticky top-20">
                         <p className="text-3xl font-bold text-gray-800 mb-4">
                             {property.price.toLocaleString()} ₽
                         </p>
 
-                        {/* Дата публикации или изменения */}
                         <div className="text-gray-500 mb-4">
                             {property.updatedAt && property.updatedAt !== property.createdAt ? (
                                 <p>Изменено: {formatDate(property.updatedAt)}</p>
@@ -208,14 +198,12 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                             )}
                         </div>
 
-                        {/* Кнопка "Показать контакты" */}
                         <button
                             className="bg-green-500 w-full text-white px-4 py-2 rounded-lg flex items-center justify-center mb-4 hover:bg-green-600 transition"
                         >
                             Показать контакты
                         </button>
 
-                        {/* Количество просмотров */}
                         <div className="flex items-center text-gray-600 mt-4">
                             <FaEye className="inline mr-2" />
                             <p>{property.views || 0} просмотров</p>
