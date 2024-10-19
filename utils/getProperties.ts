@@ -118,15 +118,13 @@ export async function getProperties(filters: PropertyFilters = {}) {
         whereClause.airConditioning = airConditioning;
     }
 
-    // Запрос к базе данных с учётом фильтров
     const properties = await prisma.post.findMany({
         where: whereClause,
         include: {
-            user: true, // Если нужна информация о пользователе
+            user: true,
         },
     });
 
-    // Возвращаем только нужные данные
     return properties.map((property) => ({
         id: property.id,
         title: property.title,
@@ -153,7 +151,8 @@ export async function getProperties(filters: PropertyFilters = {}) {
         parkingType: property.parkingType,
         hasElevator: property.hasElevator,
         furnished: property.furnished,
-        hoaFees: property.hoaFees?.toNumber(),         lotSize: property.lotSize,
+        hoaFees: property.hoaFees?.toNumber(),
+        lotSize: property.lotSize,
         basement: property.basement,
         balcony: property.balcony,
         airConditioning: property.airConditioning,

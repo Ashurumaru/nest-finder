@@ -3,7 +3,7 @@ import NextTopLoader from "nextjs-toploader";
 import type { Metadata } from 'next';
 import React from "react";
 
-const Sidebar = dynamic(() => import('@/components/dashboard/Sidebar'), {
+const Sidebar = dynamic(() => import('@/components/dashboard/layout/Sidebar'), {
     ssr: false,
 });
 

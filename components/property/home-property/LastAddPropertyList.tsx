@@ -1,12 +1,13 @@
 import React from 'react';
-import PropertyCard from '@/components/PropertyCard';
+import PropertyCard from '@/components/property/PropertyCard';
 import Link from 'next/link';
 import { getProperties } from '@/utils/getProperties';
 
-const HomeProperties = async () => {
+const LastAddPropertyList = async () => {
     const data = await getProperties();
+
     const recentProperties = data
-        .sort(() => Math.random() - Math.random())
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 3);
 
     return (
@@ -31,7 +32,7 @@ const HomeProperties = async () => {
             </section>
             <section className="m-auto max-w-lg my-10 px-6">
                 <Link
-                    href="/properties"
+                    href="/sale"
                     className="block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700"
                 >
                     Посмотреть все объекты
@@ -41,4 +42,4 @@ const HomeProperties = async () => {
     );
 };
 
-export default HomeProperties;
+export default LastAddPropertyList;

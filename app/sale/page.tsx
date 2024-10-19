@@ -1,7 +1,7 @@
 // app/sale/page.tsx
 
 import { getProperties } from "@/utils/getProperties";
-import PropertyList from "@/components/PropertyList";
+import PropertyList from "@/components/property/PropertyList";
 import { PropertyFilters } from "@/types/propertyTypes";
 
 interface SalePageProps {

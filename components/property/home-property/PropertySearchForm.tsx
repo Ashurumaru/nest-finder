@@ -64,7 +64,7 @@ const FormSchema = z.object({
     location: z.string().optional(),
 });
 
-export function HomePropertySearchForm() {
+export function PropertySearchForm() {
     const router = useRouter();
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -346,4 +346,4 @@ export function HomePropertySearchForm() {
     );
 }
 
-export default HomePropertySearchForm;
+export default PropertySearchForm;

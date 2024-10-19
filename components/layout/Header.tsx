@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { MenuIcon, XIcon } from '@heroicons/react/outline';
-import Logo from '@/components/Logo';
+import Logo from '@/components/layout/Logo';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -32,7 +32,7 @@ const Header = () => {
       <header className="bg-white shadow-md">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link href="/">
+            <Link href="/public">
               <Logo />
             </Link>
           </div>

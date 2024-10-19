@@ -6,8 +6,8 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import NextTopLoader from 'nextjs-toploader';
 import { SessionProvider } from "next-auth/react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import React from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });

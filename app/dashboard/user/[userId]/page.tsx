@@ -3,11 +3,11 @@
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
+import { DataTableBreadcrumbs } from '@/components/ui/data-table-breadcrumbs';
 import { UserForm } from '@/components/dashboard/form/UserForm';
 import { User } from '@/types/userTypes';
 
-const PageContainer = dynamic(() => import('@/components/dashboard/PageContainer'));
+const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
 
 async function fetchUser(userId: string): Promise<User | null> {
     try {
@@ -58,7 +58,7 @@ export default function Page({ params }: { params: { userId: string } }) {
     return (
         <PageContainer scrollable={true}>
             <div className="space-y-4">
-                <Breadcrumbs items={breadcrumbItems} />
+                <DataTableBreadcrumbs items={breadcrumbItems} />
                 <UserForm initialData={user} />
             </div>
         </PageContainer>

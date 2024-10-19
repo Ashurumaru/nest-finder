@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import Image  from 'next/image';
 export default function AccountSection({ userId }: { userId: string }) {
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
@@ -154,8 +154,10 @@ export default function AccountSection({ userId }: { userId: string }) {
                     className="mb-4"
                 />
                 {image && (
-                    <img
-                        src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                    <Image
+                        width={100}
+                        height={100}
+                        src={image}
                         alt="Avatar preview"
                         className="w-32 h-32 rounded-full object-cover"
                     />

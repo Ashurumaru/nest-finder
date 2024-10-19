@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PostData } from '@/types/propertyTypes';
-import PropertyCardProfile from "@/components/PropertyCardProfile";
+import ProfilePropertyCard from "@/components/property/ProfilePropertyCard";
 
 interface MyPropertiesSectionProps {
     userId: string;
@@ -74,7 +74,7 @@ export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps
             <h2 className="text-2xl font-bold mb-4">Моя недвижимость</h2>
             <div className="space-y-4">
                 {properties.map((property) => (
-                    <PropertyCardProfile
+                    <ProfilePropertyCard
                         key={property.id}
                         property={property}
                         isOwnProperty={true}

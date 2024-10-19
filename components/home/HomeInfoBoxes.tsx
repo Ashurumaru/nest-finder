@@ -1,5 +1,5 @@
 import React from 'react';
-import InfoBox from "@/components/InfoBox";
+import InfoBox from "@/components/home/InfoBox";
 
 const HomeInfoBoxes: React.FC = () => {
     return (
@@ -11,7 +11,7 @@ const HomeInfoBoxes: React.FC = () => {
                         backgroundColor={"bg-blue-50"}
                         buttonInfo={{
                             text: "Добавить объявление",
-                            link: "/properties",
+                            link: "/properties/create",
                             backgroundColor: "bg-indigo-600"
                         }}>
                         <p className="text-gray-600">На нашем сайте имеется возможность быстро и удобно разместить объявление.</p>
@@ -22,7 +22,7 @@ const HomeInfoBoxes: React.FC = () => {
                         backgroundColor={"bg-white"}
                         buttonInfo={{
                             text: "Арендовать",
-                            link: "/properties/add",
+                            link: "/rent",
                             backgroundColor: "bg-blue-600"
                         }}>
                         <p className="text-gray-600">Аренда недвижимости быстро и просто.</p>
@@ -35,7 +35,7 @@ const HomeInfoBoxes: React.FC = () => {
                         backgroundColor={"bg-white"}
                         buttonInfo={{
                             text: "Найти на карте",
-                            link: "/properties",
+                            link: "/sale",
                             backgroundColor: "bg-blue-600"
                         }}>
                         <p className="text-gray-600">Ищите объявления рядом с работой и другими важными местами.</p>
@@ -46,7 +46,7 @@ const HomeInfoBoxes: React.FC = () => {
                         backgroundColor={"bg-blue-50"}
                         buttonInfo={{
                             text: "Купить",
-                            link: "/properties/add",
+                            link: "/sale",
                             backgroundColor: "bg-indigo-600"
                         }}>
                         <p className="text-gray-600">Покупка недвижимости с лучшими предложениями.</p>

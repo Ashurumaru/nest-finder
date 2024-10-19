@@ -8,7 +8,7 @@ interface FeaturedPropertyCardProps {
     property: PostData;
 }
 
-const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property }) => {
+const FitPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property }) => {
     const formattedPrice = property.price
         ? `${property.price.toLocaleString('ru-RU')} ₽`
         : "Н/Д";
@@ -68,7 +68,7 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
                         href={`/properties/${property.id}`}
                         className="h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm"
                     >
-                        Подробности
+                        Подробнее
                     </Link>
                 </div>
             </div>
@@ -76,4 +76,4 @@ const FeaturedPropertyCard: React.FC<FeaturedPropertyCardProps> = ({ property })
     );
 };
 
-export default FeaturedPropertyCard;
+export default FitPropertyCard;

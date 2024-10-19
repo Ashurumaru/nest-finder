@@ -1,4 +1,4 @@
-import { LoginForm } from '@/components/LoginForm';
+import { LoginForm } from '@/components/auth/LoginForm';
 import { Suspense } from 'react';
 
 export default async function LoginPage() {

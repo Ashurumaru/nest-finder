@@ -32,12 +32,12 @@ interface PropertyCardProps {
     onDelete: (id: string) => void; // Логика удаления
 }
 
-const PropertyCardProfile: React.FC<PropertyCardProps> = ({ property, isOwnProperty = true, onDelete }) => {
+const ProfilePropertyCard: React.FC<PropertyCardProps> = ({ property, isOwnProperty = true, onDelete }) => {
     const formattedPrice = property.price?.toLocaleString() || 'Н/Д';
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
 
     const confirmDelete = () => {
-        onDelete(property.id); // Вызов функции удаления
+        onDelete(property.id);
     };
 
     return (
@@ -145,4 +145,4 @@ const PropertyCardProfile: React.FC<PropertyCardProps> = ({ property, isOwnPrope
     );
 };
 
-export default PropertyCardProfile;
+export default ProfilePropertyCard;

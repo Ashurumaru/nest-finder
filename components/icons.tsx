@@ -24,7 +24,6 @@ import {
     Settings,
     SunMedium,
     Trash,
-    Twitter,
     User,
     User2Icon,
     UserX2Icon,
@@ -77,6 +76,5 @@ export const Icons = {
             ></path>
         </svg>
     ),
-    twitter: Twitter,
     check: Check
 };

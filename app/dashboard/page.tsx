@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { BarGraph } from '@/components/dashboard/charts/BarGraph';
 import { PieGraph } from '@/components/dashboard/charts/PieGraph';
-import PageContainer from '@/components/dashboard/PageContainer';
+import PageContainer from '@/components/dashboard/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CalendarDateRangePicker } from '@/components/ui/date-range-picker';

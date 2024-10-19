@@ -1,37 +1,33 @@
 'use client';
-import { DashboardNav } from '@/components/dashboard/DashboardNav';
+import { DashboardNav } from '@/components/dashboard/layout/DashboardNav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { navItems } from '@/constants/data';
-import { MenuIcon } from 'lucide-react';
-import { useState } from 'react';
+import { Menu } from 'lucide-react';
+import { Dispatch, SetStateAction } from 'react';
 
+interface MobileSidebarProps {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}
 
-
-export function MobileSidebar() {
-  const [open, setOpen] = useState(false);
+export function MobileSidebar({ isOpen, setIsOpen }: MobileSidebarProps) {
   return (
-    <>
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <MenuIcon />
+          <Menu />
         </SheetTrigger>
         <SheetContent side="left" className="!px-0">
           <div className="space-y-4 py-4">
             <div className="px-3 py-2">
               <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-                Overview
+                Меню
               </h2>
               <div className="space-y-1">
-                <DashboardNav
-                  items={navItems}
-                  isMobileNav={true}
-                  setOpen={setOpen}
-                />
+                <DashboardNav items={navItems} isMobileNav={true} setOpen={setIsOpen} />
               </div>
             </div>
           </div>
         </SheetContent>
       </Sheet>
-    </>
   );
 }

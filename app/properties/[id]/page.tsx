@@ -13,12 +13,12 @@ import {
     FaWind
 } from "react-icons/fa";
 import {MdElevator, MdOutlineBalcony} from "react-icons/md";
-import ShareButton from "@/components/ShareButton";
+import ShareButton from "@/components/property/selected-property/ShareButton";
 import {formatDate} from "@/utils/formatDate";
 import dynamic from 'next/dynamic';
 
-const ImageCarousel = dynamic(() => import('@/components/ImageCarousel'));
-const FavoriteButton = dynamic(() => import('@/components/FavoriteButton'));
+const ImageCarousel = dynamic(() => import('@/components/property/selected-property/ImageCarousel'));
+const FavoriteButton = dynamic(() => import('@/components/property/selected-property/FavoriteButton'));
 
 // Функция для получения данных о недвижимости на сервере
 async function fetchProperty(id: string): Promise<PostData | null> {

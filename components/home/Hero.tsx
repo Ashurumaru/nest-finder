@@ -1,7 +1,7 @@
 // components/Hero.tsx
 
 import React from "react";
-import HomePropertySearchForm from "@/components/home/HomePropertySearchForm";
+import PropertySearchForm from "@/components/property/home-property/PropertySearchForm";
 
 const Hero: React.FC = () => {
     return (
@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
                     Откройте для себя идеальное жильё, которое подходит именно вам.
                 </p>
                 <div className="w-full max-w-3xl">
-                    <HomePropertySearchForm />
+                    <PropertySearchForm />
                 </div>
             </div>
         </section>

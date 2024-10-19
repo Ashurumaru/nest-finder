@@ -15,9 +15,9 @@ export const navItems: NavItem[] = [
     },
     {
         title: 'Объявления',
-        href: '/dashboard/post',
+        href: '/dashboard/property',
         icon: 'post',
-        label: 'post'
+        label: 'property'
     },
 ];
 

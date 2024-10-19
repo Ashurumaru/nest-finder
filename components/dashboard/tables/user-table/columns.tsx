@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import Image from 'next/image';
 import { User } from "@/types/userTypes";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableRowActions } from "@/components/ui/data-table-row-actions";
@@ -78,10 +78,12 @@ export const columns: ColumnDef<User>[] = [
         ),
         cell: ({ row }) =>
             row.original.image ? (
-                <img
+                <Image
                     src={row.original.image}
                     alt="User image"
                     className="w-8 h-8 rounded-full"
+                    width={32}
+                    height={32}
                 />
             ) : (
                 "N/A"
@@ -95,7 +97,13 @@ export const columns: ColumnDef<User>[] = [
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
     },
     {
-        id: "actions",
-        cell: ({ row }) => <DataTableRowActions row={row} />,
-    },
+        id: 'actions',
+        cell: ({ row }) => (
+            <DataTableRowActions
+                row={row}
+                editPath={(id) => `/dashboard/user/${id}`}
+                deleteApiPath={(id) => `/api/user/${id}`}
+            />
+        ),
+    }
 ];

@@ -14,7 +14,7 @@ type BreadcrumbItemProps = {
   link?: string;
 };
 
-export function Breadcrumbs({ items }: { items: BreadcrumbItemProps[] }) {
+export function DataTableBreadcrumbs({ items }: { items: BreadcrumbItemProps[] }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>

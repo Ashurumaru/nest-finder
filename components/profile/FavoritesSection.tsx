@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PostData } from '@/types/propertyTypes';
-import PropertyCardProfile from '@/components/PropertyCardProfile';
+import ProfilePropertyCard from '@/components/property/ProfilePropertyCard';
 
 interface FavoritesSectionProps {
     userId: string;
@@ -77,7 +77,7 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
             <h2 className="text-2xl font-bold mb-4">Мое избранное</h2>
             <div className="space-y-4">
                 {favorites.map((post) => (
-                    <PropertyCardProfile
+                    <ProfilePropertyCard
                         key={post.id}
                         property={post}
                         isOwnProperty={false}
