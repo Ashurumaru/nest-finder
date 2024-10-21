@@ -54,11 +54,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         });
 
         return NextResponse.json({
-            ...updatedProperty,
-            price: updatedProperty.price.toNumber(),
-            latitude: updatedProperty.latitude?.toNumber(),
-            longitude: updatedProperty.longitude?.toNumber(),
-            hoaFees: updatedProperty.hoaFees?.toNumber(),
+            ...updatedProperty
         });    } catch (error) {
         console.error('Ошибка при обновлении недвижимости:', error);
         return NextResponse.json({ message: 'Ошибка при обновлении недвижимости' }, { status: 500 });

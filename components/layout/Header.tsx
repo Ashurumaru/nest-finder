@@ -26,7 +26,7 @@ const Header = () => {
     return <p>Загрузка...</p>;
   }
 
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   return (
       <header className="bg-white shadow-md">

@@ -13,7 +13,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
             return;
         }
 
-        if (session?.user?.role === 'admin') {
+        if (session?.user?.role === 'ADMIN') {
             setIsAdmin(true);
         }
 

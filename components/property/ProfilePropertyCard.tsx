@@ -33,12 +33,20 @@ interface PropertyCardProps {
 }
 
 const ProfilePropertyCard: React.FC<PropertyCardProps> = ({ property, isOwnProperty = true, onDelete }) => {
-    const formattedPrice = property.price?.toLocaleString() || 'Н/Д';
+    const formattedPrice = property.price?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) || 'Н/Д';
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
 
     const confirmDelete = () => {
-        onDelete(property.id);
+        if (property.id != null) {
+            onDelete(property.id);
+        }
     };
+
+    const propertyType = {
+        APARTMENT: "Квартира",
+        HOUSE: "Дом",
+        LAND_PLOT: "Земельный участок"
+    }[property.property] || "Неизвестная недвижимость";
 
     return (
         <div className="relative bg-white rounded-lg shadow-lg p-4 flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-6">
@@ -54,7 +62,7 @@ const ProfilePropertyCard: React.FC<PropertyCardProps> = ({ property, isOwnPrope
 
                 {/* Цена в правом верхнем углу изображения */}
                 <div className="absolute top-4 left-4 bg-white text-blue-500 font-bold px-4 py-2 rounded-lg shadow-md">
-                    {formattedPrice} ₽
+                    {formattedPrice}
                 </div>
             </div>
 
@@ -97,31 +105,65 @@ const ProfilePropertyCard: React.FC<PropertyCardProps> = ({ property, isOwnPrope
                     </div>
                 </div>
 
-                <div className="text-gray-600 capitalize mb-2">{property.property}</div>
+                <div className="text-gray-600 capitalize mb-2">
+                    {propertyType}
+                </div>
 
                 {/* Основные параметры */}
                 <div className="flex space-x-4 text-gray-500 mb-4">
-                    {property.numBedrooms && (
-                        <p className="flex items-center">
-                            <FaBed className="inline mr-2" /> {property.numBedrooms}
-                        </p>
+                    {/* Параметры для квартиры */}
+                    {property.property === 'APARTMENT' && (
+                        <>
+                            {property.apartment?.numBedrooms && (
+                                <p className="flex items-center">
+                                    <FaBed className="inline mr-2" /> {property.apartment.numBedrooms} Спальни
+                                </p>
+                            )}
+                            {property.apartment?.numBathrooms && (
+                                <p className="flex items-center">
+                                    <FaBath className="inline mr-2" /> {property.apartment.numBathrooms} Ванные
+                                </p>
+                            )}
+                            {property.apartment?.floorNumber && (
+                                <p className="flex items-center">
+                                    <FaRulerCombined className="inline mr-2" /> {property.apartment.floorNumber} этаж
+                                </p>
+                            )}
+                        </>
                     )}
-                    {property.numBathrooms && (
-                        <p className="flex items-center">
-                            <FaBath className="inline mr-2" /> {property.numBathrooms}
-                        </p>
+
+                    {/* Параметры для дома */}
+                    {property.property === 'HOUSE' && (
+                        <>
+                            {property.house?.numberOfRooms && (
+                                <p className="flex items-center">
+                                    <FaBed className="inline mr-2" /> {property.house.numberOfRooms} Комнаты
+                                </p>
+                            )}
+                            {property.house?.houseArea && (
+                                <p className="flex items-center">
+                                    <FaRulerCombined className="inline mr-2" /> {property.house.houseArea} кв.м
+                                </p>
+                            )}
+                        </>
                     )}
-                    {property.propertySize && (
-                        <p className="flex items-center">
-                            <FaRulerCombined className="inline mr-2" /> {property.propertySize} кв.м
-                        </p>
+
+                    {/* Параметры для земельного участка */}
+                    {property.property === 'LAND_PLOT' && (
+                        <>
+                            {property.landPlot?.landArea && (
+                                <p className="flex items-center">
+                                    <FaRulerCombined className="inline mr-2" /> {property.landPlot.landArea} соток
+                                </p>
+                            )}
+                        </>
                     )}
                 </div>
 
                 {/* Тип и адрес */}
                 <div className="flex items-center text-green-900 text-sm mb-4">
                     <FaTag className="mr-2" />
-                    {property.type === 'rent' ? 'Аренда' : 'Продажа'}
+                    {property.type === 'RENT' ? 'Аренда' : 'Продажа'}
                 </div>
 
                 <div className="flex items-center text-orange-700 mb-2">
@@ -130,8 +172,8 @@ const ProfilePropertyCard: React.FC<PropertyCardProps> = ({ property, isOwnPrope
                 </div>
 
                 <p className="text-gray-700 mb-4">
-                    {property.description ?
-                        `${property.description.substring(0, 100)}${property.description.length > 100 ? '...' : ''}`
+                    {property.description
+                        ? `${property.description.substring(0, 100)}${property.description.length > 100 ? '...' : ''}`
                         : 'Описание отсутствует'}
                 </p>
 

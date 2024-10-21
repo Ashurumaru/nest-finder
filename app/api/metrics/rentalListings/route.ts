@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     try {
         const rentalListings = await prisma.post.count({
             where: {
-                type: 'rent',
+                type: "RENT",
                 createdAt: {
                     gte: startDate ? new Date(startDate) : undefined,
                     lte: endDate ? new Date(endDate) : undefined,

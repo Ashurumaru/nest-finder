@@ -81,7 +81,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                             {property.numBedrooms !== undefined && (
                                 <div className="flex items-center text-gray-700">
                                     <FaBed className="inline mr-2 text-blue-500" />
-                                    <p>{property.numBedrooms} Спальни</p>
+                                    <p>{property.apartment?.numBedrooms} Спальни</p>
                                 </div>
                             )}
                             {property.numBathrooms !== undefined && (
@@ -192,11 +192,16 @@ export default async function PropertyPage({ params }: { params: { id: string } 
 
                         <div className="text-gray-500 mb-4">
                             {property.updatedAt && property.updatedAt !== property.createdAt ? (
-                                <p>Изменено: {formatDate(property.updatedAt)}</p>
+                                <p>Изменено: {formatDate(property.updatedAt.toISOString())}</p>
                             ) : (
-                                <p>Добавлено: {formatDate(property.createdAt ?? "")}</p>
+                                <p>
+                                    Добавлено: {property.createdAt && property.createdAt instanceof Date
+                                    ? formatDate(property.createdAt.toISOString())
+                                    : ""}
+                                </p>
                             )}
                         </div>
+
 
                         <button
                             className="bg-green-500 w-full text-white px-4 py-2 rounded-lg flex items-center justify-center mb-4 hover:bg-green-600 transition"
@@ -205,7 +210,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                         </button>
 
                         <div className="flex items-center text-gray-600 mt-4">
-                            <FaEye className="inline mr-2" />
+                            <FaEye className="inline mr-2"/>
                             <p>{property.views || 0} просмотров</p>
                         </div>
                     </div>

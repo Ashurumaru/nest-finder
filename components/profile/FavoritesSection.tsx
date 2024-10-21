@@ -81,9 +81,16 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
                         key={post.id}
                         property={post}
                         isOwnProperty={false}
-                        onDelete={() => handleRemoveFavorite(post.id)}
+                        onDelete={() => {
+                            if (post.id) {
+                                handleRemoveFavorite(post.id);
+                            } else {
+                                console.error("Post ID is undefined. Cannot remove from favorites.");
+                            }
+                        }}
                     />
                 ))}
+
             </div>
         </div>
     );

@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     try {
         const saleListings = await prisma.post.count({
             where: {
-                type: 'sale',
+                type: 'SALE',
                 createdAt: {
                     gte: startDate ? new Date(startDate) : undefined,
                     lte: endDate ? new Date(endDate) : undefined,

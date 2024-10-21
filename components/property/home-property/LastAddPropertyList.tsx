@@ -7,8 +7,13 @@ const LastAddPropertyList = async () => {
     const data = await getProperties();
 
     const recentProperties = data
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+        })
         .slice(0, 3);
+
 
     return (
         <>

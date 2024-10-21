@@ -75,7 +75,7 @@ const Step2PropertyDetails = () => {
                 )}
             </div>
 
-            {propertyType !== 'land' && (
+            {propertyType !== 'LAND_PLOT' && (
                 <>
                     <div className="mb-4">
                         <Controller
@@ -175,7 +175,7 @@ const Step2PropertyDetails = () => {
                 </>
             )}
 
-            {propertyType === 'apartment' && (
+            {propertyType === 'APARTMENT' && (
                 <>
                     <div className="mb-4">
                         <Controller

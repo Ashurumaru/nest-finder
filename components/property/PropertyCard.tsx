@@ -13,18 +13,15 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     const formattedPrice = property.price
-        ? `${property.price.toLocaleString('ru-RU')} ₽`
+        ? `${property.price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}`
         : 'Н/Д';
 
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
 
     const propertyType = {
-        apartment: 'Квартира',
-        house: 'Дом',
-        condo: 'Кондо',
-        townhouse: 'Таунхаус',
-        commercial: 'Коммерческая недвижимость',
-        land: 'Земельный участок',
+        APARTMENT: 'Квартира',
+        HOUSE: 'Дом',
+        LAND_PLOT: 'Земельный участок',
     }[property.property] || 'Неизвестная недвижимость';
 
     return (
@@ -47,20 +44,46 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                 <h3 className="absolute top-4 right-4 bg-white px-4 py-2 rounded-lg text-blue-500 font-bold">
                     {formattedPrice}
                 </h3>
-                <div className="flex justify-start gap-4 text-gray-500 mb-4">
-                    <p className="flex items-center">
-                        <FaBed className="inline mr-2" /> {property.numBedrooms || 'Н/Д'} Спальни
-                    </p>
-                    <p className="flex items-center">
-                        <FaBath className="inline mr-2" /> {property.numBathrooms || 'Н/Д'} Ванные
-                    </p>
-                    <p className="flex items-center">
-                        <FaRulerCombined className="inline mr-2" /> {property.propertySize || 'Н/Д'} кв.м
-                    </p>
-                </div>
+
+                {property.property === 'APARTMENT' && (
+                    <div className="flex justify-start gap-4 text-gray-500 mb-4">
+                        <p className="flex items-center">
+                            <FaBed className="inline mr-2" /> {property.apartment?.numBedrooms || 'Н/Д'} Комнат
+                        </p>
+                        <p className="flex items-center">
+                            <FaBath className="inline mr-2" /> {property.apartment?.numBathrooms || 'Н/Д'} Ванные
+                        </p>
+                        <p className="flex items-center">
+                            <FaRulerCombined className="inline mr-2" /> {property.apartment?.apartmentArea || 'Н/Д'} кв.м
+                        </p>
+                    </div>
+                )}
+
+                {property.property === 'HOUSE' && (
+                    <div className="flex justify-start gap-4 text-gray-500 mb-4">
+                        <p className="flex items-center">
+                            <FaBed className="inline mr-2" /> {property.house?.numberOfRooms || 'Н/Д'} Комнат
+                        </p>
+                        <p className="flex items-center">
+                            <FaRulerCombined className="inline mr-2" /> {property.house?.houseArea || 'Н/Д'} кв.м
+                        </p>
+                        <p className="flex items-center">
+                            <FaRulerCombined className="inline mr-2" /> {property.house?.landArea || 'Н/Д'} соток
+                        </p>
+                    </div>
+                )}
+
+                {property.property === 'LAND_PLOT' && (
+                    <div className="flex justify-start gap-4 text-gray-500 mb-4">
+                        <p className="flex items-center">
+                            <FaRulerCombined className="inline mr-2" /> {property.landPlot?.landArea || 'Н/Д'} соток
+                        </p>
+                    </div>
+                )}
+
                 <div className="flex items-center text-green-900 text-sm mb-4">
                     <FaTag className="mr-2" />
-                    {property.type === 'rent' ? 'Аренда' : 'Продажа'}
+                    {property.type === 'RENT' ? 'Аренда' : 'Продажа'}
                 </div>
                 <div className="border border-gray-100 mb-5" />
                 <div className="flex flex-col lg:flex-row justify-between items-center">

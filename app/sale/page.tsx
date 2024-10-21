@@ -8,8 +8,7 @@ interface SalePageProps {
     searchParams: Record<string, string | string[] | undefined>;
 }
 
-// Определяем допустимые типы недвижимости
-const allowedPropertyTypes = ["apartment", "house", "condo", "townhouse", "commercial", "land"] as const;
+const allowedPropertyTypes = ["APARTMENT", "HOUSE", "LAND_PLOT"] as const;
 type PropertyType = typeof allowedPropertyTypes[number];
 
 export default async function SalePage({ searchParams }: SalePageProps) {
@@ -43,7 +42,7 @@ export default async function SalePage({ searchParams }: SalePageProps) {
     }
 
     const filters: PropertyFilters = {
-        type: "sale",
+        type: "SALE",
         propertyType: propertyType,
         minBedrooms: minBedrooms,
         maxBedrooms: maxBedrooms,
@@ -57,7 +56,7 @@ export default async function SalePage({ searchParams }: SalePageProps) {
     return (
         <div className="container mx-auto py-6">
             <h1 className="text-3xl font-bold mb-6">Недвижимость на продажу</h1>
-            <PropertyList initialProperties={properties} propertyType="sale"/>
+            <PropertyList initialProperties={properties} propertyType="SALE"/>
         </div>
     );
 }

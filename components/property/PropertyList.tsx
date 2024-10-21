@@ -8,7 +8,7 @@ import { PostData } from '@/types/propertyTypes';
 
 interface PropertyListProps {
     initialProperties: PostData[];
-    propertyType: 'rent' | 'sale';
+    propertyType: 'RENT' | 'SALE';
 }
 
 export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {

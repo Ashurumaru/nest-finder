@@ -14,10 +14,11 @@ model User {
   name           String
   surname        String?
   email          String      @unique
+  emailVerified  Boolean?
   hashedPassword String?
   image          String?
   phoneNumber    String?
-  role           Role        @default(user)
+  role           Role        @default(USER)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   posts          Post[]
@@ -31,46 +32,133 @@ model User {
 }
 
 model Post {
-  id               String       @id @default(uuid())
-  title            String
-  price            Decimal
-  imageUrls        String[]
-  address          String
-  city             String
-  numBedrooms      Int?
-  numBathrooms     Int?
-  latitude         Decimal?
-  longitude        Decimal?
-  type             Type
-  property         Property
-  description      String?
-  petPolicy        PetPolicy?
-  propertySize     Float?
-  schoolDistance   Float?
-  busStopDistance  Float?
-  yearBuilt        Int?
-  floorNumber      Int?
-  totalFloors      Int?
-  heatingType      HeatingType?
-  parking          Boolean?
-  parkingType      ParkingType?
-  hasElevator      Boolean?
-  furnished        Boolean?
-  hoaFees          Decimal?
-  lotSize          Float?
-  basement         Boolean?
-  balcony          Boolean?
-  airConditioning  Boolean?
-  internetIncluded Boolean?
-  smokingAllowed   Boolean?
-  moveInDate       DateTime?
-  leaseTerm        LeaseTerm?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @default(now()) @updatedAt
-  views            Int          @default(0)
-  user             User         @relation(fields: [userId], references: [id])
-  userId           String
-  savedPosts       SavedPost[]
+  id          String      @id @default(uuid())
+  title       String
+  price       Decimal     @db.Decimal(15, 2)
+  imageUrls   String[]
+  address     String
+  city        String
+  latitude    Decimal?    @db.Decimal(9, 6)
+  longitude   Decimal?    @db.Decimal(9, 6)
+  type        Type
+  property    Property
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+  views       Int         @default(0)
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  savedPosts  SavedPost[]
+
+  apartment Apartment?
+  house     House?
+  landPlot  LandPlot?
+
+  rentalFeatures RentalFeatures?
+  saleFeatures   SaleFeatures?
+
+  @@map("posts")
+}
+
+model Apartment {
+  id                   String           @id @default(uuid())
+  numBedrooms          Int?
+  numBathrooms         Int?
+  apartmentArea        Float?
+  floorNumber          Int?
+  totalFloors          Int?
+  buildingType         BuildingType?
+  yearBuilt            Int?
+  ceilingHeight        Float?
+  hasBalcony           Boolean?
+  balconyType          String?
+  hasLoggia            Boolean?
+  hasWalkInCloset      Boolean?
+  hasPassengerElevator Boolean?
+  hasFreightElevator   Boolean?
+  heatingType          HeatingType?
+  renovationState      RenovationState?
+  parkingType          ParkingType?
+  furnished            Boolean?
+  internetSpeed        Int?
+  flooring             String?
+  soundproofing        Boolean?
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  @@map("apartments")
+}
+
+model House {
+  id             String           @id @default(uuid())
+  numberOfFloors Int?
+  numberOfRooms  Int?
+  houseArea      Float?
+  landArea       Float?
+  wallMaterial   String?
+  yearBuilt      Int?
+  hasGarage      Boolean?
+  garageArea     Float?
+  hasBasement    Boolean?
+  basementArea   Float?
+  heatingType    HeatingType?
+  houseCondition RenovationState?
+  fencing        Boolean?
+  furnished      Boolean?
+  internetSpeed  Int?
+  flooring       String?
+  soundproofing  Boolean?
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  @@map("houses")
+}
+
+model LandPlot {
+  id          String   @id @default(uuid())
+  landArea    Float?
+  landPurpose String?
+  waterSource String?
+  fencing     Boolean?
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  @@map("land_plots")
+}
+
+model RentalFeatures {
+  id                        String            @id @default(uuid())
+  rentalTerm                RentalTerm?
+  securityDeposit           Decimal?          @db.Decimal(10, 2)
+  securityDepositConditions String?
+  utilitiesPayment          UtilitiesPayment?
+  utilitiesCost             Decimal?          @db.Decimal(10, 2)
+  leaseAgreementUrl         String?
+  petPolicy                 PetPolicy?
+  availabilityDate          DateTime?
+  minimumLeaseTerm          Int?
+  maximumLeaseTerm          Int?
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  @@map("rental_features")
+}
+
+model SaleFeatures {
+  id                String    @id @default(uuid())
+  mortgageAvailable Boolean?
+  priceNegotiable   Boolean?
+  availabilityDate  DateTime?
+  titleDeedUrl      String?
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  @@map("sale_features")
 }
 
 model SavedPost {
@@ -157,50 +245,64 @@ model VerificationRequest {
 }
 
 enum Type {
-  sale
-  rent
+  SALE
+  RENT
 }
 
 enum Property {
-  apartment
-  house
-  condo
-  townhouse
-  commercial
-  land
+  APARTMENT
+  HOUSE
+  LAND_PLOT
+}
+
+enum BuildingType {
+  PANEL
+  BRICK
+  MONOLITH
+  WOOD
+  OTHER
+}
+
+enum RenovationState {
+  COSMETIC
+  EURO
+  DESIGNER
 }
 
 enum HeatingType {
-  none
-  gas
-  electric
-  solar
-  other
+  NONE
+  GAS
+  ELECTRIC
+  SOLAR
+  OTHER
 }
 
 enum ParkingType {
-  garage
-  street
-  assigned
-  covered
-  valet
-}
-
-enum LeaseTerm {
-  monthToMonth
-  sixMonths
-  oneYear
-  twoYears
-  other
+  GARAGE
+  STREET
+  ASSIGNED
+  COVERED
 }
 
 enum PetPolicy {
-  notAllowed
-  allowed
-  allowedWithRestrictions
+  NOT_ALLOWED
+  ALLOWED
+  ALLOWED_WITH_RESTRICTIONS
 }
 
 enum Role {
-  user
-  admin
+  USER
+  ADMIN
+}
+
+enum RentalTerm {
+  DAILY_PAYMENT
+  WEEKLY_PAYMENT
+  MONTHLY_PAYMENT
+}
+
+enum UtilitiesPayment {
+  INCLUDED
+  EXCLUDED
+  PARTIALLY_INCLUDED
 }

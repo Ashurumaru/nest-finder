@@ -37,8 +37,8 @@ const CreatePropertyWizard = () => {
 
     const methods = useForm<PropertyFormData>({
         defaultValues: {
-            type: 'sale',
-            property: 'apartment',
+            type: 'SALE',
+            property: 'APARTMENT',
             title: '',
             description: '',
             price: undefined,

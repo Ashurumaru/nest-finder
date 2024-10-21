@@ -8,8 +8,7 @@ interface RentPageProps {
     searchParams: Record<string, string | string[] | undefined>;
 }
 
-// Определяем массив допустимых типов недвижимости
-const allowedPropertyTypes = ["apartment", "house", "condo", "townhouse", "commercial", "land"] as const;
+const allowedPropertyTypes = ["APARTMENT", "HOUSE", "LAND_PLOT"] as const;
 type PropertyType = typeof allowedPropertyTypes[number];
 
 export default async function RentPage({ searchParams }: RentPageProps) {
@@ -25,7 +24,7 @@ export default async function RentPage({ searchParams }: RentPageProps) {
     }
 
     const filters: PropertyFilters = {
-        type: "rent",
+        type: "RENT",
         propertyType: propertyType,
         minBedrooms: searchParams.rooms ? Number(searchParams.rooms) : undefined,
         minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
@@ -38,7 +37,7 @@ export default async function RentPage({ searchParams }: RentPageProps) {
     return (
         <div className="container mx-auto py-6">
             <h1 className="text-3xl font-bold mb-6">Недвижимость для аренды</h1>
-            <PropertyList initialProperties={properties}  propertyType="rent"/>
+            <PropertyList initialProperties={properties}  propertyType="RENT"/>
         </div>
     );
 }

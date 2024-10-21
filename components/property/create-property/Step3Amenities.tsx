@@ -82,7 +82,7 @@ const Step3Amenities = () => {
                 />
             </div>
 
-            {transactionType === 'rent' && (
+            {transactionType === 'RENT' && (
                 <>
                     <div className="mb-4">
                         <Controller
