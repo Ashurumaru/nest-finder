@@ -78,108 +78,105 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                     <section className="bg-white p-6 shadow-md rounded-lg mb-6">
                         <h2 className="text-2xl font-semibold mb-4">Основные характеристики</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {property.numBedrooms !== undefined && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaBed className="inline mr-2 text-blue-500" />
-                                    <p>{property.apartment?.numBedrooms} Спальни</p>
-                                </div>
+                            {/* Проверка на тип недвижимости */}
+                            {property.property === 'APARTMENT' && property.apartment && (
+                                <>
+                                    {property.apartment.numBedrooms !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaBed className="inline mr-2 text-blue-500" />
+                                            <p>{property.apartment.numBedrooms} Спальни</p>
+                                        </div>
+                                    )}
+                                    {property.apartment.numBathrooms !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaBath className="inline mr-2 text-blue-500" />
+                                            <p>{property.apartment.numBathrooms} Ванные комнаты</p>
+                                        </div>
+                                    )}
+                                    {property.apartment.floorNumber !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaBuilding className="inline mr-2 text-blue-500" />
+                                            <p>Этаж: {property.apartment.floorNumber}</p>
+                                        </div>
+                                    )}
+                                    {/* Добавить все другие поля для квартиры */}
+                                </>
                             )}
-                            {property.numBathrooms !== undefined && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaBath className="inline mr-2 text-blue-500" />
-                                    <p>{property.numBathrooms} Ванные комнаты</p>
-                                </div>
+
+                            {property.property === 'HOUSE' && property.house && (
+                                <>
+                                    {property.house.numberOfRooms !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaBed className="inline mr-2 text-blue-500" />
+                                            <p>{property.house.numberOfRooms} Комнаты</p>
+                                        </div>
+                                    )}
+                                    {property.house.houseArea !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaRulerCombined className="inline mr-2 text-blue-500" />
+                                            <p>{property.house.houseArea} м²</p>
+                                        </div>
+                                    )}
+                                    {/* Добавить все другие поля для дома */}
+                                </>
                             )}
-                            {property.propertySize && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaRulerCombined className="inline mr-2 text-blue-500" />
-                                    <p>{property.propertySize} м²</p>
-                                </div>
-                            )}
-                            {property.floorNumber !== undefined && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaBuilding className="inline mr-2 text-blue-500" />
-                                    <p>
-                                        Этаж: {property.floorNumber}
-                                        {property.totalFloors ? ` из ${property.totalFloors}` : ""}
-                                    </p>
-                                </div>
-                            )}
-                            {property.hasElevator && (
-                                <div className="flex items-center text-gray-700">
-                                    <MdElevator className="inline mr-2 text-blue-500" />
-                                    <p>Есть лифт</p>
-                                </div>
-                            )}
-                            {property.heatingType && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaFire className="inline mr-2 text-blue-500" />
-                                    <p>Отопление: {property.heatingType}</p>
-                                </div>
-                            )}
-                            {property.parking && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaCar className="inline mr-2 text-blue-500" />
-                                    <p>Парковка: {property.parkingType || "Есть"}</p>
-                                </div>
-                            )}
-                            {property.property && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaHome className="inline mr-2 text-blue-500" />
-                                    <p>Тип недвижимости: {property.property}</p>
-                                </div>
-                            )}
-                            {property.type && (
-                                <div className="flex items-center text-gray-700">
-                                    <FaBuilding className="inline mr-2 text-blue-500" />
-                                    <p>Тип сделки: {property.type}</p>
-                                </div>
+
+                            {property.property === 'LAND_PLOT' && property.landPlot && (
+                                <>
+                                    {property.landPlot.landArea !== undefined && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaRulerCombined className="inline mr-2 text-blue-500" />
+                                            <p>{property.landPlot.landArea} м²</p>
+                                        </div>
+                                    )}
+                                    {property.landPlot.landPurpose && (
+                                        <div className="flex items-center text-gray-700">
+                                            <FaHome className="inline mr-2 text-blue-500" />
+                                            <p>Назначение земли: {property.landPlot.landPurpose}</p>
+                                        </div>
+                                    )}
+                                    {/* Добавить все другие поля для земельного участка */}
+                                </>
                             )}
                         </div>
                     </section>
 
-                    <section className="bg-white p-6 shadow-md rounded-lg mb-6">
-                        <h2 className="text-2xl font-semibold mb-4">Описание</h2>
-                        <p className="text-gray-700 leading-relaxed">
-                            {property.description || "Описание отсутствует"}
-                        </p>
-                    </section>
-
-                    {(property.furnished || property.airConditioning || property.balcony) && (
+                    {/* Характеристики аренды */}
+                    {property.type === 'RENT' && property.rentalFeatures && (
                         <section className="bg-white p-6 shadow-md rounded-lg mb-6">
-                            <h2 className="text-2xl font-semibold mb-4">Удобства и особенности</h2>
+                            <h2 className="text-2xl font-semibold mb-4">Характеристики аренды</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {property.furnished && (
-                                    <div className="flex items-center text-gray-700">
-                                        <FaCouch className="inline mr-2 text-blue-500" />
-                                        <p>Меблированная</p>
-                                    </div>
+                                {property.rentalFeatures.rentalTerm && (
+                                    <p>Срок аренды: {property.rentalFeatures.rentalTerm}</p>
                                 )}
-                                {property.airConditioning && (
-                                    <div className="flex items-center text-gray-700">
-                                        <FaWind className="inline mr-2 text-blue-500" />
-                                        <p>Кондиционер</p>
-                                    </div>
+                                {property.rentalFeatures.securityDeposit && (
+                                    <p>Залог: {property.rentalFeatures.securityDeposit.toLocaleString()} ₽</p>
                                 )}
-                                {property.balcony && (
-                                    <div className="flex items-center text-gray-700">
-                                        <MdOutlineBalcony className="inline mr-2 text-blue-500" />
-                                        <p>Балкон/Терраса</p>
-                                    </div>
+                                {/* Добавить все другие поля для аренды */}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Характеристики продажи */}
+                    {property.type === 'SALE' && property.saleFeatures && (
+                        <section className="bg-white p-6 shadow-md rounded-lg mb-6">
+                            <h2 className="text-2xl font-semibold mb-4">Характеристики продажи</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {property.saleFeatures.mortgageAvailable && (
+                                    <p>Ипотека доступна</p>
                                 )}
+                                {property.saleFeatures.priceNegotiable && (
+                                    <p>Цена договорная</p>
+                                )}
+                                {/* Добавить все другие поля для продажи */}
                             </div>
                         </section>
                     )}
 
                     <section className="bg-white p-6 shadow-md rounded-lg mb-6">
-                        <h2 className="text-2xl font-semibold mb-4">Автор объявления</h2>
-                        <p className="text-gray-700">
-                            Размещено пользователем:{" "}
-                            <strong>
-                                {property.user?.name && property.user?.surname
-                                    ? `${property.user.name} ${property.user.surname}`
-                                    : "Неизвестно"}
-                            </strong>
+                        <h2 className="text-2xl font-semibold mb-4">Описание</h2>
+                        <p className="text-gray-700 leading-relaxed">
+                            {property.description || "Описание отсутствует"}
                         </p>
                     </section>
                 </div>
@@ -201,7 +198,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                                 </p>
                             )}
                         </div>
-
 
                         <button
                             className="bg-green-500 w-full text-white px-4 py-2 rounded-lg flex items-center justify-center mb-4 hover:bg-green-600 transition"

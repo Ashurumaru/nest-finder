@@ -134,28 +134,6 @@ export interface PostData {
     property: Property; // 'APARTMENT' | 'HOUSE' | 'LAND_PLOT'
     description?: string | null;
 
-    // Поля для фильтрации
-    numBedrooms?: number | null;
-    numBathrooms?: number | null;
-    propertySize?: number | null;
-    schoolDistance?: number | null;
-    busStopDistance?: number | null;
-    yearBuilt?: number | null;
-    floorNumber?: number | null;
-    totalFloors?: number | null;
-    heatingType?: HeatingType | null;
-    parking?: boolean | null;
-    parkingType?: ParkingType | null;
-    furnished?: boolean | null;
-    hoaFees?: number | Prisma.Decimal | null;
-    lotSize?: number | null;
-    basement?: boolean | null;
-    balcony?: boolean | null;
-    airConditioning?: boolean | null;
-    internetIncluded?: boolean | null;
-    smokingAllowed?: boolean | null;
-    moveInDate?: string | null;
-    leaseTerm?: string | null;
 
     // Связанные данные
     apartment?: ApartmentDB | null;

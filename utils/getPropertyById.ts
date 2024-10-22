@@ -61,7 +61,6 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
                 hasWalkInCloset: property.apartment.hasWalkInCloset ?? undefined,
                 hasPassengerElevator: property.apartment.hasPassengerElevator ?? undefined,
                 hasFreightElevator: property.apartment.hasFreightElevator ?? undefined,
-                elevatorType: property.apartment.elevatorType ?? undefined,
                 heatingType: property.apartment.heatingType ?? undefined,
                 renovationState: property.apartment.renovationState ?? undefined,
                 parkingType: property.apartment.parkingType ?? undefined,
@@ -85,9 +84,6 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
                 garageArea: property.house.garageArea ?? undefined,
                 hasBasement: property.house.hasBasement ?? undefined,
                 basementArea: property.house.basementArea ?? undefined,
-                additionalBuildings: typeof property.house.additionalBuildings === 'string'
-                    ? property.house.additionalBuildings
-                    : undefined,
                 heatingType: property.house.heatingType ?? undefined,
                 houseCondition: property.house.houseCondition ?? undefined,
                 fencing: property.house.fencing ?? undefined,
