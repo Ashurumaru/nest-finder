@@ -1,23 +1,25 @@
 // lib/cloudinaryClient.ts
 
-export const uploadImageToCloudinary = async (file: File): Promise<string> => {
+import axios, { AxiosProgressEvent } from "axios";
+
+export const uploadImageToCloudinary = async (
+    file: File,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
-
     formData.append('upload_preset', 'property_photos');
 
-    const response = await fetch(
+    const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+        formData,
         {
-            method: 'POST',
-            body: formData,
+            onUploadProgress,
         }
     );
 
-    const data = await response.json();
-
-    if (data.secure_url) {
-        return data.secure_url;
+    if (response.data.secure_url) {
+        return response.data.secure_url;
     } else {
         throw new Error('Ошибка при загрузке изображения на Cloudinary');
     }

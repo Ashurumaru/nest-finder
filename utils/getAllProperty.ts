@@ -118,7 +118,7 @@ export async function getAllProperties(): Promise<PropertyDB[]> {
 
         createdAt: property.createdAt ? new Date(property.createdAt) : undefined,
         updatedAt: property.updatedAt ? new Date(property.updatedAt) : undefined,
-        views: property.views ?? 0,
+        views: property.views,
         userId: property.userId,
     }));
 }

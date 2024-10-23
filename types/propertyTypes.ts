@@ -75,6 +75,7 @@ export interface HouseDB {
     wallMaterial?: string;
     hasGarage?: boolean;
     garageArea?: number;
+    yearBuilt?: number;
     hasBasement?: boolean;
     basementArea?: number;
     additionalBuildings?: string;
@@ -148,6 +149,7 @@ export interface PostData {
     user?: {
         id: string;
         name: string;
+        image: string | null;
         surname: string | null;
         email: string | null;
         phoneNumber: string | null;

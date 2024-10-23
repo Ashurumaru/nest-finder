@@ -1,7 +1,6 @@
 import prisma from "@/prisma/prisma";
 import { PostData } from "@/types/propertyTypes";
 
-// Функция для получения недвижимости по её id
 export async function getPropertyById(id: string): Promise<PostData | null> {
     const property = await prisma.post.findUnique({
         where: { id },
@@ -21,12 +20,12 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
     }
 
     // Обновляем количество просмотров при каждом запросе
-    await prisma.post.update({
-        where: { id },
-        data: {
-            views: property.views + 1, // Увеличиваем количество просмотров
-        },
-    });
+    // await prisma.post.update({
+    //     where: { id },
+    //     data: {
+    //         views: property.views + 1,
+    //     },
+    // });
 
     // Возвращаем только нужные данные
     return {
@@ -43,7 +42,7 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
         description: property.description ?? null,
         createdAt: property.createdAt,
         updatedAt: property.updatedAt,
-        views: property.views ?? 0,
+        views: property.views,
 
         // Информация об апартаментах, если есть
         apartment: property.apartment
@@ -138,6 +137,7 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
         user: {
             id: property.user.id,
             name: property.user.name,
+            image: property.user.image,
             surname: property.user.surname,
             email: property.user.email,
             phoneNumber: property.user.phoneNumber,

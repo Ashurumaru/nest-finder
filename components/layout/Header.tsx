@@ -32,7 +32,7 @@ const Header = () => {
       <header className="bg-white shadow-md">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex-shrink-0">
-            <Link href="/public">
+            <Link href="/">
               <Logo />
             </Link>
           </div>
