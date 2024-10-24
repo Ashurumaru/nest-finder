@@ -1,7 +1,7 @@
+import {PropertyFormValues} from "@/components/property/create-property/CreateUpdateProperty";
 import prisma from "@/prisma/prisma";
-import { PostData } from "@/types/propertyTypes";
 
-export async function getPropertyById(id: string): Promise<PostData | null> {
+export async function getPropertyById(id: string) {
     const property = await prisma.post.findUnique({
         where: { id },
         include: {
@@ -14,133 +14,100 @@ export async function getPropertyById(id: string): Promise<PostData | null> {
         },
     });
 
-    // Если недвижимость не найдена, возвращаем null
-    if (!property) {
-        return null;
-    }
+    if (!property) return null;
 
-    // Обновляем количество просмотров при каждом запросе
-    // await prisma.post.update({
-    //     where: { id },
-    //     data: {
-    //         views: property.views + 1,
-    //     },
-    // });
-
-    // Возвращаем только нужные данные
-    return {
-        id: property.id,
+    const parsedProperty: PropertyFormValues = {
         title: property.title,
-        price: property.price.toNumber(),
-        imageUrls: property.imageUrls,
+        price: property.price.toString(),
         address: property.address,
         city: property.city,
-        latitude: property.latitude?.toNumber() ?? null,
-        longitude: property.longitude?.toNumber() ?? null,
+        latitude: property.latitude !== null ? Number(property.latitude) : 0,
+        longitude: property.longitude !== null ? Number(property.longitude) : 0,
         type: property.type,
         property: property.property,
-        description: property.description ?? null,
-        createdAt: property.createdAt,
-        updatedAt: property.updatedAt,
-        views: property.views,
+        description: property.description ?? "",
+        imageUrls: property.imageUrls ?? [],
 
-        // Информация об апартаментах, если есть
         apartment: property.apartment
             ? {
-                id: property.apartment.id,
-                numBedrooms: property.apartment.numBedrooms ?? 0,
-                numBathrooms: property.apartment.numBathrooms ?? 0,
-                floorNumber: property.apartment.floorNumber ?? undefined,
-                totalFloors: property.apartment.totalFloors ?? undefined,
+                numBedrooms: property.apartment.numBedrooms?.toString() ?? "",
+                numBathrooms: property.apartment.numBathrooms?.toString() ?? "",
+                floorNumber: property.apartment.floorNumber?.toString() ?? "",
+                totalFloors: property.apartment.totalFloors?.toString() ?? "",
+                apartmentArea: property.apartment.apartmentArea?.toString() ?? "",
                 buildingType: property.apartment.buildingType ?? null,
-                yearBuilt: property.apartment.yearBuilt ?? undefined,
-                ceilingHeight: property.apartment.ceilingHeight ?? undefined,
-                hasBalcony: property.apartment.hasBalcony ?? undefined,
-                hasLoggia: property.apartment.hasLoggia ?? undefined,
-                hasWalkInCloset: property.apartment.hasWalkInCloset ?? undefined,
-                hasPassengerElevator: property.apartment.hasPassengerElevator ?? undefined,
-                hasFreightElevator: property.apartment.hasFreightElevator ?? undefined,
-                heatingType: property.apartment.heatingType ?? undefined,
-                renovationState: property.apartment.renovationState ?? undefined,
-                parkingType: property.apartment.parkingType ?? undefined,
-                furnished: property.apartment.furnished ?? undefined,
-                internetSpeed: property.apartment.internetSpeed ?? undefined,
-                flooring: property.apartment.flooring ?? undefined,
-                soundproofing: property.apartment.soundproofing ?? undefined,
+                yearBuilt: property.apartment.yearBuilt?.toString() ?? "",
+                ceilingHeight: property.apartment.ceilingHeight?.toString() ?? "",
+                hasBalcony: property.apartment.hasBalcony ?? false,
+                hasLoggia: property.apartment.hasLoggia ?? false,
+                hasWalkInCloset: property.apartment.hasWalkInCloset ?? false,
+                hasPassengerElevator: property.apartment.hasPassengerElevator ?? false,
+                hasFreightElevator: property.apartment.hasFreightElevator ?? false,
+                heatingType: property.apartment.heatingType ?? null,
+                renovationState: property.apartment.renovationState ?? null,
+                parkingType: property.apartment.parkingType ?? null,
+                furnished: property.apartment.furnished ?? false,
+                internetSpeed: property.apartment.internetSpeed?.toString() ?? "",
+                flooring: property.apartment.flooring ?? "",
+                soundproofing: property.apartment.soundproofing ?? false,
             }
-            : null,
+            : undefined,
 
-        // Информация о домах, если есть
         house: property.house
             ? {
-                id: property.house.id,
-                numberOfFloors: property.house.numberOfFloors ?? undefined,
-                numberOfRooms: property.house.numberOfRooms ?? undefined,
-                houseArea: property.house.houseArea ?? undefined,
-                landArea: property.house.landArea ?? undefined,
-                wallMaterial: property.house.wallMaterial ?? undefined,
-                hasGarage: property.house.hasGarage ?? undefined,
-                garageArea: property.house.garageArea ?? undefined,
-                hasBasement: property.house.hasBasement ?? undefined,
-                basementArea: property.house.basementArea ?? undefined,
-                heatingType: property.house.heatingType ?? undefined,
-                houseCondition: property.house.houseCondition ?? undefined,
-                fencing: property.house.fencing ?? undefined,
-                furnished: property.house.furnished ?? undefined,
-                internetSpeed: property.house.internetSpeed ?? undefined,
-                flooring: property.house.flooring ?? undefined,
-                soundproofing: property.house.soundproofing ?? undefined,
+                numberOfFloors: property.house.numberOfFloors ?? 0,
+                numberOfRooms: property.house.numberOfRooms ?? 0,
+                houseArea: property.house.houseArea ?? 0,
+                landArea: property.house.landArea ?? 0,
+                wallMaterial: property.house.wallMaterial ?? "",
+                yearBuilt: property.house.yearBuilt?.toString() ?? "",
+                hasGarage: property.house.hasGarage ?? false,
+                garageArea: property.house.garageArea ?? 0,
+                hasBasement: property.house.hasBasement ?? false,
+                basementArea: property.house.basementArea ?? 0,
+                heatingType: property.house.heatingType ?? null,
+                houseCondition: property.house.houseCondition ?? null,
+                fencing: property.house.fencing ?? false,
+                furnished: property.house.furnished ?? false,
+                internetSpeed: property.house.internetSpeed ?? 0,
+                flooring: property.house.flooring ?? "",
+                soundproofing: property.house.soundproofing ?? false,
             }
-            : null,
+            : undefined,
 
-        // Информация о земельных участках, если есть
         landPlot: property.landPlot
             ? {
-                id: property.landPlot.id,
-                landArea: property.landPlot.landArea ?? undefined,
-                landPurpose: property.landPlot.landPurpose ?? undefined,
-                waterSource: property.landPlot.waterSource ?? undefined,
-                fencing: property.landPlot.fencing ?? undefined,
+                landArea: property.landPlot?.landArea ?? undefined,
+                landPurpose: property.landPlot.landPurpose ?? "",
+                waterSource: property.landPlot.waterSource ?? "",
+                fencing: property.landPlot.fencing ?? false,
             }
-            : null,
+            : undefined,
 
-        // Характеристики аренды, если есть
         rentalFeatures: property.rentalFeatures
             ? {
-                id: property.rentalFeatures.id,
-                rentalTerm: property.rentalFeatures.rentalTerm ?? undefined,
-                securityDeposit: property.rentalFeatures.securityDeposit?.toNumber() ?? undefined,
-                securityDepositConditions: property.rentalFeatures.securityDepositConditions ?? undefined,
-                utilitiesPayment: property.rentalFeatures.utilitiesPayment ?? undefined,
-                utilitiesCost: property.rentalFeatures.utilitiesCost?.toNumber() ?? undefined,
-                leaseAgreementUrl: property.rentalFeatures.leaseAgreementUrl ?? undefined,
-                petPolicy: property.rentalFeatures.petPolicy ?? undefined,
-                availabilityDate: property.rentalFeatures.availabilityDate ?? undefined,
-                minimumLeaseTerm: property.rentalFeatures.minimumLeaseTerm ?? undefined,
-                maximumLeaseTerm: property.rentalFeatures.maximumLeaseTerm ?? undefined,
+                rentalTerm: property.rentalFeatures.rentalTerm ?? 'DAILY_PAYMENT',  // Обработка null значений
+                securityDeposit: Number(property.rentalFeatures.securityDeposit ?? 0),
+                securityDepositConditions: property.rentalFeatures.securityDepositConditions ?? "",
+                utilitiesPayment: property.rentalFeatures.utilitiesPayment ?? 'INCLUDED',
+                utilitiesCost: Number(property.rentalFeatures.utilitiesCost ?? 0),
+                leaseAgreementUrl: property.rentalFeatures.leaseAgreementUrl ?? "",
+                petPolicy: property.rentalFeatures.petPolicy ?? 'NOT_ALLOWED',
+                availabilityDate: property.rentalFeatures.availabilityDate ?? new Date(),
+                minimumLeaseTerm: Number(property.rentalFeatures.minimumLeaseTerm ?? 0),
+                maximumLeaseTerm: Number(property.rentalFeatures.maximumLeaseTerm ?? 0),
             }
-            : null,
+            : undefined,
 
-        // Характеристики продажи, если есть
         saleFeatures: property.saleFeatures
             ? {
-                id: property.saleFeatures.id,
-                mortgageAvailable: property.saleFeatures.mortgageAvailable ?? undefined,
-                priceNegotiable: property.saleFeatures.priceNegotiable ?? undefined,
-                availabilityDate: property.saleFeatures.availabilityDate
-                    ? new Date(property.saleFeatures.availabilityDate)
-                    : undefined,
-                titleDeedUrl: property.saleFeatures.titleDeedUrl ?? undefined,
+                mortgageAvailable: property.saleFeatures.mortgageAvailable ?? false,
+                priceNegotiable: property.saleFeatures.priceNegotiable ?? false,
+                availabilityDate: property.saleFeatures.availabilityDate ?? new Date(),
+                titleDeedUrl: property.saleFeatures.titleDeedUrl ?? "",
             }
-            : null,
-
-        user: {
-            id: property.user.id,
-            name: property.user.name,
-            image: property.user.image,
-            surname: property.user.surname,
-            email: property.user.email,
-            phoneNumber: property.user.phoneNumber,
-        },
+            : undefined,
     };
+
+    return parsedProperty;
 }

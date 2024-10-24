@@ -30,7 +30,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import UploadImage from "@/components/property/create-property/UploadImage";
 
-type PropertyFormValues = z.infer<typeof propertySchema> & { id?: string };
+export type PropertyFormValues = z.infer<typeof propertySchema> & { id?: string };
 type FieldName = Path<PropertyFormValues>;
 
 interface CreateOrUpdatePropertyFormProps {
@@ -195,6 +195,7 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                     body: JSON.stringify(data),
                 });
             } else {
+                console.log("отправка...")
                 await fetch('/api/properties/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

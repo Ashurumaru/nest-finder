@@ -7,7 +7,7 @@ import {
     PetPolicy,
     RentalTerm,
     UtilitiesPayment,
-    BuildingType
+    BuildingType, RenovationState
 } from '@prisma/client';
 
 // Интерфейс для основной сущности PropertyDB
@@ -57,8 +57,7 @@ export interface ApartmentDB {
     hasFreightElevator?: boolean;
     elevatorType?: string;
     heatingType?: HeatingType | null;
-    renovationState?: string;
-    parkingType?: ParkingType | null;
+    renovationState?: RenovationState | null;    parkingType?: ParkingType | null;
     furnished?: boolean | null;
     internetSpeed?: number;
     flooring?: string;
@@ -80,8 +79,7 @@ export interface HouseDB {
     basementArea?: number;
     additionalBuildings?: string;
     heatingType?: HeatingType | null;
-    houseCondition?: string;
-    fencing?: boolean;
+    houseCondition?: RenovationState | null;    fencing?: boolean;
     furnished?: boolean | null;
     internetSpeed?: number;
     flooring?: string;

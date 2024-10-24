@@ -23,6 +23,28 @@ export async function PUT(
         // Получаем данные из запроса
         const data = await request.json();
 
+        if (typeof data.latitude === 'number') {
+            data.latitude = data.latitude.toString();
+        }
+        if (typeof data.longitude === 'number') {
+            data.longitude = data.longitude.toString();
+        }
+        if (data.apartment && typeof data.apartment.numBedrooms === 'number') {
+            data.apartment.numBedrooms = data.apartment.numBedrooms.toString();
+        }
+        if (data.apartment && typeof data.apartment.numBathrooms === 'number') {
+            data.apartment.numBathrooms = data.apartment.numBathrooms.toString();
+        }
+        if (data.saleFeatures && data.saleFeatures.availabilityDate) {
+            data.saleFeatures.availabilityDate = new Date(data.saleFeatures.availabilityDate);
+        }
+        if (data.rentalFeatures && data.rentalFeatures.availabilityDate) {
+            data.rentalFeatures.availabilityDate = new Date(data.rentalFeatures.availabilityDate);
+        }
+        if (data.apartment && typeof data.apartment.internetSpeed === 'number') {
+            data.apartment.internetSpeed = data.apartment.internetSpeed.toString();
+        }
+
         // Валидация данных
         const validatedData = propertySchema.parse(data);
 
@@ -57,48 +79,80 @@ export async function PUT(
             await prisma.apartment.upsert({
                 where: { postId: propertyId },
                 update: {
-                    numBedrooms: validatedData.apartment.numBedrooms,
-                    numBathrooms: validatedData.apartment.numBathrooms,
-                    floorNumber: validatedData.apartment.floorNumber,
-                    totalFloors: validatedData.apartment.totalFloors,
-                    apartmentArea: validatedData.apartment.apartmentArea,
-                    buildingType: validatedData.apartment.buildingType,
-                    yearBuilt: validatedData.apartment.yearBuilt,
-                    ceilingHeight: validatedData.apartment.ceilingHeight,
-                    hasBalcony: validatedData.apartment.hasBalcony,
-                    hasLoggia: validatedData.apartment.hasLoggia,
-                    hasWalkInCloset: validatedData.apartment.hasWalkInCloset,
-                    hasPassengerElevator: validatedData.apartment.hasPassengerElevator,
-                    hasFreightElevator: validatedData.apartment.hasFreightElevator,
-                    heatingType: validatedData.apartment.heatingType,
-                    renovationState: validatedData.apartment.renovationState,
-                    parkingType: validatedData.apartment.parkingType,
-                    furnished: validatedData.apartment.furnished,
-                    internetSpeed: validatedData.apartment.internetSpeed,
-                    flooring: validatedData.apartment.flooring,
-                    soundproofing: validatedData.apartment.soundproofing,
+                    numBedrooms: validatedData.apartment.numBedrooms
+                        ? Number(validatedData.apartment.numBedrooms)
+                        : null,
+                    numBathrooms: validatedData.apartment.numBathrooms
+                        ? Number(validatedData.apartment.numBathrooms)
+                        : null,
+                    floorNumber: validatedData.apartment.floorNumber
+                        ? Number(validatedData.apartment.floorNumber)
+                        : null,
+                    totalFloors: validatedData.apartment.totalFloors
+                        ? Number(validatedData.apartment.totalFloors)
+                        : null,
+                    apartmentArea: validatedData.apartment.apartmentArea
+                        ? Number(validatedData.apartment.apartmentArea)
+                        : null,
+                    buildingType: validatedData.apartment.buildingType ?? null,
+                    yearBuilt: validatedData.apartment.yearBuilt
+                        ? Number(validatedData.apartment.yearBuilt)
+                        : null,
+                    ceilingHeight: validatedData.apartment.ceilingHeight
+                        ? Number(validatedData.apartment.ceilingHeight)
+                        : null,
+                    hasBalcony: validatedData.apartment.hasBalcony ?? false,
+                    hasLoggia: validatedData.apartment.hasLoggia ?? false,
+                    hasWalkInCloset: validatedData.apartment.hasWalkInCloset ?? false,
+                    hasPassengerElevator: validatedData.apartment.hasPassengerElevator ?? false,
+                    hasFreightElevator: validatedData.apartment.hasFreightElevator ?? false,
+                    heatingType: validatedData.apartment.heatingType ?? null,
+                    renovationState: validatedData.apartment.renovationState ?? null,
+                    parkingType: validatedData.apartment.parkingType ?? null,
+                    furnished: validatedData.apartment.furnished ?? false,
+                    internetSpeed: validatedData.apartment.internetSpeed
+                        ? Number(validatedData.apartment.internetSpeed)
+                        : null,
+                    flooring: validatedData.apartment.flooring ?? "",
+                    soundproofing: validatedData.apartment.soundproofing ?? false,
                 },
                 create: {
-                    numBedrooms: validatedData.apartment.numBedrooms,
-                    numBathrooms: validatedData.apartment.numBathrooms,
-                    floorNumber: validatedData.apartment.floorNumber,
-                    totalFloors: validatedData.apartment.totalFloors,
-                    apartmentArea: validatedData.apartment.apartmentArea,
-                    buildingType: validatedData.apartment.buildingType,
-                    yearBuilt: validatedData.apartment.yearBuilt,
-                    ceilingHeight: validatedData.apartment.ceilingHeight,
-                    hasBalcony: validatedData.apartment.hasBalcony,
-                    hasLoggia: validatedData.apartment.hasLoggia,
-                    hasWalkInCloset: validatedData.apartment.hasWalkInCloset,
-                    hasPassengerElevator: validatedData.apartment.hasPassengerElevator,
-                    hasFreightElevator: validatedData.apartment.hasFreightElevator,
-                    heatingType: validatedData.apartment.heatingType,
-                    renovationState: validatedData.apartment.renovationState,
-                    parkingType: validatedData.apartment.parkingType,
-                    furnished: validatedData.apartment.furnished,
-                    internetSpeed: validatedData.apartment.internetSpeed,
-                    flooring: validatedData.apartment.flooring,
-                    soundproofing: validatedData.apartment.soundproofing,
+                    numBedrooms: validatedData.apartment.numBedrooms
+                        ? Number(validatedData.apartment.numBedrooms)
+                        : null,
+                    numBathrooms: validatedData.apartment.numBathrooms
+                        ? Number(validatedData.apartment.numBathrooms)
+                        : null,
+                    floorNumber: validatedData.apartment.floorNumber
+                        ? Number(validatedData.apartment.floorNumber)
+                        : null,
+                    totalFloors: validatedData.apartment.totalFloors
+                        ? Number(validatedData.apartment.totalFloors)
+                        : null,
+                    apartmentArea: validatedData.apartment.apartmentArea
+                        ? Number(validatedData.apartment.apartmentArea)
+                        : null,
+                    buildingType: validatedData.apartment.buildingType ?? null,
+                    yearBuilt: validatedData.apartment.yearBuilt
+                        ? Number(validatedData.apartment.yearBuilt)
+                        : null,
+                    ceilingHeight: validatedData.apartment.ceilingHeight
+                        ? Number(validatedData.apartment.ceilingHeight)
+                        : null,
+                    hasBalcony: validatedData.apartment.hasBalcony ?? false,
+                    hasLoggia: validatedData.apartment.hasLoggia ?? false,
+                    hasWalkInCloset: validatedData.apartment.hasWalkInCloset ?? false,
+                    hasPassengerElevator: validatedData.apartment.hasPassengerElevator ?? false,
+                    hasFreightElevator: validatedData.apartment.hasFreightElevator ?? false,
+                    heatingType: validatedData.apartment.heatingType ?? null,
+                    renovationState: validatedData.apartment.renovationState ?? null,
+                    parkingType: validatedData.apartment.parkingType ?? null,
+                    furnished: validatedData.apartment.furnished ?? false,
+                    internetSpeed: validatedData.apartment.internetSpeed
+                        ? Number(validatedData.apartment.internetSpeed)
+                        : null,
+                    flooring: validatedData.apartment.flooring ?? "",
+                    soundproofing: validatedData.apartment.soundproofing ?? false,
                     postId: propertyId,
                 },
             });
@@ -111,7 +165,9 @@ export async function PUT(
                     houseArea: validatedData.house.houseArea,
                     landArea: validatedData.house.landArea,
                     wallMaterial: validatedData.house.wallMaterial,
-                    yearBuilt: validatedData.house.yearBuilt,
+                    yearBuilt: validatedData.house.yearBuilt
+                        ? Number(validatedData.house.yearBuilt)
+                        : null,
                     hasGarage: validatedData.house.hasGarage,
                     garageArea: validatedData.house.garageArea,
                     hasBasement: validatedData.house.hasBasement,
@@ -130,7 +186,9 @@ export async function PUT(
                     houseArea: validatedData.house.houseArea,
                     landArea: validatedData.house.landArea,
                     wallMaterial: validatedData.house.wallMaterial,
-                    yearBuilt: validatedData.house.yearBuilt,
+                    yearBuilt: validatedData.house.yearBuilt
+                        ? Number(validatedData.house.yearBuilt)
+                        : null,
                     hasGarage: validatedData.house.hasGarage,
                     garageArea: validatedData.house.garageArea,
                     hasBasement: validatedData.house.hasBasement,

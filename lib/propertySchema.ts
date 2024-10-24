@@ -6,7 +6,7 @@ import {RenovationState} from "@prisma/client";
 export const propertySchema = z.object({
     title: z.string().min(1, 'Заголовок обязателен'),
     price: z.string(),
-    imageUrls: z.array(z.string().url('Неверный формат URL')),
+    imageUrls: z.array(z.string().url('Неверный формат URL')).optional(),
     address: z.string().min(1, 'Адрес обязателен'),
     city: z.string().min(1, 'Город обязателен'),
     latitude: z
@@ -56,7 +56,7 @@ export const propertySchema = z.object({
                 .nullable()
                 .optional(),
             furnished: z.boolean().nullable().optional(),
-            internetSpeed: z.number().optional(),
+            internetSpeed: z.string().optional(),
             flooring: z.string().optional(),
             soundproofing: z.boolean().optional(),
         })
@@ -70,7 +70,7 @@ export const propertySchema = z.object({
             houseArea: z.number().optional(),
             landArea: z.number().optional(),
             wallMaterial: z.string().optional(),
-            yearBuilt: z.number().int().optional(),
+            yearBuilt: z.string().optional(),
             hasGarage: z.boolean().optional(),
             garageArea: z.number().optional(),
             hasBasement: z.boolean().optional(),
