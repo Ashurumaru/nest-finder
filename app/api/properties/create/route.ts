@@ -38,7 +38,9 @@ export async function POST(request: Request) {
         if (data.apartment && typeof data.apartment.internetSpeed === 'number') {
             data.apartment.internetSpeed = data.apartment.internetSpeed.toString();
         }
-
+        if (data.apartment && typeof data.apartment.apartmentArea === 'number') {
+            data.apartment.apartmentArea = data.apartment.apartmentArea.toString();
+        }
         // Валидация данных с помощью Zod
         const validatedData = propertySchema.parse(data);
 
@@ -105,8 +107,12 @@ export async function POST(request: Request) {
         } else if (validatedData.property === 'HOUSE' && validatedData.house) {
             await prisma.house.create({
                 data: {
-                    numberOfFloors: validatedData.house.numberOfFloors,
-                    numberOfRooms: validatedData.house.numberOfRooms,
+                    numberOfFloors: validatedData.house.numberOfFloors
+                        ? Number(validatedData.house.numberOfFloors)
+                        : null,
+                    numberOfRooms: validatedData.house.numberOfRooms
+                        ? Number(validatedData.house.numberOfRooms)
+                        : null,
                     houseArea: validatedData.house.houseArea,
                     landArea: validatedData.house.landArea,
                     wallMaterial: validatedData.house.wallMaterial,

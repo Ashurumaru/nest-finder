@@ -35,6 +35,10 @@ export async function PUT(
         if (data.apartment && typeof data.apartment.numBathrooms === 'number') {
             data.apartment.numBathrooms = data.apartment.numBathrooms.toString();
         }
+        if (data.house && typeof data.house.numberOfFloors === 'number') {
+            data.house.numberOfFloors = data.house.numberOfFloors.toString();
+        }
+
         if (data.saleFeatures && data.saleFeatures.availabilityDate) {
             data.saleFeatures.availabilityDate = new Date(data.saleFeatures.availabilityDate);
         }
@@ -160,9 +164,15 @@ export async function PUT(
             await prisma.house.upsert({
                 where: { postId: propertyId },
                 update: {
-                    numberOfFloors: validatedData.house.numberOfFloors,
-                    numberOfRooms: validatedData.house.numberOfRooms,
-                    houseArea: validatedData.house.houseArea,
+                    numberOfFloors: validatedData.house.numberOfFloors
+                        ? Number(validatedData.house.numberOfFloors)
+                        : null,
+                    numberOfRooms: validatedData.house.numberOfRooms
+                        ? Number(validatedData.house.numberOfRooms)
+                        : null,
+                    houseArea: validatedData.house.houseArea
+                        ? Number(validatedData.house.houseArea)
+                        : null,
                     landArea: validatedData.house.landArea,
                     wallMaterial: validatedData.house.wallMaterial,
                     yearBuilt: validatedData.house.yearBuilt
@@ -181,8 +191,12 @@ export async function PUT(
                     soundproofing: validatedData.house.soundproofing,
                 },
                 create: {
-                    numberOfFloors: validatedData.house.numberOfFloors,
-                    numberOfRooms: validatedData.house.numberOfRooms,
+                    numberOfFloors: validatedData.house.numberOfFloors
+                        ? Number(validatedData.house.numberOfFloors)
+                        : null,
+                    numberOfRooms: validatedData.house.numberOfRooms
+                        ? Number(validatedData.house.numberOfRooms)
+                        : null,
                     houseArea: validatedData.house.houseArea,
                     landArea: validatedData.house.landArea,
                     wallMaterial: validatedData.house.wallMaterial,

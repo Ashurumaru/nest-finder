@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
-import { Icons } from '@/components/icons';
+import { NavIcons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { NavItem } from '@/types/navTypes';
 import { Dispatch, SetStateAction } from 'react';
@@ -39,7 +39,7 @@ export function DashboardNav({
       <nav className="grid items-start gap-2">
         <TooltipProvider>
           {navItems.map((item, index) => {
-            const Icon = Icons[item.icon || 'arrowRight'];
+            const Icon = NavIcons[item.icon || 'arrowRight'];
 
             return (
                 item.href && (

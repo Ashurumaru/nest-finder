@@ -78,8 +78,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             return NextResponse.json({ message: 'Недвижимость не найдена' }, { status: 404 });
         }
 
-        // Проверяем, является ли пользователь владельцем недвижимости
-        if (property.userId !== userId) {
+    // Проверяем, является ли пользователь владельцем недвижимости или администратором
+        if (session.user.role !== 'ADMIN' && property.userId !== userId) {
             return NextResponse.json({ message: 'Доступ запрещен' }, { status: 403 });
         }
 

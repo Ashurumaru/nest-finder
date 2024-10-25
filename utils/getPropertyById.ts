@@ -27,7 +27,9 @@ export async function getPropertyById(id: string) {
         property: property.property,
         description: property.description ?? "",
         imageUrls: property.imageUrls ?? [],
-
+        views: property.views.toString() ?? "",
+        updatedAt: property.updatedAt ?? new Date(),
+        createdAt: property.createdAt ?? new Date(),
         apartment: property.apartment
             ? {
                 numBedrooms: property.apartment.numBedrooms?.toString() ?? "",
@@ -55,8 +57,8 @@ export async function getPropertyById(id: string) {
 
         house: property.house
             ? {
-                numberOfFloors: property.house.numberOfFloors ?? 0,
-                numberOfRooms: property.house.numberOfRooms ?? 0,
+                numberOfFloors: property.house.numberOfFloors?.toString() ?? "",
+                numberOfRooms: property.house.numberOfRooms?.toString() ?? "",
                 houseArea: property.house.houseArea ?? 0,
                 landArea: property.house.landArea ?? 0,
                 wallMaterial: property.house.wallMaterial ?? "",

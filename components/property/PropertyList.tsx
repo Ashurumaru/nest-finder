@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import PropertyCard from './PropertyCard';
 import PropertyFilter from './PropertyFilter';
 import { PostData } from '@/types/propertyTypes';
@@ -14,7 +14,6 @@ interface PropertyListProps {
 export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {
     const [properties, setProperties] = useState<PostData[]>(initialProperties);
     const searchParams = useSearchParams();
-    const router = useRouter();
 
     useEffect(() => {
         const fetchProperties = async () => {

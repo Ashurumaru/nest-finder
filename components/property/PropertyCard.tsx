@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FaBed, FaBath, FaRulerCombined, FaMapMarkerAlt, FaTag } from 'react-icons/fa';
 import { PostData } from '@/types/propertyTypes';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import {FaBath, FaBed, FaMapMarkerAlt, FaRulerCombined, FaTag} from "react-icons/fa";
 
 interface PropertyCardProps {
     property: PostData;

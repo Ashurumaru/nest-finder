@@ -26,7 +26,9 @@ export const propertySchema = z.object({
     type: z.enum(['SALE', 'RENT']),
     property: z.enum(['APARTMENT', 'HOUSE', 'LAND_PLOT']),
     description: z.string().nullable().optional(),
-
+    views: z.string(),
+    updatedAt: z.date(),
+    createdAt: z.date(),
     // Данные для апартаментов
     apartment: z
         .object({
@@ -65,8 +67,8 @@ export const propertySchema = z.object({
     // Данные для домов
     house: z
         .object({
-            numberOfFloors: z.number().int().optional(),
-            numberOfRooms: z.number().int().optional(),
+            numberOfFloors: z.string().optional(),
+            numberOfRooms: z.string().optional(),
             houseArea: z.number().optional(),
             landArea: z.number().optional(),
             wallMaterial: z.string().optional(),
