@@ -1,54 +1,25 @@
 // app/sale/page.tsx
-
 import { getProperties } from "@/utils/getProperties";
 import PropertyList from "@/components/property/PropertyList";
 import { PropertyFilters } from "@/types/propertyTypes";
-
-interface SalePageProps {
-    searchParams: Record<string, string | string[] | undefined>;
-}
+import { Type } from "@prisma/client";
 
 const allowedPropertyTypes = ["APARTMENT", "HOUSE", "LAND_PLOT"] as const;
 type PropertyType = typeof allowedPropertyTypes[number];
 
-export default async function SalePage({ searchParams }: SalePageProps) {
-    const propertyTypeParam = searchParams.propertyType;
-
-    let propertyType: PropertyType | undefined = undefined;
-
-    if (
-        typeof propertyTypeParam === "string" &&
-        allowedPropertyTypes.includes(propertyTypeParam as PropertyType)
-    ) {
-        propertyType = propertyTypeParam as PropertyType;
-    }
-
-    // Обработка параметра "rooms"
-    const roomsParam = searchParams.rooms;
-
-    let minBedrooms: number | undefined = undefined;
-    let maxBedrooms: number | undefined = undefined;
-
-    if (typeof roomsParam === "string") {
-        if (roomsParam === "5+") {
-            minBedrooms = 5;
-        } else {
-            const numRooms = Number(roomsParam);
-            if (!isNaN(numRooms)) {
-                minBedrooms = numRooms;
-                maxBedrooms = numRooms;
-            }
-        }
-    }
+export default async function SalePage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+    const propertyType = allowedPropertyTypes.includes(searchParams.propertyType as PropertyType)
+        ? (searchParams.propertyType as PropertyType)
+        : undefined;
 
     const filters: PropertyFilters = {
-        type: "SALE",
-        propertyType: propertyType,
-        minBedrooms: minBedrooms,
-        maxBedrooms: maxBedrooms,
+        type: Type.SALE,
+        propertyType,
+        searchQuery: searchParams.searchQuery as string | undefined,
+        minBedrooms: searchParams.rooms ? Number(searchParams.rooms) : undefined,
+        maxBedrooms: searchParams.rooms ? Number(searchParams.rooms) : undefined,
         minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
         maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
-        searchQuery: searchParams.searchQuery as string,
     };
 
     const properties = await getProperties(filters);
@@ -56,7 +27,7 @@ export default async function SalePage({ searchParams }: SalePageProps) {
     return (
         <div className="container mx-auto py-6">
             <h1 className="text-3xl font-bold mb-6">Недвижимость на продажу</h1>
-            <PropertyList initialProperties={properties} propertyType="SALE"/>
+            <PropertyList initialProperties={properties} propertyType={Type.SALE} />
         </div>
     );
 }

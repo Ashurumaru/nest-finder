@@ -1,7 +1,6 @@
 import prisma from "@/prisma/prisma";
 import { PropertyDB, PropertyFilters } from "@/types/propertyTypes";
 
-// Функция для получения недвижимости с применением фильтров
 export async function getProperties(filters: PropertyFilters = {}): Promise<PropertyDB[]> {
     const {
         type,
@@ -14,44 +13,19 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
         maxBathrooms,
     } = filters;
 
-    const whereClause: any = {};
+    const whereClause: any = {
+        ...(type && { type }),
+        ...(propertyType && { property: propertyType }),
+        ...(minPrice || maxPrice ? { price: { gte: minPrice, lte: maxPrice } } : {}),
+    };
 
-    // Фильтрация по типу сделки (аренда или продажа)
-    if (type) {
-        whereClause.type = type;
-    }
-
-    // Фильтрация по типу недвижимости
-    if (propertyType) {
-        whereClause.property = propertyType;
-    }
-
-    // Фильтрация по цене
-    if (minPrice || maxPrice) {
-        whereClause.price = {};
-        if (minPrice) {
-            whereClause.price.gte = minPrice;
-        }
-        if (maxPrice) {
-            whereClause.price.lte = maxPrice;
-        }
-    }
-
-    // Фильтрация по количеству спален
     if (minBedrooms || maxBedrooms) {
         whereClause.apartment = {
-            ...(whereClause.apartment || {}),
-            ...(minBedrooms ? { numBedrooms: { gte: minBedrooms } } : {}),
-            ...(maxBedrooms ? { numBedrooms: { lte: maxBedrooms } } : {}),
-        };
-    }
-
-    // Фильтрация по количеству ванных комнат
-    if (minBathrooms || maxBathrooms) {
-        whereClause.apartment = {
-            ...(whereClause.apartment || {}),
-            ...(minBathrooms ? { numBathrooms: { gte: minBathrooms } } : {}),
-            ...(maxBathrooms ? { numBathrooms: { lte: maxBathrooms } } : {}),
+            ...whereClause.apartment,
+            numBedrooms: {
+                ...(minBedrooms ? { gte: Number(minBedrooms) } : {}),
+                ...(maxBedrooms ? { lte: Number(maxBedrooms) } : {}),
+            },
         };
     }
 

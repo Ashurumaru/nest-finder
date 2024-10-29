@@ -1,16 +1,28 @@
 'use client';
 
-import React, { useState, ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Type } from '@prisma/client'; // Импорт типа из базы данных
 
-interface PropertyFilterProps {
-    propertyType: 'RENT' | 'SALE';
-}
+// Функция для определения типа недвижимости по пути
+const getPropertyTypeFromPath = (path: string): Type => {
+    return path.includes('rent') ? Type.RENT : Type.SALE;
+};
 
-export default function PropertyFilter({ propertyType }: PropertyFilterProps) {
+export default function PropertyFilter() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // Определение типа недвижимости на основе пути
+    const propertyType = useMemo(() => {
+        if (typeof window !== 'undefined') {
+            return getPropertyTypeFromPath(window.location.pathname);
+        }
+        return Type.RENT; // Значение по умолчанию
+    }, []);
+
     const [filters, setFilters] = useState({
         searchQuery: '',
         minPrice: '',
@@ -19,25 +31,33 @@ export default function PropertyFilter({ propertyType }: PropertyFilterProps) {
         maxBedrooms: '',
     });
 
+    // Инициализация состояния из параметров поиска (searchParams)
+    useEffect(() => {
+        const params = Object.fromEntries(searchParams.entries());
+
+        setFilters({
+            searchQuery: params.searchQuery || '',
+            minPrice: params.minPrice || '',
+            maxPrice: params.maxPrice || '',
+            minBedrooms: params.minBedrooms || '',
+            maxBedrooms: params.maxBedrooms || '',
+        });
+    }, [searchParams]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFilters((prev) => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
+        const { name, value } = e.target;
+        setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
     const applyFilters = () => {
-        const queryParams = {
-            searchQuery: filters.searchQuery,
-            minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
-            maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
-            minBedrooms: filters.minBedrooms ? Number(filters.minBedrooms) : undefined,
-            maxBedrooms: filters.maxBedrooms ? Number(filters.maxBedrooms) : undefined,
-        };
+        const queryParams = Object.fromEntries(
+            Object.entries(filters).filter(([_, value]) => value !== '')
+        ) as Record<string, string>;
 
-        const query = new URLSearchParams(queryParams as any).toString();
-        router.push(`/${propertyType}?${query}`);
+        const query = new URLSearchParams(queryParams).toString();
+        router.push(`/${propertyType.toLowerCase()}?${query}`);
     };
+
 
     return (
         <div className="bg-white p-4 rounded-xl shadow-md mb-6">

@@ -1,40 +1,58 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PropertyCard from './PropertyCard';
 import PropertyFilter from './PropertyFilter';
 import { PostData } from '@/types/propertyTypes';
+import { toNumber } from '@/utils/toNumber';
+import {Type} from "@prisma/client";
 
 interface PropertyListProps {
     initialProperties: PostData[];
-    propertyType: 'RENT' | 'SALE';
+    propertyType: Type;
 }
 
 export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {
-    const [properties, setProperties] = useState<PostData[]>(initialProperties);
     const searchParams = useSearchParams();
 
-    useEffect(() => {
-        const fetchProperties = async () => {
-            const params = Object.fromEntries(searchParams.entries());
-            const res = await fetch('/api/properties', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: propertyType, ...params }),
-            });
-            const data = await res.json();
-            setProperties(data);
-        };
+    const filteredProperties = useMemo(() => {
+        const params = Object.fromEntries(searchParams.entries());
 
-        fetchProperties();
-    }, [searchParams, propertyType]);
+        return initialProperties.filter((property) => {
+            const matchesType = property.type === propertyType;
+            const matchesMinBedrooms = params.minBedrooms
+                ? property.apartment?.numBedrooms >= Number(params.minBedrooms)
+                : true;
+            const matchesMaxBedrooms = params.maxBedrooms
+                ? property.apartment?.numBedrooms <= Number(params.maxBedrooms)
+                : true;
+            const matchesMinPrice = params.minPrice
+                ? toNumber(property.price) >= Number(params.minPrice)
+                : true;
+            const matchesMaxPrice = params.maxPrice
+                ? toNumber(property.price) <= Number(params.maxPrice)
+                : true;
+            const matchesLocation = params.searchQuery
+                ? property.city.toLowerCase().includes(params.searchQuery.toLowerCase())
+                : true;
+
+            return (
+                matchesType &&
+                matchesMinBedrooms &&
+                matchesMaxBedrooms &&
+                matchesMinPrice &&
+                matchesMaxPrice &&
+                matchesLocation
+            );
+        });
+    }, [initialProperties, searchParams, propertyType]);
 
     return (
         <>
-            <PropertyFilter propertyType={propertyType} />
+            <PropertyFilter />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {properties.map((property) => (
+                {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                 ))}
             </div>

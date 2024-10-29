@@ -167,11 +167,6 @@ export interface PropertyFilters {
     maxBathrooms?: number;   // Максимальное количество ванных комнат
     minPropertySize?: number; // Минимальный размер недвижимости
     maxPropertySize?: number; // Максимальный размер недвижимости
-    petPolicy?: 'ALLOWED' | 'NOT_ALLOWED' | 'ALLOWED_WITH_RESTRICTIONS'; // Политика по животным
-    heatingType?: 'GAS' | 'ELECTRIC' | 'SOLAR' | 'OTHER'; // Тип отопления
-    parking?: boolean;       // Наличие парковки
-    furnished?: boolean;     // Меблированность
-    airConditioning?: boolean; // Наличие кондиционера
 }
 
 // Интерфейс для данных формы (PropertyFormData)
