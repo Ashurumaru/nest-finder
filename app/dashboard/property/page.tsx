@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
-import { PropertyDB } from '@/types/propertyTypes';
-import { DataTableBreadcrumbs } from '@/components/ui/data-table-breadcrumbs';
-import { PropertyClient } from '@/components/dashboard/tables/property-table/client';
+import {PropertyDB} from '@/types/propertyTypes';
+import {DataTableBreadcrumbs} from '@/components/ui/data-table-breadcrumbs';
+import {PropertyClient} from '@/components/dashboard/tables/property-table/client';
 
 const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
 
@@ -17,8 +17,7 @@ async function fetchProperties(): Promise<PropertyDB[]> {
             throw new Error('Ошибка при получении данных недвижимости');
         }
 
-        const properties = await res.json();
-        return properties;
+        return await res.json();
     } catch (error) {
         console.error(error);
         return [];

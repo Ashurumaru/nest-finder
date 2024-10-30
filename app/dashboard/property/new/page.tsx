@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import React, { useMemo } from 'react';
 import { DataTableBreadcrumbs } from '@/components/ui/data-table-breadcrumbs';
 import { PropertyForm } from '@/components/dashboard/form/PropertyForm';
+import CreateUpdateProperty from "@/components/property/create-property/CreateUpdateProperty";
 
 const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
 
@@ -18,7 +19,7 @@ export default function CreatePropertyPage() {
         <PageContainer scrollable={true}>
             <div className="space-y-4">
                 <DataTableBreadcrumbs items={breadcrumbItems} />
-                <PropertyForm initialData={null} />
+                <CreateUpdateProperty initialData={null} />
             </div>
         </PageContainer>
     );

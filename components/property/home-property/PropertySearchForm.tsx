@@ -9,37 +9,10 @@ import {
     Form,
     FormControl,
     FormField,
-    FormItem,
-    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-
-// Данные для типа сделки, недвижимости и количества комнат
-const transactionTypes = [
-    { label: "Продажа", value: "SALE" },
-    { label: "Аренда", value: "RENT" },
-];
-
-const propertyTypes = [
-    { label: "Квартира", value: "APARTMENT" },
-    { label: "Дом", value: "HOUSE" },
-    { label: "Участок", value: "LAND_PLOT" },
-];
-
-const roomCounts = [
-    { label: "1 комн.", value: "1" },
-    { label: "2 комн.", value: "2" },
-    { label: "3 комн.", value: "3" },
-    { label: "4 комн.", value: "4" },
-    { label: "5+ комн.", value: "5+" },
-];
+import {DropdownSelect} from "@/components/ui/DropdownSelect";
+import {propertyTypes, roomCounts, transactionTypes} from "@/constants/data";
 
 // Валидация с Zod
 const FormSchema = z.object({
@@ -99,9 +72,9 @@ export default function PropertySearchForm() {
                 )} />
 
                 {/** Поле для количества комнат */}
-                <FormField control={form.control} name="rooms" render={({ field }) => (
-                    <DropdownSelect field={field} options={roomCounts} placeholder="Количество комнат" />
-                )} />
+                {/*<FormField control={form.control} name="rooms" render={({ field }) => (*/}
+                {/*    <DropdownSelect field={field} options={roomCounts} placeholder="Количество комнат" />*/}
+                {/*)} />*/}
 
                 {/** Поля для ввода цен */}
                 <FormField control={form.control} name="priceFrom" render={({ field }) => (
@@ -126,35 +99,6 @@ export default function PropertySearchForm() {
     );
 }
 
-// Компонент для выпадающего списка
-function DropdownSelect({ field, options, placeholder }: any) {
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <FormControl>
-                    <Button variant="outline" className="w-full justify-between">
-                        {field.value ? options.find((opt: any) => opt.value === field.value)?.label : placeholder}
-                        <CaretSortIcon className="ml-2 h-4 w-4 opacity-50" />
-                    </Button>
-                </FormControl>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-                <Command>
-                    <CommandList>
-                        <CommandGroup>
-                            {options.map((option: any) => (
-                                <CommandItem key={option.value} onSelect={() => field.onChange(option.value)}>
-                                    {option.label}
-                                    <CheckIcon className={`ml-auto h-4 w-4 ${field.value === option.value ? "opacity-100" : "opacity-0"}`} />
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
-    );
-}
 
 // Компонент для текстового поля
 function InputField({ field, placeholder }: any) {

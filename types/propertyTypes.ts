@@ -162,11 +162,7 @@ export interface PropertyFilters {
     minPrice?: number;       // Минимальная цена
     maxPrice?: number;       // Максимальная цена
     minBedrooms?: number;    // Минимальное количество спален
-    maxBedrooms?: number;    // Максимальное количество спален
-    minBathrooms?: number;   // Минимальное количество ванных комнат
-    maxBathrooms?: number;   // Максимальное количество ванных комнат
-    minPropertySize?: number; // Минимальный размер недвижимости
-    maxPropertySize?: number; // Максимальный размер недвижимости
+    maxBedrooms?: number;    // Минимальное количество спален
 }
 
 // Интерфейс для данных формы (PropertyFormData)

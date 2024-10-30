@@ -2,31 +2,42 @@ import prisma from "@/prisma/prisma";
 import { PropertyDB, PropertyFilters } from "@/types/propertyTypes";
 
 export async function getProperties(filters: PropertyFilters = {}): Promise<PropertyDB[]> {
-    const {
-        type,
-        propertyType,
-        minPrice,
-        maxPrice,
-        minBedrooms,
-        maxBedrooms,
-        minBathrooms,
-        maxBathrooms,
-    } = filters;
+    const { searchQuery, type, propertyType, minPrice, maxPrice, minBedrooms, maxBedrooms } = filters;
+
+    console.log('Received Filters:', filters);
 
     const whereClause: any = {
+        ...(searchQuery && {
+            OR: [
+                { city: { contains: searchQuery, mode: 'insensitive' } },
+                { address: { contains: searchQuery, mode: 'insensitive' } },
+                { title: { contains: searchQuery, mode: 'insensitive' } },
+            ],
+        }),
         ...(type && { type }),
         ...(propertyType && { property: propertyType }),
-        ...(minPrice || maxPrice ? { price: { gte: minPrice, lte: maxPrice } } : {}),
+        ...(minPrice || maxPrice ? { price: { gte: minPrice ?? 0, lte: maxPrice } } : {}),
     };
 
+    // Добавляем логику фильтрации по спальням/комнатам
     if (minBedrooms || maxBedrooms) {
-        whereClause.apartment = {
-            ...whereClause.apartment,
-            numBedrooms: {
-                ...(minBedrooms ? { gte: Number(minBedrooms) } : {}),
-                ...(maxBedrooms ? { lte: Number(maxBedrooms) } : {}),
-            },
-        };
+        if (propertyType === "APARTMENT") {
+            whereClause.apartment = {
+                ...whereClause.apartment,
+                numBedrooms: {
+                    ...(minBedrooms ? { gte: minBedrooms } : {}),
+                    ...(maxBedrooms ? { lte: maxBedrooms } : {}),
+                },
+            };
+        } else if (propertyType === "HOUSE") {
+            whereClause.house = {
+                ...whereClause.house,
+                numberOfRooms: {
+                    ...(minBedrooms ? { gte: minBedrooms } : {}),
+                    ...(maxBedrooms ? { lte: maxBedrooms } : {}),
+                },
+            };
+        }
     }
 
     const properties = await prisma.post.findMany({
@@ -40,6 +51,8 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
             saleFeatures: true,
         },
     });
+
+    console.log('Found Properties:', properties.length);
 
     return properties.map((property) => ({
         id: property.id,
