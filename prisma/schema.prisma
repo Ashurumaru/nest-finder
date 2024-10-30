@@ -32,23 +32,25 @@ model User {
 }
 
 model Post {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
-  price       Decimal     @db.Decimal(15, 2)
+  price       Decimal  @db.Decimal(15, 2)
   imageUrls   String[]
   address     String
   city        String
-  latitude    Decimal?    @db.Decimal(9, 6)
-  longitude   Decimal?    @db.Decimal(9, 6)
+  latitude    Decimal? @db.Decimal(9, 6)
+  longitude   Decimal? @db.Decimal(9, 6)
   type        Type
   property    Property
   description String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now()) @updatedAt
-  views       Int         @default(0)
-  user        User        @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  views       Int      @default(0)
+  user        User     @relation(fields: [userId], references: [id])
   userId      String
-  savedPosts  SavedPost[]
+  isArchive   Boolean  @default(false)
+
+  savedPosts SavedPost[]
 
   apartment Apartment?
   house     House?

@@ -72,9 +72,9 @@ export default function PropertySearchForm() {
                 )} />
 
                 {/** Поле для количества комнат */}
-                {/*<FormField control={form.control} name="rooms" render={({ field }) => (*/}
-                {/*    <DropdownSelect field={field} options={roomCounts} placeholder="Количество комнат" />*/}
-                {/*)} />*/}
+                <FormField control={form.control} name="rooms" render={({ field }) => (
+                    <DropdownSelect field={field} options={roomCounts} placeholder="Количество комнат" />
+                )} />
 
                 {/** Поля для ввода цен */}
                 <FormField control={form.control} name="priceFrom" render={({ field }) => (

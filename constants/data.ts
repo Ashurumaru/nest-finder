@@ -38,7 +38,7 @@ export const roomCounts = [
     { label: "2 комн.", value: "2" },
     { label: "3 комн.", value: "3" },
     { label: "4 комн.", value: "4" },
-    { label: "5+ комн.", value: "5" },
+    { label: "5 комн.", value: "5" },
 ];
 
 export const transactionTypes = [

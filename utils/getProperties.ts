@@ -7,6 +7,7 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
     console.log('Received Filters:', filters);
 
     const whereClause: any = {
+        isArchive: false,
         ...(searchQuery && {
             OR: [
                 { city: { contains: searchQuery, mode: 'insensitive' } },

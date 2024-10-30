@@ -3,7 +3,10 @@ import { PropertyDB } from "@/types/propertyTypes";
 
 export async function getAllProperties(): Promise<PropertyDB[]> {
     const properties = await prisma.post.findMany({
-        include: {
+        where: {
+            isArchive: false,
+        },
+        include: {                         
             user: true,
             apartment: true,
             house: true,

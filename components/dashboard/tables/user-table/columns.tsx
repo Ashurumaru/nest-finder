@@ -102,7 +102,7 @@ export const columns: ColumnDef<User>[] = [
             <DataTableRowActions
                 row={row}
                 editPath={(id) => `/dashboard/user/${id}`}
-                deleteApiPath={(id) => `/api/user/${id}`}
+                archiveApiPath={(id) => `/api/user/${id}`}
             />
         ),
     }

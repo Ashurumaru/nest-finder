@@ -14,13 +14,13 @@ import { useRouter } from 'next/navigation';
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>;
     editPath: (id: string) => string;
-    deleteApiPath: (id: string) => string;
+    archiveApiPath: (id: string) => string;
 }
 
 export function DataTableRowActions<TData extends { id?: string }>({
                                                                        row,
                                                                        editPath,
-                                                                       deleteApiPath,
+                                                                       archiveApiPath,
                                                                    }: DataTableRowActionsProps<TData>) {
     const router = useRouter();
     const item = row.original;
@@ -33,25 +33,25 @@ export function DataTableRowActions<TData extends { id?: string }>({
         }
     };
 
-    const handleDelete = async () => {
+    const handleArchive = async () => {
         if (!item.id) {
             console.error('Item ID is undefined');
             return;
         }
 
         try {
-            const response = await fetch(deleteApiPath(item.id), {
+            const response = await fetch(archiveApiPath(item.id), {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
 
             if (!response.ok) {
-                throw new Error('Failed to delete item');
+                throw new Error('Failed to archive item');
             }
 
             router.refresh();
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error('Error archiving item:', error);
         }
     };
 
@@ -64,7 +64,7 @@ export function DataTableRowActions<TData extends { id?: string }>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleArchive}>Archive</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );

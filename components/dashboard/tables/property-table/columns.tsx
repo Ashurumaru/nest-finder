@@ -102,7 +102,7 @@ export const columns: ColumnDef<PropertyDB>[] = [
             <DataTableRowActions
                 row={row}
                 editPath={(id) => `/dashboard/property/${id}`}
-                deleteApiPath={(id) => `/api/properties/${id}`}
+                archiveApiPath={(id) => `/api/properties/${id}`}
             />
         ),
     }

@@ -56,7 +56,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+
+export async function DELETE(
+    request: Request,
+    { params }: { params: { id: string } }
+) {
     const { id } = params;
 
     // Получаем сессию пользователя
@@ -78,19 +82,20 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             return NextResponse.json({ message: 'Недвижимость не найдена' }, { status: 404 });
         }
 
-    // Проверяем, является ли пользователь владельцем недвижимости или администратором
+        // Проверяем, является ли пользователь владельцем или администратором
         if (session.user.role !== 'ADMIN' && property.userId !== userId) {
             return NextResponse.json({ message: 'Доступ запрещен' }, { status: 403 });
         }
 
-        // Удаляем запись недвижимости из базы данных
-        await prisma.post.delete({
+        // Обновляем isArchive на true вместо удаления
+        await prisma.post.update({
             where: { id },
+            data: { isArchive: true },
         });
 
-        return NextResponse.json({ message: 'Недвижимость успешно удалена' });
+        return NextResponse.json({ message: 'Недвижимость успешно архивирована' });
     } catch (error) {
-        console.error('Ошибка при удалении недвижимости:', error);
-        return NextResponse.json({ message: 'Ошибка при удалении недвижимости' }, { status: 500 });
+        console.error('Ошибка при архивировании недвижимости:', error);
+        return NextResponse.json({ message: 'Ошибка при архивировании' }, { status: 500 });
     }
 }

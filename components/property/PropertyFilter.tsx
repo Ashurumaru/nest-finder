@@ -58,7 +58,7 @@ export default function PropertyFilter({ propertyType }: PropertyFilterProps) {
         if (data.location) queryParams.searchQuery = data.location;
         if (data.minPrice) queryParams.minPrice = data.minPrice;
         if (data.maxPrice) queryParams.maxPrice = data.maxPrice;
-        if (data.rooms) queryParams.rooms = encodeURIComponent(data.rooms === "5+" ? "5+" : data.rooms);
+        if (data.rooms) queryParams.rooms = data.rooms;
         if (data.propertyType) queryParams.propertyType = data.propertyType;
 
         const queryString = new URLSearchParams(queryParams).toString();
