@@ -27,7 +27,7 @@ export async function getPropertyById(id: string) {
         property: property.property,
         description: property.description ?? "",
         imageUrls: property.imageUrls ?? [],
-        views: property.views.toString() ?? "",
+        views: property.views,
         updatedAt: property.updatedAt ?? new Date(),
         createdAt: property.createdAt ?? new Date(),
         apartment: property.apartment
