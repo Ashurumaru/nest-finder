@@ -17,12 +17,6 @@ export async function POST(request: Request) {
     try {
         const data = await request.json();
 
-        if (typeof data.latitude === 'number') {
-            data.latitude = data.latitude.toString();
-        }
-        if (typeof data.longitude === 'number') {
-            data.longitude = data.longitude.toString();
-        }
         if (data.apartment && typeof data.apartment.numBedrooms === 'number') {
             data.apartment.numBedrooms = data.apartment.numBedrooms.toString();
         }
@@ -35,6 +29,7 @@ export async function POST(request: Request) {
         if (data.rentalFeatures && data.rentalFeatures.availabilityDate) {
             data.rentalFeatures.availabilityDate = new Date(data.rentalFeatures.availabilityDate);
         }
+
         if (data.apartment && typeof data.apartment.internetSpeed === 'number') {
             data.apartment.internetSpeed = data.apartment.internetSpeed.toString();
         }
@@ -52,8 +47,8 @@ export async function POST(request: Request) {
                 imageUrls: validatedData.imageUrls,
                 address: validatedData.address,
                 city: validatedData.city,
-                latitude: validatedData.latitude,
-                longitude: validatedData.longitude,
+                latitude: new Decimal(validatedData.latitude),
+                longitude: new Decimal(validatedData.longitude),
                 type: validatedData.type,
                 property: validatedData.property,
                 description: validatedData.description,

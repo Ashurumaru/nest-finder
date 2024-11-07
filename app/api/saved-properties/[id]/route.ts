@@ -20,6 +20,16 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     try {
+        // Проверяем, существует ли пост
+        const postExists = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!postExists) {
+            return NextResponse.json({ error: "Post not found" }, { status: 404 });
+        }
+
+        // Добавляем пост в избранное
         const savedPost = await prisma.savedPost.create({
             data: {
                 userId,
@@ -33,6 +43,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         return NextResponse.json({ error: 'Не удалось добавить в избранное' }, { status: 500 });
     }
 }
+
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
     const session = await auth();

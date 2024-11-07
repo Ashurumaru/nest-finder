@@ -38,8 +38,8 @@ model Post {
   imageUrls   String[]
   address     String
   city        String
-  latitude    Decimal? @db.Decimal(9, 6)
-  longitude   Decimal? @db.Decimal(9, 6)
+  latitude    Decimal  @db.Decimal(18, 15)
+  longitude   Decimal  @db.Decimal(18, 15)
   type        Type
   property    Property
   description String?

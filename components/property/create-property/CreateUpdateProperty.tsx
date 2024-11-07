@@ -29,6 +29,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import UploadImage from "@/components/property/create-property/UploadImage";
+import AddressInput from "@/components/property/create-property/AddressInput";
+import MapWithMarker from "@/components/property/create-property/MapWithMarker";
+import {extractCityFromAddress} from "@/utils/extractText";
 
 export type PropertyFormValues = z.infer<typeof propertySchema> & { id?: string };
 type FieldName = Path<PropertyFormValues>;
@@ -41,7 +44,6 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                                                                                    initialData,
                                                                                }) => {
     const form = useForm<PropertyFormValues>({
-        resolver: zodResolver(propertySchema),
         defaultValues: initialData || {},
         mode: 'onChange',
     });
@@ -49,11 +51,29 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
     const {
         control,
         formState: { errors },
+        setValue,
     } = form;
 
     const router = useRouter();
 
     const [currentStep, setCurrentStep] = useState(0);
+
+    const handleLocationSelect = (latitude: number, longitude: number, address: string | null) => {
+        // Обновление координат и адреса в форме
+        setValue("latitude", latitude);
+        setValue("longitude", longitude);
+        setValue("address", address || "");
+        setValue("city", extractCityFromAddress(address || ""));
+    };
+
+    const handleAddressSelect = (latitude: number, longitude: number, address: string) => {
+        // Обновление координат и адреса при выборе в поле ввода
+        setValue("latitude", latitude);
+        setValue("longitude", longitude);
+        setValue("address", address);
+        setValue("city", extractCityFromAddress(address));
+    };
+
 
     const steps = [
         {
@@ -89,6 +109,8 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
     ];
 
     const nextStep = async () => {
+        console.log("Проверка валидности полей...");
+
         let fieldsToValidate: FieldName[] = steps[currentStep].fields as FieldName[];
 
         if (currentStep === 2) {
@@ -170,12 +192,14 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
         }
 
         const isValid = await form.trigger(fieldsToValidate, { shouldFocus: true });
+        console.log("Результат валидации:", isValid);
 
         if (!isValid) return;
 
         if (currentStep < steps.length - 1) {
             setCurrentStep((prev) => prev + 1);
         } else {
+            console.log("Попытка отправки формы...");
             await form.handleSubmit(onSubmit)();
         }
     };
@@ -187,6 +211,7 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
     };
 
     const onSubmit: SubmitHandler<PropertyFormValues> = async (data) => {
+        console.log("Отправка формы началась:", data);
         try {
             if (initialData && initialData.id) {
                 await fetch(`/api/properties/${initialData.id}/update`, {
@@ -207,8 +232,6 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
             console.error('Ошибка при сохранении объявления:', error);
         }
     };
-
-    const formGrid = 'grid grid-cols-1 gap-6 md:grid-cols-2';
 
     return (
         <>
@@ -254,7 +277,7 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
             <Separator />
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className={formGrid}>
+                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                         {currentStep === 0 && (
                             <>
                                 <FormField
@@ -391,16 +414,18 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                         {currentStep === 1 && (
                             <>
                                 <FormField
-                                    control={form.control}
+                                    control={control}
                                     name="address"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Адрес</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder="Введите адрес"
-                                                    {...field}
-                                                    value={field.value ?? ''}
+                                                <AddressInput
+                                                    onAddressSelect={(latitude, longitude, address) => {
+                                                        handleAddressSelect(latitude, longitude, address);
+                                                        field.onChange(address); // Update the form state
+                                                    }}
+                                                    address={field.value} // Pass the current address value
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -408,58 +433,42 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                                     )}
                                 />
 
+
+
+                                <MapWithMarker onLocationSelect={handleLocationSelect} />
+
                                 <FormField
-                                    control={form.control}
+                                    control={control}
                                     name="city"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Город</FormLabel>
+                                        <FormItem className="">
                                             <FormControl>
-                                                <Input
-                                                    placeholder="Введите город"
-                                                    {...field}
-                                                    value={field.value ?? ''}
-                                                />
+                                                <Input type="text" {...field} />
                                             </FormControl>
-                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
                                 <FormField
-                                    control={form.control}
+                                    control={control}
                                     name="latitude"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Широта</FormLabel>
+                                        <FormItem className="">
                                             <FormControl>
-                                                <Input
-                                                    placeholder="Введите широту"
-                                                    type="text"
-                                                    {...field}
-                                                    value={field.value ?? ''}
-                                                />
+                                                <Input type="text" {...field} />
                                             </FormControl>
-                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
                                 <FormField
-                                    control={form.control}
+                                    control={control}
                                     name="longitude"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Долгота</FormLabel>
+                                        <FormItem className="">
                                             <FormControl>
-                                                <Input
-                                                    placeholder="Введите долготу"
-                                                    type="text"
-                                                    {...field}
-                                                    value={field.value ?? ''}
-                                                />
+                                                <Input type="text" {...field} />
                                             </FormControl>
-                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />

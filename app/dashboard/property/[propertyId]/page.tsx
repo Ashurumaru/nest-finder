@@ -14,7 +14,7 @@ const PageContainer = dynamic(() =>
 
 export default function EditPropertyPage() {
     const pathname = usePathname();
-    const propertyId = pathname.split('/').pop(); // Извлекаем ID из пути
+    const propertyId = pathname.split('/').pop();
 
     const [property, setProperty] = useState<any>(null);
     const [loading, setLoading] = useState(true);

@@ -10,25 +10,21 @@ export const propertySchema = z.object({
     address: z.string().min(1, 'Адрес обязателен'),
     city: z.string().min(1, 'Город обязателен'),
     latitude: z
-        .string()
-        .min(1, 'Введите широту')
-        .transform((val) => Number(val))
+        .number()
         .refine((val) => val >= -90 && val <= 90, {
             message: 'Широта должна быть от -90 до 90',
         }),
     longitude: z
-        .string()
-        .min(1, 'Введите долготу')
-        .transform((val) => Number(val))
+        .number()
         .refine((val) => val >= -180 && val <= 180, {
             message: 'Долгота должна быть от -180 до 180',
         }),
     type: z.enum(['SALE', 'RENT']),
     property: z.enum(['APARTMENT', 'HOUSE', 'LAND_PLOT']),
     description: z.string().nullable().optional(),
-    views: z.string(),
-    updatedAt: z.date(),
-    createdAt: z.date(),
+    views: z.number().int().optional(),
+    updatedAt: z.date().optional(),
+    createdAt: z.date().optional(),
     // Данные для апартаментов
     apartment: z
         .object({

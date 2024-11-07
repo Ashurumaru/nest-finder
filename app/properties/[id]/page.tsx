@@ -5,9 +5,9 @@ import {PostData} from "@/types/propertyTypes";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {incrementPostViews} from "@/utils/updateViews";
 import {fetchIsFavorite, fetchProperty} from "@/services/propertyService";
+import FavoriteButton from "@/components/property/selected-property/FavoriteButton";
 
 const ImageCarousel = dynamic(() => import('@/components/property/selected-property/ImageCarousel'));
-const FavoriteButton = dynamic(() => import('@/components/property/selected-property/FavoriteButton'));
 const ShareButton = dynamic(() => import('@/components/property/selected-property/ShareButton'));
 
 export default async function PropertyPage({ params }: { params: { id: string } }) {
@@ -37,7 +37,6 @@ export default async function PropertyPage({ params }: { params: { id: string } 
             </div>
         );
     } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
         return <h1 className="text-center text-2xl font-bold mt-10">Ошибка загрузки данных</h1>;
     }
 }
