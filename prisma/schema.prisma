@@ -10,23 +10,24 @@ datasource db {
 }
 
 model User {
-  id             String      @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   surname        String?
-  email          String      @unique
+  email          String        @unique
   emailVerified  Boolean?
   hashedPassword String?
   image          String?
   phoneNumber    String?
-  role           Role        @default(USER)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  role           Role          @default(USER)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   posts          Post[]
   savedPosts     SavedPost[]
   chats          ChatUser[]
   accounts       Account[]
   sessions       Session[]
   messages       Message[]
+  reservations   Reservation[]
 
   @@map("users")
 }
@@ -58,8 +59,25 @@ model Post {
 
   rentalFeatures RentalFeatures?
   saleFeatures   SaleFeatures?
+  reservations   Reservation[]
 
   @@map("posts")
+}
+
+model Reservation {
+  id         String            @id @default(uuid())
+  userId     String
+  postId     String
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Decimal           @db.Decimal(15, 2)
+  status     ReservationStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("reservations")
 }
 
 model Apartment {
@@ -255,6 +273,12 @@ enum Property {
   APARTMENT
   HOUSE
   LAND_PLOT
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }
 
 enum BuildingType {

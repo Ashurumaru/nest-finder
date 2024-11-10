@@ -1,11 +1,12 @@
 import { Icons } from '@/components/icons';
 import dynamic from 'next/dynamic';
-import {formatDate} from "@/utils/formatDate";
-import {PostData} from "@/types/propertyTypes";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {incrementPostViews} from "@/utils/updateViews";
-import {fetchIsFavorite, fetchProperty} from "@/services/propertyService";
+import { formatDate } from "@/utils/formatDate";
+import { PostData } from "@/types/propertyTypes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { incrementPostViews } from "@/utils/updateViews";
+import { fetchIsFavorite, fetchProperty, fetchReservations } from "@/services/propertyService";
 import FavoriteButton from "@/components/property/selected-property/FavoriteButton";
+import ListingReservation from "@/components/property/selected-property/ListingReservation";
 
 const ImageCarousel = dynamic(() => import('@/components/property/selected-property/ImageCarousel'));
 const ShareButton = dynamic(() => import('@/components/property/selected-property/ShareButton'));
@@ -14,9 +15,10 @@ export default async function PropertyPage({ params }: { params: { id: string } 
     try {
         await incrementPostViews(params.id);
 
-        const [property, isFavorite] = await Promise.all([
+        const [property, isFavorite, reservations] = await Promise.all([
             fetchProperty(params.id),
             fetchIsFavorite(params.id),
+            fetchReservations({ postId: params.id }),
         ]);
 
         if (!property) {
@@ -26,20 +28,38 @@ export default async function PropertyPage({ params }: { params: { id: string } 
         const createdAt = property.createdAt ? new Date(property.createdAt) : null;
         const updatedAt = property.updatedAt ? new Date(property.updatedAt) : null;
 
+        const formattedReservations = reservations.map(reservation => ({
+            startDate: new Date(reservation.startDate).toISOString(),
+            endDate: new Date(reservation.endDate).toISOString(),
+        }));
+
         return (
             <div className="container mx-auto py-6 px-4">
                 <Header property={property} />
 
                 <div className="grid lg:grid-cols-3 gap-6">
                     <MainContent property={property} />
-                    <Sidebar property={property} createdAt={createdAt} updatedAt={updatedAt} isFavorite={isFavorite} />
+                    <Sidebar
+                        property={property}
+                        createdAt={createdAt}
+                        updatedAt={updatedAt}
+                        isFavorite={isFavorite}
+                        reservations={formattedReservations}
+                    />
                 </div>
             </div>
         );
     } catch (error) {
-        return <h1 className="text-center text-2xl font-bold mt-10">Ошибка загрузки данных</h1>;
+        const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
+        return (
+            <div className="text-center text-2xl font-bold mt-10">
+                <h1>Ошибка загрузки данных</h1>
+                <p className="text-red-500 mt-4">{errorMessage}</p>
+            </div>
+        );
     }
 }
+
 function Header({ property }: { property: PostData }) {
     return (
         <div className="flex flex-col md:flex-row justify-between mb-6">
@@ -75,12 +95,41 @@ function MainContent({ property }: { property: PostData }) {
     );
 }
 
-function Sidebar({ property, createdAt, updatedAt, isFavorite }: { property: PostData; createdAt: Date | null; updatedAt: Date | null; isFavorite: boolean }) {
+function Sidebar({
+                     property,
+                     createdAt,
+                     updatedAt,
+                     isFavorite,
+                     reservations,
+                 }: {
+    property: PostData;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+    isFavorite: boolean;
+    reservations: Array<{ startDate: string; endDate: string }>;
+
+})
+{
     return (
         <div className="sticky top-20">
-            <PriceBox property={property} createdAt={createdAt} updatedAt={updatedAt} isFavorite={isFavorite} />
+            {property.type === 'SALE' && (
+                <PriceBox
+                    property={property}
+                    createdAt={createdAt}
+                    updatedAt={updatedAt}
+                    isFavorite={isFavorite}
+                />
+            )}
+            {property.type === 'RENT' && property.id && (
+                <ListingReservation
+                    price={Number(property.price)}
+                    postId={property.id}
+                    reservations={reservations}
+                />
+            )}
         </div>
     );
+
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

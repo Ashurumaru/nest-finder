@@ -7,8 +7,37 @@ import {
     PetPolicy,
     RentalTerm,
     UtilitiesPayment,
-    BuildingType, RenovationState
+    BuildingType,
+    RenovationState
 } from '@prisma/client';
+
+// Интерфейс для данных бронирования (ReservationData)
+export interface ReservationData {
+    id: string;
+    startDate: Date;
+    endDate: Date;
+    totalPrice: number | Prisma.Decimal;
+    postId: string;
+    userId: string;
+    createdAt?: Date;
+    status?: string;  // Возможные статусы: "PENDING", "CONFIRMED", "CANCELLED"
+
+    // Связанные данные: минимальные данные о недвижимости и пользователе
+    post?: {
+        id: string;
+        title: string;
+        price: number | Prisma.Decimal;
+        imageUrls: string[];
+        address: string;
+        city: string;
+    } | null;
+
+    user?: {
+        id: string;
+        name: string;
+        email?: string | null;
+    } | null;
+}
 
 // Интерфейс для основной сущности PropertyDB
 export interface PropertyDB {
@@ -29,12 +58,10 @@ export interface PropertyDB {
     views?: number;
     userId: string;
 
-    // Связанные модели для разных типов недвижимости
     apartment?: ApartmentDB | null;
     house?: HouseDB | null;
     landPlot?: LandPlotDB | null;
 
-    // Характеристики аренды и продажи
     rentalFeatures?: RentalFeaturesDB | null;
     saleFeatures?: SaleFeaturesDB | null;
 }
@@ -57,7 +84,8 @@ export interface ApartmentDB {
     hasFreightElevator?: boolean;
     elevatorType?: string;
     heatingType?: HeatingType | null;
-    renovationState?: RenovationState | null;    parkingType?: ParkingType | null;
+    renovationState?: RenovationState | null;
+    parkingType?: ParkingType | null;
     furnished?: boolean | null;
     internetSpeed?: number;
     flooring?: string;
@@ -79,7 +107,8 @@ export interface HouseDB {
     basementArea?: number;
     additionalBuildings?: string;
     heatingType?: HeatingType | null;
-    houseCondition?: RenovationState | null;    fencing?: boolean;
+    houseCondition?: RenovationState | null;
+    fencing?: boolean;
     furnished?: boolean | null;
     internetSpeed?: number;
     flooring?: string;
@@ -133,8 +162,6 @@ export interface PostData {
     property: Property; // 'APARTMENT' | 'HOUSE' | 'LAND_PLOT'
     description?: string | null;
 
-
-    // Связанные данные
     apartment?: ApartmentDB | null;
     house?: HouseDB | null;
     landPlot?: LandPlotDB | null;
@@ -164,39 +191,3 @@ export interface PropertyFilters {
     minBedrooms?: number;    // Минимальное количество спален
     maxBedrooms?: number;    // Минимальное количество спален
 }
-
-// Интерфейс для данных формы (PropertyFormData)
-export type PropertyFormData = {
-    // Шаг 1
-    type: 'SALE' | 'RENT';
-    property: 'APARTMENT' | 'HOUSE' | 'LAND_PLOT';
-    title: string;
-    description: string;
-
-    // Шаг 2
-    price: number;
-    address: string;
-    city: string;
-    numBedrooms?: number;
-    numBathrooms?: number;
-    floorNumber?: number;
-    totalFloors?: number;
-    hasElevator?: boolean;
-    lotSize?: number;
-    basement?: boolean;
-    latitude: number;
-    longitude: number;
-
-    // Шаг 3
-    furnished?: boolean;
-    airConditioning?: boolean;
-    balcony?: boolean;
-    moveInDate?: string; // ISO строка даты
-    leaseTerm?: 'monthToMonth' | 'sixMonths' | 'oneYear' | 'twoYears' | 'other';
-
-    // Шаг 4
-    images: FileList | null;
-
-    // Дополнительные поля
-    [key: string]: any;
-};

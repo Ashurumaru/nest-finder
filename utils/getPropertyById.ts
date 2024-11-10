@@ -17,6 +17,7 @@ export async function getPropertyById(id: string) {
     if (!property) return null;
 
     const parsedProperty: PropertyFormValues = {
+        id: property.id,
         title: property.title,
         price: property.price.toString(),
         address: property.address,
