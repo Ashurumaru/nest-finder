@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     const { startDate, endDate, totalPrice, postId } = await request.json();
 
-    if (!startDate || !endDate || isAfter(startDate, endDate) || isSameDay(startDate, endDate)) {
+    if (!startDate || !endDate || isAfter(new Date(startDate), new Date(endDate))) {
         return NextResponse.json({ message: 'Некорректные даты' }, { status: 400 });
     }
 

@@ -1,6 +1,5 @@
 // services/propertyService.ts
-import { PostData } from "@/types/propertyTypes";
-import { ReservationData } from "@/types/propertyTypes";
+import {PostData, ReservationData} from "@/types/propertyTypes";
 
 const API_URL = process.env.API_URL || '';
 
@@ -11,9 +10,7 @@ export async function fetchProperty(id: string): Promise<PostData | null> {
     });
 
     if (!res.ok) return null;
-    const property = await res.json();
-    console.log("Fetched Property:", property); // Логирование для отладки
-    return property;
+    return await res.json();
 }
 
 // Функция для проверки, является ли объект избранным

@@ -27,7 +27,6 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, postId, 
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    // Создаем массив заблокированных дат на основе существующих бронирований
     const disabledDates = reservations.flatMap((reservation) => {
         const start = startOfDay(new Date(reservation.startDate));
         const end = endOfDay(new Date(reservation.endDate));
@@ -73,29 +72,34 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, postId, 
         }
     };
 
-
     return (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-            <div className="flex flex-row items-center gap-1 p-4">
-                <div className="text-2xl font-semibold">{price.toLocaleString()} ₽</div>
-                <div className="font-light text-neutral-600">за ночь</div>
+        <div className="bg-white rounded-lg shadow-lg border border-neutral-300 overflow-hidden">
+            <div className="flex flex-row items-center gap-2 p-6 bg-gray-50">
+                <div className="text-3xl font-bold text-primary-600">{price.toLocaleString()} ₽</div>
+                <span className="text-sm font-medium text-gray-600 ml-1">за ночь</span>
             </div>
             <hr />
-            <BookingCalendar
-                value={dateRange}
-                disabledDates={disabledDates}
-                onChange={(value) => setDateRange(value.selection)}
-            />
+            <div className="p-6">
+                <BookingCalendar
+                    value={dateRange}
+                    disabledDates={disabledDates}
+                    onChange={(value) => setDateRange(value.selection)}
+                />
+            </div>
             <hr />
-            <div className="p-4">
-                <Button disabled={isLoading} onClick={onCreateReservation}>
+            <div className="p-6 flex flex-col gap-4">
+                <Button
+                    className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out font-semibold shadow-md"
+                    disabled={isLoading}
+                    onClick={onCreateReservation}
+                >
                     {isLoading ? 'Бронирование...' : 'Забронировать'}
                 </Button>
-            </div>
-            <hr />
-            <div className="p-4 flex flex-row items-center justify-between font-semibold text-lg">
-                <div>Итого</div>
-                <div>{totalPrice.toLocaleString()} ₽</div>
+                <hr />
+                <div className="flex flex-row items-center justify-between text-lg font-semibold">
+                    <span>Итого</span>
+                    <span className="text-primary-600">{totalPrice.toLocaleString()} ₽</span>
+                </div>
             </div>
         </div>
     );

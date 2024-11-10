@@ -7,6 +7,8 @@ import { incrementPostViews } from "@/utils/updateViews";
 import { fetchIsFavorite, fetchProperty, fetchReservations } from "@/services/propertyService";
 import FavoriteButton from "@/components/property/selected-property/FavoriteButton";
 import ListingReservation from "@/components/property/selected-property/ListingReservation";
+import {TRANSLATIONS} from "@/constants/translations";
+import { getTranslation } from '@/utils/extractText';
 
 const ImageCarousel = dynamic(() => import('@/components/property/selected-property/ImageCarousel'));
 const ShareButton = dynamic(() => import('@/components/property/selected-property/ShareButton'));
@@ -54,7 +56,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
         return (
             <div className="text-center text-2xl font-bold mt-10">
                 <h1>Ошибка загрузки данных</h1>
-                <p className="text-red-500 mt-4">{errorMessage}</p>
+                <p className="text-red-500">{errorMessage}</p>
             </div>
         );
     }
@@ -107,9 +109,7 @@ function Sidebar({
     updatedAt: Date | null;
     isFavorite: boolean;
     reservations: Array<{ startDate: string; endDate: string }>;
-
-})
-{
+}) {
     return (
         <div className="sticky top-20">
             {property.type === 'SALE' && (
@@ -129,7 +129,6 @@ function Sidebar({
             )}
         </div>
     );
-
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -142,117 +141,72 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function CharacteristicsList({ property }: { property: PostData }) {
+    const renderCharacteristic = (
+        icon: React.ReactNode,
+        label: string,
+        value: any,
+        enumType?: keyof typeof TRANSLATIONS
+    ) => {
+        if (value === undefined || value === null || value === '') return null;
+        const translatedValue = enumType ? getTranslation(enumType, value) : value;
+        return (
+            <Characteristic icon={icon} label={label} value={translatedValue} />
+        );
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {property.apartment && (
                 <>
-                    {property.apartment.apartmentArea !== undefined && (
-                        <Characteristic icon={Icons.area} label="Площадь" value={`${property.apartment.apartmentArea} м²`} />
-                    )}
-                    {property.apartment.numBedrooms !== undefined && (
-                        <Characteristic icon={Icons.bedrooms} label="Комнат" value={property.apartment.numBedrooms} />
-                    )}
-                    {property.apartment.numBathrooms !== undefined && (
-                        <Characteristic icon={Icons.bathrooms} label="Ванных комнат" value={property.apartment.numBathrooms} />
-                    )}
-                    {property.apartment.floorNumber !== undefined && (
-                        <Characteristic icon={Icons.floor} label="Этаж" value={`${property.apartment.floorNumber} из ${property.apartment.totalFloors}`} />
-                    )}
-                    {property.apartment.hasBalcony !== undefined && (
-                        <Characteristic icon={Icons.balcony} label="Балкон" value={property.apartment.hasBalcony ? "Да" : "Нет"} />
-                    )}
-                    {property.apartment.hasLoggia !== undefined && (
-                        <Characteristic icon={Icons.loggia} label="Лоджия" value={property.apartment.hasLoggia ? "Да" : "Нет"} />
-                    )}
-                    {property.apartment.heatingType && (
-                        <Characteristic icon={Icons.heating} label="Тип отопления" value={property.apartment.heatingType} />
-                    )}
-                    {property.apartment.internetSpeed !== undefined && (
-                        <Characteristic icon={Icons.internet} label="Скорость интернета" value={`${property.apartment.internetSpeed} Мбит/с`} />
-                    )}
-                    {property.apartment.renovationState && (
-                        <Characteristic icon={Icons.renovation} label="Состояние ремонта" value={property.apartment.renovationState} />
-                    )}
-                    {property.apartment.yearBuilt !== undefined && (
-                        <Characteristic icon={Icons.yearBuilt} label="Год постройки" value={property.apartment.yearBuilt} />
-                    )}
-                    {property.apartment.parkingType && (
-                        <Characteristic icon={Icons.parking} label="Парковка" value={property.apartment.parkingType} />
-                    )}
+                    {renderCharacteristic(Icons.area, "Площадь", property.apartment.apartmentArea ? `${property.apartment.apartmentArea} м²` : null)}
+                    {renderCharacteristic(Icons.bedrooms, "Комнат", property.apartment.numBedrooms)}
+                    {renderCharacteristic(Icons.bathrooms, "Ванных комнат", property.apartment.numBathrooms)}
+                    {renderCharacteristic(Icons.floor, "Этаж", property.apartment.floorNumber && property.apartment.totalFloors ? `${property.apartment.floorNumber} из ${property.apartment.totalFloors}` : null)}
+                    {renderCharacteristic(Icons.balcony, "Балкон", property.apartment.hasBalcony ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.loggia, "Лоджия", property.apartment.hasLoggia ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.heating, "Тип отопления", property.apartment.heatingType, "HeatingType")}
+                    {renderCharacteristic(Icons.internet, "Скорость интернета", property.apartment.internetSpeed ? `${property.apartment.internetSpeed} Мбит/с` : null)}
+                    {renderCharacteristic(Icons.renovation, "Состояние ремонта", property.apartment.renovationState, "RenovationState")}
+                    {renderCharacteristic(Icons.yearBuilt, "Год постройки", property.apartment.yearBuilt)}
+                    {renderCharacteristic(Icons.parking, "Парковка", property.apartment.parkingType, "ParkingType")}
                 </>
             )}
 
             {property.house && (
                 <>
-                    {property.house.numberOfRooms !== undefined && (
-                        <Characteristic icon={Icons.house} label="Комнат" value={property.house.numberOfRooms} />
-                    )}
-                    {property.house.houseArea !== undefined && (
-                        <Characteristic icon={Icons.area} label="Площадь дома" value={`${property.house.houseArea} м²`} />
-                    )}
-                    {property.house.hasGarage !== undefined && (
-                        <Characteristic icon={Icons.garage} label="Гараж" value={property.house.hasGarage ? "Да" : "Нет"} />
-                    )}
-                    {property.house.fencing !== undefined && (
-                        <Characteristic icon={Icons.fencing} label="Ограждение" value={property.house.fencing ? "Да" : "Нет"} />
-                    )}
-                    {property.house.heatingType && (
-                        <Characteristic icon={Icons.heating} label="Тип отопления" value={property.house.heatingType} />
-                    )}
-                    {property.house.internetSpeed !== undefined && (
-                        <Characteristic icon={Icons.internet} label="Скорость интернета" value={`${property.house.internetSpeed} Мбит/с`} />
-                    )}
-                    {property.house.yearBuilt !== undefined && (
-                        <Characteristic icon={Icons.yearBuilt} label="Год постройки" value={property.house.yearBuilt} />
-                    )}
-                    {property.house.houseCondition && (
-                        <Characteristic icon={Icons.renovation} label="Состояние ремонта" value={property.house.houseCondition} />
-                    )}
+                    {renderCharacteristic(Icons.house, "Комнат", property.house.numberOfRooms)}
+                    {renderCharacteristic(Icons.area, "Площадь дома", property.house.houseArea ? `${property.house.houseArea} м²` : null)}
+                    {renderCharacteristic(Icons.garage, "Гараж", property.house.hasGarage ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.fencing, "Ограждение", property.house.fencing ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.heating, "Тип отопления", property.house.heatingType, "HeatingType")}
+                    {renderCharacteristic(Icons.internet, "Скорость интернета", property.house.internetSpeed ? `${property.house.internetSpeed} Мбит/с` : null)}
+                    {renderCharacteristic(Icons.yearBuilt, "Год постройки", property.house.yearBuilt)}
+                    {renderCharacteristic(Icons.renovation, "Состояние ремонта", property.house.houseCondition, "RenovationState")}
                 </>
             )}
 
             {property.landPlot && (
                 <>
-                    {property.landPlot.landArea !== undefined && (
-                        <Characteristic icon={Icons.area} label="Площадь участка" value={`${property.landPlot.landArea} м²`} />
-                    )}
-                    {property.landPlot.fencing !== undefined && (
-                        <Characteristic icon={Icons.fencing} label="Ограждение" value={property.landPlot.fencing ? "Да" : "Нет"} />
-                    )}
-                    {property.landPlot.landPurpose && (
-                        <Characteristic icon={Icons.house} label="Назначение участка" value={property.landPlot.landPurpose} />
-                    )}
-                    {property.landPlot.waterSource && (
-                        <Characteristic icon={Icons.heating} label="Источник воды" value={property.landPlot.waterSource} />
-                    )}
+                    {renderCharacteristic(Icons.area, "Площадь участка", property.landPlot.landArea ? `${property.landPlot.landArea} м²` : null)}
+                    {renderCharacteristic(Icons.fencing, "Ограждение", property.landPlot.fencing ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.house, "Назначение участка", property.landPlot.landPurpose)}
+                    {renderCharacteristic(Icons.heating, "Источник воды", property.landPlot.waterSource)}
                 </>
             )}
 
             {property.rentalFeatures && (
                 <>
-                    {property.rentalFeatures.petPolicy && (
-                        <Characteristic icon={Icons.petPolicy} label="Домашние животные" value={property.rentalFeatures.petPolicy} />
-                    )}
-                    {property.rentalFeatures.minimumLeaseTerm !== undefined && (
-                        <Characteristic icon={Icons.yearBuilt} label="Минимальный срок аренды" value={`${property.rentalFeatures.minimumLeaseTerm} месяцев`} />
-                    )}
-                    {property.rentalFeatures.maximumLeaseTerm !== undefined && (
-                        <Characteristic icon={Icons.yearBuilt} label="Максимальный срок аренды" value={`${property.rentalFeatures.maximumLeaseTerm} месяцев`} />
-                    )}
-                    {property.rentalFeatures.securityDeposit !== undefined && (
-                        <Characteristic icon={Icons.heating} label="Залог" value={`${property.rentalFeatures.securityDeposit?.toLocaleString()} ₽`} />
-                    )}
+                    {renderCharacteristic(Icons.petPolicy, "Домашние животные", property.rentalFeatures.petPolicy, "PetPolicy")}
+                    {renderCharacteristic(Icons.yearBuilt, "Минимальный срок аренды", property.rentalFeatures.minimumLeaseTerm ? `${property.rentalFeatures.minimumLeaseTerm} месяцев` : null)}
+                    {renderCharacteristic(Icons.yearBuilt, "Максимальный срок аренды", property.rentalFeatures.maximumLeaseTerm ? `${property.rentalFeatures.maximumLeaseTerm} месяцев` : null)}
+                    {renderCharacteristic(Icons.heating, "Залог", property.rentalFeatures.securityDeposit ? `${property.rentalFeatures.securityDeposit.toLocaleString()} ₽` : null)}
                 </>
             )}
 
             {property.saleFeatures && (
                 <>
-                    {property.saleFeatures.mortgageAvailable !== undefined && (
-                        <Characteristic icon={Icons.heating} label="Ипотека доступна" value={property.saleFeatures.mortgageAvailable ? "Да" : "Нет"} />
-                    )}
-                    {property.saleFeatures.priceNegotiable !== undefined && (
-                        <Characteristic icon={Icons.heating} label="Цена договорная" value={property.saleFeatures.priceNegotiable ? "Да" : "Нет"} />
-                    )}
+                    {renderCharacteristic(Icons.heating, "Ипотека доступна", property.saleFeatures.mortgageAvailable ? "Да" : "Нет")}
+                    {renderCharacteristic(Icons.heating, "Цена договорная", property.saleFeatures.priceNegotiable ? "Да" : "Нет")}
                 </>
             )}
         </div>
@@ -260,7 +214,6 @@ function CharacteristicsList({ property }: { property: PostData }) {
 }
 
 function Characteristic({ icon, label, value }: { icon: React.ReactNode; label: string; value: any }) {
-    if (value === undefined || value === null) return null;
     return (
         <div className="flex items-center text-gray-700">
             {icon}
@@ -270,7 +223,6 @@ function Characteristic({ icon, label, value }: { icon: React.ReactNode; label: 
 }
 
 function PriceBox({ property, createdAt, updatedAt, isFavorite }: { property: PostData; createdAt: Date | null; updatedAt: Date | null; isFavorite: boolean }) {
-
     return (
         <div className="bg-gradient-to-br from-white via-gray-100 to-gray-200 p-8 shadow-lg rounded-xl mb-6">
             <div className="flex items-center justify-between mb-6">
@@ -286,8 +238,8 @@ function PriceBox({ property, createdAt, updatedAt, isFavorite }: { property: Po
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <FavoriteButton isFavorite={isFavorite} id={property.id!}/>
-                    <ShareButton title={property.title}/>
+                    <FavoriteButton isFavorite={isFavorite} id={property.id!} />
+                    <ShareButton title={property.title} />
                 </div>
             </div>
             <p className="text-5xl font-bold text-gray-900 mb-4">{property.price.toLocaleString()} ₽</p>
