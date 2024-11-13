@@ -8,7 +8,8 @@ import {
     RentalTerm,
     UtilitiesPayment,
     BuildingType,
-    RenovationState
+    RenovationState,
+    ReservationStatus
 } from '@prisma/client';
 
 // Интерфейс для данных бронирования (ReservationData)
@@ -20,7 +21,7 @@ export interface ReservationData {
     postId: string;
     userId: string;
     createdAt?: Date;
-    status?: string;  // Возможные статусы: "PENDING", "CONFIRMED", "CANCELLED"
+    status?: ReservationStatus;  // Возможные статусы: "PENDING", "CONFIRMED", "CANCELLED"
 
     // Связанные данные: минимальные данные о недвижимости и пользователе
     post?: {
@@ -30,6 +31,7 @@ export interface ReservationData {
         imageUrls: string[];
         address: string;
         city: string;
+        description?: string | null;
     } | null;
 
     user?: {
@@ -183,6 +185,7 @@ export interface PostData {
 
 // Фильтры для поиска недвижимости
 export interface PropertyFilters {
+    userId?: string;
     type?: 'SALE' | 'RENT';  // Тип сделки
     propertyType?: 'APARTMENT' | 'HOUSE' | 'LAND_PLOT'; // Тип недвижимости
     searchQuery?: string;    // Поиск по ключевым словам

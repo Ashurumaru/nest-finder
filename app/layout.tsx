@@ -13,7 +13,7 @@ import React from "react";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Real Estate App",
+  title: "Nest-finder",
   description: "Find your dream home",
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
       <html lang="ru" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
-      <NextTopLoader showSpinner={false} />
+      <NextTopLoader showSpinner={true} />
       <SessionProvider>
         <Header />
         <main className="flex-grow">{children}</main>

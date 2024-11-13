@@ -1,85 +1,57 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { useDropzone, Accept } from "react-dropzone";
-import { IoCloudUploadOutline } from "react-icons/io5";
+import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
+import { IoCloudUploadOutline } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
-import RadialProgress from "@/components/ui/progress";
-import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
 
 interface UploadImageProps {
     onUploadComplete?: (urls: string[]) => void;
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({ onUploadComplete }) => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [progress, setProgress] = useState<number>(0);
     const [uploadedImagePaths, setUploadedImagePaths] = useState<string[]>([]);
 
-    const handleImageUpload = async (image: File) => {
-        setLoading(true);
-        try {
-            const url = await uploadImageToCloudinary(image, (progressEvent) => {
-                if (progressEvent.total) {
-                    const percentage = Math.round(
-                        (progressEvent.loaded * 100) / progressEvent.total
-                    );
-                    setProgress(percentage);
-                }
+    const handleUploadSuccess = (result: any) => {
+        if (result.event === "success" && result.info.secure_url) {
+            const imageUrl = result.info.secure_url;
+            setUploadedImagePaths((prevPaths) => {
+                const updatedPaths = [...prevPaths, imageUrl];
+                onUploadComplete?.(updatedPaths);
+                return updatedPaths;
             });
-            setUploadedImagePaths((prev) => [...prev, url]);
-            if (onUploadComplete) {
-                onUploadComplete([...uploadedImagePaths, url]);
-            }
-        } catch (error) {
-            console.error("Error uploading image:", error);
-        } finally {
-            setLoading(false);
-            setProgress(0);
         }
     };
-
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        acceptedFiles.forEach((file) => {
-            handleImageUpload(file);
-        });
-    }, [uploadedImagePaths]);
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: {
-            "image/jpeg": [],
-            "image/png": [],
-        } as Accept,
-        multiple: true,
-    });
 
     const removeImage = (index: number) => {
         const updatedPaths = uploadedImagePaths.filter((_, i) => i !== index);
         setUploadedImagePaths(updatedPaths);
-        if (onUploadComplete) onUploadComplete(updatedPaths);
+        onUploadComplete?.(updatedPaths);
     };
 
     return (
         <div className="space-y-4">
-            <div
-                {...getRootProps()}
-                className={`flex items-center justify-center p-6 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 ${
-                    isDragActive ? "border-blue-500" : "border-gray-300"
-                }`}
+            <CldUploadWidget
+                onUpload={handleUploadSuccess}
+                uploadPreset="property_photos"
+                options={{
+                    maxFiles: 5,
+                    multiple: true,
+                    resourceType: "image",
+                    clientAllowedFormats: ["jpeg", "png", "jpg"],
+                }}
             >
-                <input {...getInputProps()} />
-                <IoCloudUploadOutline size="2em" />
-                <p className="ml-2">Drag & drop images here, or click to select</p>
-            </div>
-
-            {loading && (
-                <div className="flex items-center space-x-2">
-                    <RadialProgress progress={progress} />
-                    <span>Uploading...</span>
-                </div>
-            )}
+                {({ open }) => (
+                    <div
+                        onClick={() => open?.()} // Ensure 'open' is defined before calling
+                        className="relative cursor-pointer border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
+                    >
+                        <IoCloudUploadOutline size="2.5em" />
+                        <span className="font-medium">Нажмите для загрузки изображений</span>
+                    </div>
+                )}
+            </CldUploadWidget>
 
             <div className="grid grid-cols-3 gap-4">
                 {uploadedImagePaths.map((url, index) => (
@@ -89,7 +61,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onUploadComplete }) => {
                             alt={`Uploaded image ${index + 1}`}
                             width={150}
                             height={150}
-                            className="object-cover rounded-md"
+                            className="object-cover rounded-md shadow-lg"
                         />
                         <Button
                             size="sm"

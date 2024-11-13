@@ -19,7 +19,7 @@ export default function ProfileClient({ user }: { user: any }) {
     // При загрузке компонента проверяем фрагмент URL
     useEffect(() => {
         const hash = window.location.hash.replace('#', '');
-        if (hash && ["account", "my-properties", "favorites"].includes(hash)) {
+        if (hash && ["account", "my-properties", "favorites", "booked-properties"].includes(hash)) {
             setSelectedMenu(hash);
         }
     }, []);
@@ -36,9 +36,7 @@ export default function ProfileClient({ user }: { user: any }) {
 
     return (
         <section className="min-h-screen bg-gray-100 p-4 md:p-6">
-            <div
-                className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 items-start"> {/* Добавлено items-start для выравнивания */}
-                {/* Сайдбар */}
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 items-start">
                 <aside className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
                     <div className="flex flex-col items-center mb-6">
                         <Image
@@ -71,7 +69,6 @@ export default function ProfileClient({ user }: { user: any }) {
                     </ul>
                 </aside>
 
-                {/* Основной контент */}
                 <main className="w-full md:w-3/4 bg-white p-4 md:p-6 rounded-lg shadow-md flex-grow">
                     {menuItems.find((item) => item.key === selectedMenu)?.content}
                 </main>

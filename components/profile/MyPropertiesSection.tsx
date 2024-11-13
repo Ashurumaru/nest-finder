@@ -3,85 +3,126 @@
 import { useEffect, useState } from 'react';
 import { PostData } from '@/types/propertyTypes';
 import ProfilePropertyCard from "@/components/property/ProfilePropertyCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { fetchProperties } from "@/services/propertyService";
+import LeasedPropertyCard from "@/components/property/LeasedPropertyCard";
 
 interface MyPropertiesSectionProps {
     userId: string;
 }
 
 export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps) {
-    const [properties, setProperties] = useState<PostData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [saleProperties, setSaleProperties] = useState<PostData[]>([]);
+    const [leasedProperties, setLeasedProperties] = useState<PostData[]>([]);
+    const [loading, setLoading] = useState({ sale: true, lease: true });
+    const [errors, setErrors] = useState<{ sale: string | null; lease: string | null }>({ sale: null, lease: null });
 
     useEffect(() => {
-        const fetchProperties = async () => {
+        const fetchAllProperties = async () => {
+            console.log("Начало загрузки данных о недвижимости");
+
             try {
-                const response = await fetch(`/api/properties?userId=${userId}`);
-                if (!response.ok) {
-                    throw new Error('Ошибка при загрузке недвижимости');
-                }
-                const data = await response.json();
-                setProperties(data);
-            } catch (err) {
-                if (err instanceof Error) {
-                    setError(err.message);
+                setLoading({ sale: true, lease: true });
+                setErrors({ sale: null, lease: null });
+
+                const [saleData, leaseData] = await Promise.all([
+                    fetchProperties({ userId, type: 'SALE' }),
+                    fetchProperties({ userId, type: 'RENT' }),
+                ]);
+
+                console.log("Успешно загружено:", {
+                    sale: saleData.length,
+                    lease: leaseData.length,
+                });
+
+                setSaleProperties(saleData);
+                setLeasedProperties(leaseData);
+            } catch (error) {
+                console.error("Ошибка при загрузке данных о недвижимости:", error);
+                if (error instanceof Error) {
+                    setErrors({
+                        sale: error.message.includes("SALE") ? error.message : errors.sale,
+                        lease: error.message.includes("RENT") ? error.message : errors.lease,
+                    });
                 } else {
-                    setError('Неизвестная ошибка');
+                    setErrors({ sale: "Неизвестная ошибка", lease: "Неизвестная ошибка" });
                 }
             } finally {
-                setLoading(false);
+                setLoading({ sale: false, lease: false });
+                console.log("Завершение загрузки данных о недвижимости");
             }
         };
 
-        fetchProperties();
+        fetchAllProperties();
     }, [userId]);
 
     const handleDeleteProperty = async (propertyId: string) => {
         try {
-            const response = await fetch(`/api/properties/${propertyId}`, {
-                method: 'DELETE',
-            });
+            console.log(`Удаление недвижимости с ID: ${propertyId}`);
+            const response = await fetch(`/api/properties/${propertyId}`, { method: 'DELETE' });
 
-            if (!response.ok) {
-                throw new Error('Ошибка при удалении недвижимости');
-            }
+            if (!response.ok) throw new Error('Ошибка при удалении недвижимости');
 
-            // Убираем удалённую недвижимость из списка
-            setProperties(prevProperties =>
-                prevProperties.filter(property => property.id !== propertyId)
-            );
-
+            setSaleProperties(prev => prev.filter(property => property.id !== propertyId));
+            setLeasedProperties(prev => prev.filter(property => property.id !== propertyId));
             console.log(`Недвижимость с ID ${propertyId} успешно удалена`);
-        } catch (err) {
-            console.error('Ошибка при удалении недвижимости:', err);
+        } catch (error) {
+            console.error('Ошибка при удалении недвижимости:', error);
         }
     };
-
-    if (loading) {
-        return <p>Загрузка недвижимости...</p>;
-    }
-
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
-    }
-
-    if (properties.length === 0) {
-        return <p>У вас нет выложенной недвижимости.</p>;
-    }
 
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Моя недвижимость</h2>
-            <div className="space-y-4">
-                {properties.map((property) => (
-                    <ProfilePropertyCard
-                        key={property.id}
-                        property={property}
-                        isOwnProperty={true}
-                        onDelete={handleDeleteProperty}
-                    />
-                ))}
-            </div>
+            <Tabs defaultValue="sale">
+                <TabsList className="mb-4">
+                    <TabsTrigger value="sale">Продаваемая</TabsTrigger>
+                    <TabsTrigger value="rent">Сдаваемая в аренду</TabsTrigger>
+                </TabsList>
+
+                {/* Вкладка для продаваемой недвижимости */}
+                <TabsContent value="sale">
+                    {loading.sale ? (
+                        <p>Загрузка продаваемой недвижимости...</p>
+                    ) : errors.sale ? (
+                        <p className="text-red-500">{errors.sale}</p>
+                    ) : saleProperties.length === 0 ? (
+                        <p>У вас нет продаваемой недвижимости.</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {saleProperties.map((property) => (
+                                <ProfilePropertyCard
+                                    key={property.id}
+                                    property={property}
+                                    isOwnProperty={true}
+                                    onDelete={handleDeleteProperty}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </TabsContent>
+
+                {/* Вкладка для сдаваемой в аренду недвижимости */}
+                <TabsContent value="rent">
+                    {loading.lease ? (
+                        <p>Загрузка сдаваемой в аренду недвижимости...</p>
+                    ) : errors.lease ? (
+                        <p className="text-red-500">{errors.lease}</p>
+                    ) : leasedProperties.length === 0 ? (
+                        <p>У вас нет сдаваемой в аренду недвижимости.</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {leasedProperties.map((property) => (
+                                <LeasedPropertyCard
+                                    key={property.id}
+                                    property={property}
+                                    onDelete={handleDeleteProperty}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

@@ -1241,23 +1241,21 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                         )}
 
                         {currentStep === 3 && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="imageUrls"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Фотографии</FormLabel>
-                                            <FormControl>
-                                                <UploadImage
-                                                    onUploadComplete={(urls) => field.onChange(urls)}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
+                            <FormField
+                                control={form.control}
+                                name="imageUrls"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Фотографии</FormLabel>
+                                        <FormControl>
+                                            <UploadImage
+                                                onUploadComplete={(urls) => field.onChange(urls)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         )}
 
                         {currentStep === 4 && (

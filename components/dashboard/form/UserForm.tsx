@@ -33,7 +33,7 @@ const formSchema = z.object({
     surname: z.string().optional(),
     email: z.string().email({ message: 'Invalid email address' }),
     phoneNumber: z.string().optional(),
-    role: z.enum(['user', 'admin'], { message: 'Please select a valid role' }),
+    role: z.enum(['USER', 'ADMIN'], { message: 'Please select a valid role' }),
     image: z.string().url().optional(),
 });
 
@@ -73,7 +73,7 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
             surname: initialData.surname ?? undefined,
             email: initialData.email,
             phoneNumber: initialData.phoneNumber ?? undefined,
-            role: initialData.role as 'user' | 'admin',
+            role: initialData.role as 'USER' | 'ADMIN',
             image: initialData.image ?? undefined,
         }
         : {
@@ -81,7 +81,7 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
             surname: undefined,
             email: '',
             phoneNumber: undefined,
-            role: 'user',
+            role: 'USER',
             image: undefined,
         };
 
@@ -255,8 +255,8 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="user">User</SelectItem>
-                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="USER">User</SelectItem>
+                                            <SelectItem value="ADMIN">Admin</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
