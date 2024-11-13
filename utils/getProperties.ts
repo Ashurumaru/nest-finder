@@ -2,9 +2,7 @@ import prisma from "@/prisma/prisma";
 import { PropertyDB, PropertyFilters } from "@/types/propertyTypes";
 
 export async function getProperties(filters: PropertyFilters = {}): Promise<PropertyDB[]> {
-    const { searchQuery, type, propertyType, minPrice, maxPrice, minBedrooms, maxBedrooms } = filters;
-
-    console.log('Received Filters:', filters);
+    const { userId, searchQuery, type, propertyType, minPrice, maxPrice, minBedrooms, maxBedrooms } = filters;
 
     const whereClause: any = {
         isArchive: false,
@@ -15,6 +13,7 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
                 { title: { contains: searchQuery, mode: 'insensitive' } },
             ],
         }),
+        ...(userId && { userId }),
         ...(type && { type }),
         ...(propertyType && { property: propertyType }),
         ...(minPrice || maxPrice ? { price: { gte: minPrice ?? 0, lte: maxPrice } } : {}),
@@ -50,10 +49,19 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
             landPlot: true,
             rentalFeatures: true,
             saleFeatures: true,
+            reservations: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                },
+            },
         },
     });
-
-    console.log('Found Properties:', properties.length);
 
     return properties.map((property) => ({
         id: property.id,
@@ -163,5 +171,21 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Prop
         updatedAt: property.updatedAt ? new Date(property.updatedAt) : undefined,
         views: property.views ?? 0,
         userId: property.userId,
+
+        reservations: property.reservations?.map((reservation) => ({
+            id: reservation.id,
+            startDate: reservation.startDate,
+            endDate: reservation.endDate,
+            totalPrice: reservation.totalPrice.toNumber(),
+            postId: reservation.postId,
+            userId: reservation.userId,
+            createdAt: reservation.createdAt,
+            status: reservation.status,
+            user: {
+                id: reservation.user.id,
+                name: reservation.user.name,
+                email: reservation.user.email,
+            },
+        })) ?? [],
     }));
 }

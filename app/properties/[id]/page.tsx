@@ -33,6 +33,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
         const formattedReservations = reservations.map(reservation => ({
             startDate: new Date(reservation.startDate).toISOString(),
             endDate: new Date(reservation.endDate).toISOString(),
+            status: reservation.status || "PENDING",
         }));
 
         return (
@@ -46,7 +47,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
                         createdAt={createdAt}
                         updatedAt={updatedAt}
                         isFavorite={isFavorite}
-                        reservations={formattedReservations}
+                        reservations={formattedReservations} // Pass 'formattedReservations' with 'status'
                     />
                 </div>
             </div>
@@ -108,7 +109,7 @@ function Sidebar({
     createdAt: Date | null;
     updatedAt: Date | null;
     isFavorite: boolean;
-    reservations: Array<{ startDate: string; endDate: string }>;
+    reservations: Array<{ startDate: string; endDate: string; status: string }>; // Updated to include 'status'
 }) {
     return (
         <div className="sticky top-20">

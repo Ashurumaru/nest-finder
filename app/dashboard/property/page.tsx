@@ -19,7 +19,6 @@ async function fetchProperties(): Promise<PropertyDB[]> {
 
         return await res.json();
     } catch (error) {
-        console.error(error);
         return [];
     }
 }

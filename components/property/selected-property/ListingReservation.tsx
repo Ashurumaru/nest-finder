@@ -1,3 +1,5 @@
+// ListingReservation.tsx
+
 'use client';
 
 import { Range } from 'react-date-range';
@@ -12,7 +14,7 @@ import { createReservation } from '@/services/propertyService';
 interface ListingReservationProps {
     price: number;
     postId: string;
-    reservations: Array<{ startDate: string; endDate: string }>;
+    reservations: Array<{ startDate: string; endDate: string; status: string }>;
 }
 
 const initialDateRange: Range = {
@@ -27,15 +29,17 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, postId, 
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const disabledDates = reservations.flatMap((reservation) => {
-        const start = startOfDay(new Date(reservation.startDate));
-        const end = endOfDay(new Date(reservation.endDate));
-        const dates = [];
-        for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-            dates.push(new Date(date));
-        }
-        return dates;
-    });
+    const disabledDates = reservations
+        .filter(reservation => reservation.status !== 'CANCELLED')
+        .flatMap(reservation => {
+            const start = startOfDay(new Date(reservation.startDate));
+            const end = endOfDay(new Date(reservation.endDate));
+            const dates = [];
+            for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+                dates.push(new Date(date));
+            }
+            return dates;
+        });
 
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {

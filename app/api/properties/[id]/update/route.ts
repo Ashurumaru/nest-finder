@@ -297,7 +297,6 @@ export async function PUT(
             );
         }
 
-        console.error('Ошибка при обновлении недвижимости:', error);
         return NextResponse.json(
             { message: 'Ошибка при обновлении недвижимости' },
             { status: 500 }

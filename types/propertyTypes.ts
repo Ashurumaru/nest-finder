@@ -64,6 +64,7 @@ export interface PropertyDB {
     house?: HouseDB | null;
     landPlot?: LandPlotDB | null;
 
+    reservations?: ReservationData[];
     rentalFeatures?: RentalFeaturesDB | null;
     saleFeatures?: SaleFeaturesDB | null;
 }
@@ -169,6 +170,7 @@ export interface PostData {
     landPlot?: LandPlotDB | null;
     rentalFeatures?: RentalFeaturesDB | null;
     saleFeatures?: SaleFeaturesDB | null;
+    reservations?: ReservationData[];
 
     createdAt?: Date | null;
     updatedAt?: Date | null;

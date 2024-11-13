@@ -1,7 +1,8 @@
 // services/propertyService.ts
 import {PostData, ReservationData} from "@/types/propertyTypes";
+import {ReservationStatus} from "@prisma/client";
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.API_URL || "";
 
 // Функция для получения данных конкретной недвижимости по её ID
 export async function fetchProperty(id: string): Promise<PostData | null> {
@@ -21,29 +22,21 @@ export async function fetchProperty(id: string): Promise<PostData | null> {
 
 // Функция для получения данных о недвижимости
 export async function fetchProperties(filters?: { userId?: string; type?: 'SALE' | 'RENT' }): Promise<PostData[]> {
-    const url = new URL(`${API_URL}/api/properties`);
-
-    // Логгирование входных данных
-    console.log("Запрос на получение недвижимости начат с фильтрами:", filters);
-
+    const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
+    // const url = new URL(`http://localhost:3000/api/properties/`);
     if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined) {
                 url.searchParams.append(key, String(value));
-                console.log(`Добавлен параметр запроса: ${key} = ${value}`);
             }
         });
     }
 
     try {
-        console.log("Формирование запроса по URL:", url.toString());
-
         const res = await fetch(url.toString(), {
             method: 'GET',
             cache: 'no-store',
         });
-
-        console.log("Ответ сервера получен со статусом:", res.status);
 
         if (!res.ok) {
             const errorData = await res.json();
@@ -51,9 +44,7 @@ export async function fetchProperties(filters?: { userId?: string; type?: 'SALE'
             throw new Error(errorData.message || 'Ошибка при получении недвижимости');
         }
 
-        const data = await res.json();
-        console.log("Успешно получены данные недвижимости:", data);
-        return data;
+        return await res.json();
     } catch (error) {
         console.error('Ошибка при запросе fetchProperties:', error);
         throw error;
@@ -77,6 +68,7 @@ export async function fetchReservations(filters?: {
     future?: boolean;
     current?: boolean;
     past?: boolean;
+    status?: ReservationStatus;
 }): Promise<ReservationData[]> {
     const url = new URL(`${API_URL}/api/reservations`);
     if (filters) {
@@ -139,6 +131,16 @@ export async function createReservation(data: CreateReservationParams): Promise<
         throw new Error(errorData.message || 'Ошибка при создании бронирования');
     }
 
+    return res.json();
+}
+
+export async function updateReservationStatus(id: string, status: ReservationStatus) {
+    const res = await fetch(`/api/reservations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error("Ошибка при обновлении статуса.");
     return res.json();
 }
 

@@ -3,30 +3,30 @@ import { NextResponse } from 'next/server';
 import { auth } from "@/auth";
 import prisma from '@/prisma/prisma';
 import { startOfDay, endOfDay, isAfter, isBefore, isSameDay } from 'date-fns';
+import {ReservationStatus} from "@prisma/client";
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const postId = url.searchParams.get('postId');
     const userId = url.searchParams.get('userId');
+    const status = url.searchParams.get('status') as ReservationStatus | null;
     const future = url.searchParams.get('future') === 'true';
     const current = url.searchParams.get('current') === 'true';
     const past = url.searchParams.get('past') === 'true';
 
-    // Проверяем, является ли пользователь администратором
     const session = await auth();
     const isAdmin = session?.user?.role === 'ADMIN';
 
     try {
         const today = new Date();
-        let whereClause: any = {};
+        let whereClause: any = { };
 
         if (postId) whereClause.postId = postId;
+        if (status) whereClause.status = status;
 
-        // Если пользователь – администратор, разрешаем использовать фильтр по userId
         if (userId && isAdmin) {
             whereClause.userId = userId;
         } else if (session) {
-            // Если пользователь авторизован, фильтруем по userId текущего пользователя
             whereClause.userId = session.user?.id;
         }
 
