@@ -21,9 +21,10 @@ export const TRANSLATIONS = {
         OTHER: "Другое"
     },
     RenovationState: {
+        NO_RENOVATION: "Нет ремонта",
         COSMETIC: "Косметический ремонт",
         EURO: "Евроремонт",
-        DESIGNER: "Дизайнерский ремонт"
+        DESIGNER: "Дизайнерский ремонт",
     },
     HeatingType: {
         NONE: "Отсутствует",

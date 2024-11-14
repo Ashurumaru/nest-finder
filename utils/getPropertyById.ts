@@ -1,4 +1,3 @@
-import {PropertyFormValues} from "@/components/property/create-property/CreateUpdateProperty";
 import prisma from "@/prisma/prisma";
 
 export async function getPropertyById(id: string) {
@@ -16,7 +15,7 @@ export async function getPropertyById(id: string) {
 
     if (!property) return null;
 
-    const parsedProperty: PropertyFormValues = {
+    return {
         id: property.id,
         title: property.title,
         price: property.price.toString(),
@@ -111,6 +110,4 @@ export async function getPropertyById(id: string) {
             }
             : undefined,
     };
-
-    return parsedProperty;
 }

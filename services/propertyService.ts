@@ -1,10 +1,26 @@
 // services/propertyService.ts
-import {PostData, ReservationData} from "@/types/propertyTypes";
+import {PostData, PropertyDB, ReservationData} from "@/types/propertyTypes";
 import {ReservationStatus} from "@prisma/client";
+import {PropertyFormValues} from "@/components/property/create-property/CreateUpdateProperty";
 
 const API_URL = process.env.API_URL || "";
 
 // Функция для получения данных конкретной недвижимости по её ID
+export async function fetchPropertyData(id: string): Promise<PropertyFormValues | null> {
+    const res = await fetch(`${API_URL}/api/properties/${id}`, {
+        method: 'GET',
+        cache: 'no-store',
+    });
+
+    if (res.status === 404) return null;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Ошибка при получении данных недвижимости');
+    }
+
+    return res.json();
+}
+
 export async function fetchProperty(id: string): Promise<PostData | null> {
     const res = await fetch(`${API_URL}/api/properties/${id}`, {
         method: 'GET',
@@ -22,8 +38,8 @@ export async function fetchProperty(id: string): Promise<PostData | null> {
 
 // Функция для получения данных о недвижимости
 export async function fetchProperties(filters?: { userId?: string; type?: 'SALE' | 'RENT' }): Promise<PostData[]> {
-    const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
-    // const url = new URL(`http://localhost:3000/api/properties/`);
+    //const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
+    const url = new URL(`http://localhost:3000/api/properties/`);
     if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined) {
@@ -52,6 +68,36 @@ export async function fetchProperties(filters?: { userId?: string; type?: 'SALE'
 }
 
 
+export async function createProperty(data: PropertyFormValues): Promise<PropertyFormValues> {
+    const res = await fetch(`${API_URL}/api/properties`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Ошибка при создании объявления');
+    }
+
+    return res.json();
+}
+
+// Функция для обновления объявления недвижимости
+export async function updateProperty(id: string, data: PropertyFormValues): Promise<PropertyFormValues> {
+    const res = await fetch(`${API_URL}/api/properties/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Ошибка при обновлении объявления');
+    }
+
+    return res.json();
+}
 
 // Функция для проверки, является ли объект избранным
 export async function fetchIsFavorite(id: string): Promise<boolean> {

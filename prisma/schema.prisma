@@ -290,6 +290,7 @@ enum BuildingType {
 }
 
 enum RenovationState {
+  NO_RENOVATION
   COSMETIC
   EURO
   DESIGNER

@@ -3,7 +3,6 @@
 
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, Path } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { propertySchema } from '@/lib/propertySchema';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -32,6 +31,7 @@ import UploadImage from "@/components/property/create-property/UploadImage";
 import AddressInput from "@/components/property/create-property/AddressInput";
 import MapWithMarker from "@/components/property/create-property/MapWithMarker";
 import {extractCityFromAddress} from "@/utils/extractText";
+import {createProperty, updateProperty} from "@/services/propertyService";
 
 export type PropertyFormValues = z.infer<typeof propertySchema> & { id?: string };
 type FieldName = Path<PropertyFormValues>;
@@ -214,18 +214,9 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
         console.log("Отправка формы началась:", data);
         try {
             if (initialData && initialData.id) {
-                await fetch(`/api/properties/${initialData.id}/update`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
+                await updateProperty(initialData.id, data);
             } else {
-                console.log("отправка...")
-                await fetch('/api/properties/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
+                await createProperty(data);
             }
             router.push('/');
         } catch (error) {
@@ -1419,14 +1410,24 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                                                             type="date"
                                                             placeholder="Введите дату доступности"
                                                             {...field}
-                                                            value={field.value ? field.value.toISOString().substring(0, 10) : ''}
-                                                            onChange={(e) => field.onChange(new Date(e.target.value))}
+                                                            value={
+                                                                field.value instanceof Date && !isNaN(field.value.getTime())
+                                                                    ? field.value.toISOString().substring(0, 10)
+                                                                    : ''
+                                                            }
+                                                            onChange={(e) => {
+                                                                const dateValue = new Date(e.target.value);
+                                                                if (!isNaN(dateValue.getTime())) {
+                                                                    field.onChange(dateValue); // Передаём объект Date
+                                                                }
+                                                            }}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
+
 
                                         <FormField
                                             control={form.control}
@@ -1513,8 +1514,17 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
                                                             type="date"
                                                             placeholder="Введите дату доступности"
                                                             {...field}
-                                                            value={field.value ? field.value.toISOString().substring(0, 10) : ''}
-                                                            onChange={(e) => field.onChange(new Date(e.target.value))}
+                                                            value={
+                                                                field.value instanceof Date && !isNaN(field.value.getTime())
+                                                                    ? field.value.toISOString().substring(0, 10)
+                                                                    : ''
+                                                            }
+                                                            onChange={(e) => {
+                                                                const dateValue = new Date(e.target.value);
+                                                                if (!isNaN(dateValue.getTime())) {
+                                                                    field.onChange(dateValue);
+                                                                }
+                                                            }}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
