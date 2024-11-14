@@ -38,8 +38,8 @@ export async function fetchProperty(id: string): Promise<PostData | null> {
 
 // Функция для получения данных о недвижимости
 export async function fetchProperties(filters?: { userId?: string; type?: 'SALE' | 'RENT' }): Promise<PostData[]> {
-    //const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
-    const url = new URL(`http://localhost:3000/api/properties/`);
+    const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
+    //const url = new URL(`http://localhost:3000/api/properties/`);
     if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined) {
