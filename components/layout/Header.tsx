@@ -17,13 +17,27 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton'; // Подключаем Skeleton компонент
 
 const Header = () => {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
   if (status === 'loading') {
-    return <p>Загрузка...</p>;
+    // Возвращаем скелетон-загрузку, пока данные не подгрузились
+    return (
+        <header className="bg-white shadow-md">
+          <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <Skeleton className="h-8 w-32" /> {/* Скелетон для логотипа */}
+            <div className="flex-shrink-0">
+              <Skeleton className="h-8 w-8" />
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <Skeleton className="h-6 w-24" />
+            </div>
+          </nav>
+        </header>
+    );
   }
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -82,7 +96,6 @@ const Header = () => {
                       <DropdownMenuGroup>
                         <DropdownMenuItem>
                           <Link href="/profile">Профиль</Link>
-                          <DropdownMenuShortcut></DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Link href="/properties/create">Добавить недвижимость</Link>
@@ -96,7 +109,6 @@ const Header = () => {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => signOut()}>
                         Выйти
-                        <DropdownMenuShortcut></DropdownMenuShortcut>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -125,8 +137,9 @@ const Header = () => {
           </div>
         </nav>
 
+        {/* Мобильное меню с плавным появлением */}
         {menuOpen && (
-            <div className="md:hidden">
+            <div className="md:hidden transition-all duration-300 ease-in-out">
               <div className="px-4 pt-2 pb-4 space-y-4 bg-white border-t border-gray-200">
                 <ul className="space-y-2">
                   <li>
