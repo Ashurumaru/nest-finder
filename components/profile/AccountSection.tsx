@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Image  from 'next/image';
+import Image from 'next/image';
+import { fetchUserById, updateUser } from '@/services/propertyService';
+
 export default function AccountSection({ userId }: { userId: string }) {
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
@@ -17,30 +19,33 @@ export default function AccountSection({ userId }: { userId: string }) {
     const [isFetching, setIsFetching] = useState<boolean>(true);
 
     useEffect(() => {
-        // Загружаем данные пользователя при монтировании компонента
-        const fetchUserData = async () => {
+        const fetchUserDataFromService = async () => {
+            if (!userId) {
+                setError('User ID is missing');
+                return;
+            }
+
             try {
-                const response = await fetch(`/api/user/${userId}`);
-                if (!response.ok) {
-                    throw new Error('Ошибка при загрузке данных пользователя');
-                }
-                const userData = await response.json();
-                setName(userData.name);
-                setSurname(userData.surname);
-                setEmail(userData.email);
-                setPhone(userData.phoneNumber); // Устанавливаем текущий номер телефона
+                const userData = await fetchUserById(userId);
+                setName(userData.name || '');
+                setSurname(userData.surname || '');
+                setEmail(userData.email || '');
+                setPhone(userData.phoneNumber || '');
                 if (userData.image) {
-                    setImage(userData.image); // Устанавливаем текущий аватар
+                    setImage(userData.image);
                 }
             } catch (err) {
-                setError('Не удалось загрузить данные профиля');
+                const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+                setError(`Не удалось загрузить данные профиля: ${errorMessage}`);
             } finally {
-                setIsFetching(false); // Отключаем состояние загрузки
+                setIsFetching(false);
             }
         };
 
-        fetchUserData();
+        fetchUserDataFromService();
     }, [userId]);
+
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,16 +54,14 @@ export default function AccountSection({ userId }: { userId: string }) {
         setError('');
 
         try {
-            const response = await fetch('/api/user/update', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, surname, email, phoneNumber, password, image, userId }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка при обновлении профиля');
-            }
-
+            const updatedUser = await updateUser(userId, {
+                name,
+                surname,
+                email,
+                phoneNumber,
+                password,
+                image
+            }); // Используем сервис для обновления данных
             setSuccess('Профиль успешно обновлён!');
         } catch (error) {
             setError('Не удалось обновить профиль');
@@ -72,7 +75,7 @@ export default function AccountSection({ userId }: { userId: string }) {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImage(reader.result as string); // Конвертируем файл в base64
+                setImage(reader.result as string);
             };
             reader.readAsDataURL(file);
         }

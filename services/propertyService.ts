@@ -1,9 +1,13 @@
-// services/propertyService.ts
-import {PostData, PropertyDB, ReservationData} from "@/types/propertyTypes";
-import {ReservationStatus} from "@prisma/client";
-import {PropertyFormValues} from "@/components/property/create-property/CreateUpdateProperty";
+import {User} from "@/types/userTypes";
 
-const API_URL = process.env.API_URL || "";
+const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'
+    ? 'https://nest-finder-diplom.vercel.app'
+    : 'http://localhost:3000';
+
+// services/propertyService.ts
+import { PostData, PropertyDB, ReservationData } from "@/types/propertyTypes";
+import { ReservationStatus } from "@prisma/client";
+import { PropertyFormValues } from "@/components/property/create-property/CreateUpdateProperty";
 
 // Функция для получения данных конкретной недвижимости по её ID
 export async function fetchPropertyData(id: string): Promise<PropertyFormValues | null> {
@@ -38,8 +42,7 @@ export async function fetchProperty(id: string): Promise<PostData | null> {
 
 // Функция для получения данных о недвижимости
 export async function fetchProperties(filters?: { userId?: string; type?: 'SALE' | 'RENT' }): Promise<PostData[]> {
-    const url = new URL(`https://nest-finder-diplom.vercel.app/api/properties/`);
-    //const url = new URL(`http://localhost:3000/api/properties/`);
+    const url = new URL(`${API_URL}/api/properties/`);
     if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined) {
@@ -66,7 +69,6 @@ export async function fetchProperties(filters?: { userId?: string; type?: 'SALE'
         throw error;
     }
 }
-
 
 export async function createProperty(data: PropertyFormValues): Promise<PropertyFormValues> {
     const res = await fetch(`${API_URL}/api/properties`, {
@@ -199,5 +201,50 @@ export async function deleteReservation(id: string): Promise<void> {
     if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || 'Ошибка при удалении бронирования');
+    }
+}
+
+// пример fetchUserById
+export async function fetchUserById(userId: string): Promise<User>  {
+    const res = await fetch(`/api/user/${userId}`);
+
+    if (!res.ok) {
+        throw new Error('Не удалось получить данные пользователя');
+    }
+
+    return res.json();
+};
+
+
+export async function updateUser(userId: string, userData: any) {
+    const res = await fetch(`${API_URL}/api/user/update`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...userData, userId }),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Ошибка при обновлении профиля');
+    }
+
+    return res.json();
+}
+
+export async function fetchUsers(): Promise<User[]> {
+    try {
+        const res = await fetch(`${process.env.API_URL}/api/user`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store',
+        });
+
+        if (!res.ok) {
+            throw new Error('Ошибка при получении данных пользователей');
+        }
+
+        return await res.json();
+    } catch (error) {
+        return [];
     }
 }

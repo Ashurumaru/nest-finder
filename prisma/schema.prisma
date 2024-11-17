@@ -193,12 +193,10 @@ model SavedPost {
 }
 
 model Chat {
-  id            String     @id @default(uuid())
-  seenByUserIds String[]
-  lastMessage   String?
-  createdAt     DateTime   @default(now())
-  messages      Message[]
-  users         ChatUser[]
+  id        String     @id @default(uuid())
+  createdAt DateTime   @default(now())
+  messages  Message[]
+  users     ChatUser[]
 }
 
 model ChatUser {
@@ -218,6 +216,7 @@ model Message {
   chat        Chat     @relation(fields: [chatId], references: [id])
   chatId      String
   sentAt      DateTime @default(now())
+  read        Boolean  @default(false)
 }
 
 model Account {

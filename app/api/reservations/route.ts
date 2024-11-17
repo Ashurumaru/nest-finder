@@ -72,18 +72,18 @@ export async function POST(request: Request) {
     }
 
     try {
-        const existingReservations = await prisma.reservation.findMany({
-            where: {
-                postId,
-                OR: [
-                    { startDate: { lte: new Date(endDate) }, endDate: { gte: new Date(startDate) } },
-                ],
-            },
-        });
-
-        if (existingReservations.length > 0) {
-            return NextResponse.json({ message: 'Даты пересекаются с существующими бронированиями' }, { status: 409 });
-        }
+        // const existingReservations = await prisma.reservation.findMany({
+        //     where: {
+        //         postId,
+        //         OR: [
+        //             { startDate: { lte: new Date(endDate) }, endDate: { gte: new Date(startDate) } },
+        //         ],
+        //     },
+        // });
+        //
+        // if (existingReservations.length > 0) {
+        //     return NextResponse.json({ message: 'Даты пересекаются с существующими бронированиями' }, { status: 409 });
+        // }
 
         const reservation = await prisma.reservation.create({
             data: {

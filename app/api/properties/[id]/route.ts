@@ -15,6 +15,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
             landPlot: true,
             rentalFeatures: true,
             saleFeatures: true,
+            user: true,
         },
     });
 

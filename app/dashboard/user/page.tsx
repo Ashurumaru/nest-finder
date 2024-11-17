@@ -1,30 +1,9 @@
 import dynamic from 'next/dynamic';
-import { User } from '@/types/userTypes';
 import {DataTableBreadcrumbs} from "@/components/ui/data-table-breadcrumbs";
 import {UserClient} from "@/components/dashboard/tables/user-table/client";
+import {fetchUsers} from "@/services/propertyService";
 
 const PageContainer = dynamic(() => import('@/components/dashboard/layout/PageContainer'));
-
-async function fetchUsers(): Promise<User[]> {
-    try {
-        const res = await fetch(`${process.env.API_URL}/api/user`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            cache: 'no-store',
-        });
-
-        if (!res.ok) {
-            throw new Error('Ошибка при получении данных пользователей');
-        }
-
-        const users = await res.json();
-        return users;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-}
-
 
 export default async function UserPage() {
     const users = await fetchUsers();

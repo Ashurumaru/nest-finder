@@ -5,22 +5,27 @@ import prisma from '@/prisma/prisma';
 
 // Получение пользователя по ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
+    const { id } = params;
+
+    if (!id) {
+        throw new Error('ID пользователя не предоставлено');
+    }
+
     try {
         const user = await prisma.user.findUnique({
-            where: { id: params.id },
+            where: {
+                id: id, // Убедитесь, что здесь передается корректный ID
+            },
         });
 
         if (!user) {
-            return NextResponse.json({ message: 'User not found' }, { status: 404 });
+            throw new Error('Пользователь не найден');
         }
 
-        return NextResponse.json(user);
+        return new Response(JSON.stringify(user), { status: 200 });
     } catch (error) {
-        console.error('Ошибка при получении пользователя:', error);
-        return NextResponse.json(
-            { message: 'Error fetching user' },
-            { status: 500 }
-        );
+        console.error(error);
+        return new Response('Ошибка при получении пользователя', { status: 500 });
     }
 }
 
