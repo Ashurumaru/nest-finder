@@ -54,6 +54,8 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
         setValue,
     } = form;
 
+    const [imageUrls, setImageUrls] = useState<string[]>([]);
+
     const router = useRouter();
 
     const [currentStep, setCurrentStep] = useState(0);
@@ -74,6 +76,10 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
         setValue("city", extractCityFromAddress(address));
     };
 
+    const handleImageUpload = (urls: string[]) => {
+        setImageUrls(urls);
+        setValue("imageUrls", urls); //
+    };
 
     const steps = [
         {
@@ -1233,20 +1239,32 @@ const CreateOrUpdatePropertyForm: React.FC<CreateOrUpdatePropertyFormProps> = ({
 
                         {currentStep === 3 && (
                             <FormField
-                                control={form.control}
+                                control={control}
                                 name="imageUrls"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Фотографии</FormLabel>
                                         <FormControl>
-                                            <UploadImage
-                                                onUploadComplete={(urls) => field.onChange(urls)}
-                                            />
+                                            <UploadImage onUploadComplete={handleImageUpload} />
                                         </FormControl>
-                                        <FormMessage />
+                                        {/* Вывод загруженных изображений */}
+                                        <div className="mt-4">
+                                            {imageUrls.length > 0 ? (
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    {imageUrls.map((url, index) => (
+                                                        <div key={index} className="w-full">
+                                                            <img src={url} alt={`image-${index}`} className="w-full h-auto" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p>Здесь будут отображаться загруженные изображения.</p>
+                                            )}
+                                        </div>
                                     </FormItem>
                                 )}
                             />
+
                         )}
 
                         {currentStep === 4 && (

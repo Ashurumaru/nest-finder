@@ -74,6 +74,7 @@ export default function MyPropertiesSection({ userId }: MyPropertiesSectionProps
                         key={property.id}
                         property={property}
                         onDelete={handleDeleteProperty}
+                        currentUserId={userId}
                     />
                 )
             ))}

@@ -10,13 +10,11 @@ import FavoritesSection from './FavoritesSection';
 export default function ProfileClient({ user }: { user: any }) {
     const [selectedMenu, setSelectedMenu] = useState<string>("account");
 
-    // Функция для переключения вкладок и обновления фрагмента URL
     const handleMenuSelect = (key: string) => {
         setSelectedMenu(key);
         window.location.hash = key;
     };
 
-    // При загрузке компонента проверяем фрагмент URL
     useEffect(() => {
         const hash = window.location.hash.replace('#', '');
         if (hash && ["account", "my-properties", "favorites", "booked-properties"].includes(hash)) {

@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { createChat } from '@/services/ChatService';
 import { PostData } from '@/types/propertyTypes';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,25 +23,42 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { FaBed, FaBath, FaRulerCombined, FaMapMarkerAlt, FaEdit, FaTrash } from 'react-icons/fa';
 import { updateReservationStatus } from '@/services/propertyService';
 import {ReservationStatus} from "@prisma/client";
+import {useRouter} from "next/navigation";
 
 interface LeasedPropertyCardProps {
     property: PostData;
     onDelete: (id: string) => void;
+    currentUserId: string;
 }
 
 type TimeFilter = 'ALL' | 'CURRENT' | 'PAST';
 
-const LeasedPropertyCard: React.FC<LeasedPropertyCardProps> = ({ property, onDelete }) => {
+const LeasedPropertyCard: React.FC<LeasedPropertyCardProps> = ({ property, onDelete, currentUserId }) => {
     const [showReservations, setShowReservations] = useState(false);
     const [filterStatus, setFilterStatus] = useState<ReservationStatus | 'ALL'>('ALL');
     const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL');
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     const imageSrc = property.imageUrls?.[0] || '/images/default-property.jpg';
     const formattedPrice = property.price?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) || 'Н/Д';
 
     const confirmDelete = () => {
         if (property.id) onDelete(property.id);
+    };
+
+    const handleContact = async (recipientId: string | undefined) => {
+        try {
+            if (!recipientId) {
+                alert("Ошибка: ID получателя не найден.");
+                return;
+            }
+            const chatId = await createChat(currentUserId, recipientId);
+            router.push(`/chat/${chatId}`);
+        } catch (error) {
+            console.error("Ошибка при создании чата:", error);
+            alert("Не удалось создать чат. Попробуйте снова.");
+        }
     };
 
     const handleStatusUpdate = async (reservationId: string, status: ReservationStatus) => {
@@ -167,7 +185,7 @@ const LeasedPropertyCard: React.FC<LeasedPropertyCardProps> = ({ property, onDel
                                             <p><strong>Сумма:</strong> {reservation.totalPrice.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</p>
                                             <p><strong>Статус:</strong> <span className={`font-semibold ${reservation.status === 'CONFIRMED' ? 'text-green-600' : reservation.status === 'CANCELLED' ? 'text-red-600' : 'text-yellow-600'}`}>{reservation.status}</span></p>
                                             <div className="flex space-x-2 mt-3">
-                                                <Button variant="secondary">Связаться</Button>
+                                                <Button variant="secondary" onClick={() => handleContact(reservation.user?.id)}>Связаться</Button>
                                                 <Button variant="primary" onClick={() => handleStatusUpdate(reservation.id, 'CONFIRMED')}>Подтвердить</Button>
                                                 <Button variant="destructive" onClick={() => handleStatusUpdate(reservation.id, 'CANCELLED')}>Отменить</Button>
                                             </div>
