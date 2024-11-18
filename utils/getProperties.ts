@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import {PostData, PropertyDB, PropertyFilters} from "@/types/propertyTypes";
+import {PostData, PropertyFilters} from "@/types/propertyTypes";
 
 export async function getProperties(filters: PropertyFilters = {}): Promise<PostData[]> {
     const { userId, searchQuery, type, propertyType, minPrice, maxPrice, minBedrooms, maxBedrooms } = filters;
