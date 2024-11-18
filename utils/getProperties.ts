@@ -63,6 +63,7 @@ export async function getProperties(filters: PropertyFilters = {}): Promise<Post
         },
     });
 
+
     return properties.map((property) => ({
         id: property.id,
         title: property.title,
