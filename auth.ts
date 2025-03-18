@@ -28,23 +28,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           v: "5.131"
         }
       },
-      token: {
-        url: "https://oauth.vk.com/access_token"
-      },
-      userinfo: {
-        url: "https://api.vk.com/method/users.get",
-        params: {
-          fields: "email",
-          v: "5.131"
-        }
-      },
-      profile(profile) {
-        return {
-          id: profile.response?.[0]?.id.toString(),
-          name: profile.response?.[0]?.first_name + " " + profile.response?.[0]?.last_name,
-          email: profile.email,
-        };
-      },
       checks: ["none"]
     }),
     YandexProvider({
