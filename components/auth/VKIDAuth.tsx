@@ -13,7 +13,7 @@ export const VKIDAuth = ({ callbackUrl = '/profile' }: VKIDAuthProps) => {
     const router = useRouter();
 
     useEffect(() => {
-        // Динамически загружаем скрипт VK ID SDK
+        // Dynamically load VK ID SDK
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js';
         script.async = true;
@@ -22,9 +22,12 @@ export const VKIDAuth = ({ callbackUrl = '/profile' }: VKIDAuthProps) => {
             if ('VKIDSDK' in window) {
                 const VKID = (window as any).VKIDSDK;
 
+                // Important: This redirect URL should match what you've set up in NextAuth and VK developer cabinet
+                const redirectUrl = 'https://nest-finder-diplom.vercel.app/api/auth/callback/vk-id';
+
                 VKID.Config.init({
                     app: 53279730,
-                    redirectUrl: 'https://nest-finder-diplom.vercel.app/api/auth/vkid-callback',
+                    redirectUrl: redirectUrl,
                     responseMode: VKID.ConfigResponseMode.Callback,
                     source: VKID.ConfigSource.LOWCODE,
                     scope: '',
@@ -48,9 +51,12 @@ export const VKIDAuth = ({ callbackUrl = '/profile' }: VKIDAuthProps) => {
                             const code = payload.code;
                             const deviceId = payload.device_id;
 
-                            // Перенаправляем на наш API эндпоинт с кодом и deviceId
-                            const callbackUrlWithParams = `/api/auth/vkid-callback?code=${code}&device_id=${deviceId}&callbackUrl=${encodeURIComponent(callbackUrl)}`;
-                            router.push(callbackUrlWithParams);
+                            // Handle the redirect based on how your application is set up
+                            // If using custom route handler:
+                            router.push(`/api/auth/vkid-callback?code=${code}&device_id=${deviceId}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+
+                            // Alternative: If using NextAuth's built-in callback handling:
+                            // router.push(`/api/auth/callback/vk-id?code=${code}&state=${deviceId}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
                         });
                 }
             }

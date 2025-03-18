@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Обмен кода на токен
+        // Exchange code for token
         const tokenResponse = await fetch('https://api.vk.com/method/auth.exchangeCode', {
             method: 'POST',
             headers: {
@@ -35,21 +35,36 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(new URL(`/login?error=${tokenData.error.error_msg}`, request.url));
         }
 
-        // Получение информации о пользователе
+        // Get user information
         const accessToken = tokenData.response.access_token;
-        const userInfo = await fetch(`https://api.vk.com/method/users.get?access_token=${accessToken}&v=5.199`);
-        const userData = await userInfo.json();
+        const userResponse = await fetch(`https://api.vk.com/method/users.get?fields=photo_200&access_token=${accessToken}&v=5.199`);
+        const userData = await userResponse.json();
 
-        // Создаем сессию с помощью NextAuth
-        await signIn('vk-id', {
-            access_token: accessToken,
-            user: userData.response[0],
+        if (!userData.response || userData.response.length === 0) {
+            return NextResponse.redirect(new URL('/login?error=user_info_error', request.url));
+        }
+
+        const user = userData.response[0];
+
+        // Sign in with NextAuth
+        const result = await signIn('vk-id', {
             redirect: false,
+            // Pass user data
+            // Note: This approach depends on whether your NextAuth provider can accept this data
+            // You may need to adjust based on your NextAuth implementation
+            providerAccountId: user.id.toString(),
+            access_token: accessToken,
+            // Add any other required data
         });
 
+        if (result?.error) {
+            return NextResponse.redirect(new URL(`/login?error=${result.error}`, request.url));
+        }
+
         return NextResponse.redirect(new URL(callbackUrl, request.url));
-    } catch (error) {
+    } catch (error: any) {
         console.error('VK ID callback error:', error);
-        return NextResponse.redirect(new URL('/login?error=vkid_callback_error', request.url));
+        const errorMessage = error.message || 'vkid_callback_error';
+        return NextResponse.redirect(new URL(`/login?error=${errorMessage}`, request.url));
     }
 }
