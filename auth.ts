@@ -3,10 +3,9 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import prisma from './prisma/prisma';
-import vk from 'next-auth/providers/vk';
-import yandex from 'next-auth/providers/yandex';
-
+import VKProvider from "next-auth/providers/vk";
 import CredentialsProvider from 'next-auth/providers/credentials';
+import YandexProvider from 'next-auth/providers/yandex';
 import bcrypt from 'bcryptjs';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -15,10 +14,48 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   pages: {
     signIn: '/login',
+    error: '/auth/error',
   },
   providers: [
-    vk,
-    yandex,
+    VKProvider({
+      clientId: process.env.VK_ID,
+      clientSecret: process.env.VK_SECRET,
+      authorization: {
+        url: "https://oauth.vk.com/authorize",
+        params: {
+          scope: "email",
+          response_type: "code",
+          v: "5.131"
+        }
+      },
+      token: {
+        url: "https://oauth.vk.com/access_token"
+      },
+      userinfo: {
+        url: "https://api.vk.com/method/users.get",
+        params: {
+          fields: "photo_max,nickname,email",
+          v: "5.131"
+        }
+      },
+      profile(profile) {
+        return {
+          id: profile.response?.[0]?.id.toString(),
+          name: profile.response?.[0]?.first_name + " " + profile.response?.[0]?.last_name,
+          email: profile.email,
+          image: profile.response?.[0]?.photo_max
+        };
+      }
+    }),
+    YandexProvider({
+      clientId: process.env.YANDEX_ID,
+      clientSecret: process.env.YANDEX_SECRET,
+      authorization: {
+        params: {
+          scope: "login:email login:info"
+        }
+      }
+    }),
     CredentialsProvider({
       name: 'Sign in',
       id: 'credentials',
@@ -42,8 +79,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (
-          !user ||
-          !(await bcrypt.compare(String(credentials.password), user.hashedPassword!))
+            !user ||
+            !(await bcrypt.compare(String(credentials.password), user.hashedPassword!))
         ) {
           return null;
         }
@@ -58,6 +95,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    // Добавляем callback для решения проблемы OAuthAccountNotLinked
+    signIn: async ({ user, account, profile }) => {
+      // Проверяем, что это вход через OAuth и у пользователя есть email
+      if (account && account.provider !== 'credentials' && user.email) {
+        // Поиск существующего пользователя по email
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          include: { accounts: true },
+        });
+
+        // Если пользователь найден
+        if (existingUser) {
+          // Проверяем, есть ли у него уже привязанный аккаунт этого провайдера
+          const linkedAccount = existingUser.accounts.find(
+              (acc) => acc.provider === account.provider
+          );
+
+          if (!linkedAccount) {
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+              },
+            });
+          }
+          return true;
+        }
+      }
+      return true;
+    },
+
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const paths = ['/profile',];
@@ -72,6 +147,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
+
     jwt: ({ token, user }) => {
       if (user) {
         const u = user as unknown as any;
@@ -83,6 +159,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
+
     session(params) {
       const { session, token, user } = params as {
         session: Session;
