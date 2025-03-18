@@ -34,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       userinfo: {
         url: "https://api.vk.com/method/users.get",
         params: {
-          fields: "photo_max,nickname,email",
+          fields: "email",
           v: "5.131"
         }
       },
@@ -43,7 +43,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: profile.response?.[0]?.id.toString(),
           name: profile.response?.[0]?.first_name + " " + profile.response?.[0]?.last_name,
           email: profile.email,
-          image: profile.response?.[0]?.photo_max
         };
       },
       checks: ["none"]
