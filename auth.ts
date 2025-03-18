@@ -8,6 +8,60 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import YandexProvider from 'next-auth/providers/yandex';
 import VKProvider from 'next-auth/providers/vk';
 import bcrypt from 'bcryptjs';
+import {OAuthConfig, OAuthUserConfig} from "@auth/core/providers";
+
+export interface VKProfile {
+  response: Array<{
+    id: number;
+    first_name: string;
+    last_name: string;
+    photo_100: string;
+    email?: string;
+  }>;
+}
+
+export default function CustomVKProvider<P extends VKProfile>(
+    options: OAuthUserConfig<P>
+): OAuthConfig<P> {
+  const apiVersion = "5.199";
+
+  return {
+    id: "vk-custom",
+    name: "VK",
+    type: "oauth",
+    checks: ["none"],
+    authorization: {
+      url: `https://oauth.vk.com/authorize`,
+      params: {
+        scope: "email",
+        response_type: "code",
+        v: apiVersion
+      }
+    },
+    token: {
+      url: `https://oauth.vk.com/access_token`,
+      params: { v: apiVersion }
+    },
+    userinfo: {
+      url: `https://api.vk.com/method/users.get`,
+      params: {
+        fields: "photo_100",
+        v: apiVersion
+      }
+    },
+    profile(result: P) {
+      const profile = result.response?.[0] ?? {};
+      return {
+        id: profile.id.toString(),
+        name: [profile.first_name, profile.last_name].filter(Boolean).join(" "),
+        email: null,
+        image: profile.photo_100,
+      };
+    },
+    style: { logo: "/vk.svg", bg: "#07F", text: "#fff" },
+    ...options,
+  };
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
@@ -27,11 +81,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
     }),
-    VKProvider({
+    CustomVKProvider({
       clientId: process.env.VK_ID,
       clientSecret: process.env.VK_SECRET,
-      checks: ["none"]
-     }),
+    }) as any,
     CredentialsProvider({
       name: 'Sign in',
       id: 'credentials',
@@ -73,7 +126,80 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     // Handling OAuthAccountNotLinked issue
     signIn: async ({ user, account, profile }) => {
-      // Check if this is OAuth login and user has email
+      // Обработка кастомного VK провайдера
+      if (account && account.provider === 'vk-custom') {
+        // Если у пользователя нет email (часто случается с VK),
+        // создаем уникальный идентификатор на основе providerAccountId
+        const vkEmail = user.email || `vk-user-${account.providerAccountId}@example.com`;
+
+        // Ищем существующего пользователя по email или по providerAccountId
+        const existingUser = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: vkEmail },
+              {
+                accounts: {
+                  some: {
+                    provider: 'vk-custom',
+                    providerAccountId: account.providerAccountId
+                  }
+                }
+              }
+            ]
+          },
+          include: { accounts: true },
+        });
+
+        // Если пользователь найден
+        if (existingUser) {
+          // Проверяем, есть ли уже связанный аккаунт VK
+          const linkedAccount = existingUser.accounts.find(
+              (acc) => acc.provider === 'vk-custom' && acc.providerAccountId === account.providerAccountId
+          );
+
+          if (!linkedAccount) {
+            // Создаем связь с аккаунтом
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+              },
+            });
+          }
+
+          // Обновляем токен доступа, если он изменился
+          else if (linkedAccount.access_token !== account.access_token && account.access_token) {
+            await prisma.account.update({
+              where: { id: linkedAccount.id },
+              data: {
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+              },
+            });
+          }
+
+          return true;
+        }
+
+        // Если пользователь не найден, продолжаем стандартный процесс создания
+        // NextAuth автоматически создаст пользователя и аккаунт
+        // Но можно добавить дополнительную логику, если нужно
+        if (!user.email) {
+          // Устанавливаем email для пользователя, если он не был предоставлен VK
+          user.email = vkEmail;
+        }
+      }
+
+      // Стандартная обработка для других провайдеров
       if (account && account.provider !== 'credentials' && user.email) {
         // Find existing user by email
         const existingUser = await prisma.user.findUnique({
@@ -106,9 +232,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return true;
         }
       }
+
+      // Логирование для отладки
+      console.log('Sign in success for user:', user.id);
       return true;
     },
-
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const paths = ['/profile',];
