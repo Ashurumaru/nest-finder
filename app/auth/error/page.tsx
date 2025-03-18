@@ -2,8 +2,10 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default function AuthError() {
+// Компонент, использующий useSearchParams
+function ErrorContent() {
     const searchParams = useSearchParams();
     const error = searchParams.get('error');
     const description = searchParams.get('description');
@@ -31,5 +33,14 @@ export default function AuthError() {
                 </div>
             </div>
         </div>
+    );
+}
+
+// Основной компонент страницы
+export default function AuthError() {
+    return (
+        <Suspense fallback={<div>Загрузка...</div>}>
+            <ErrorContent />
+        </Suspense>
     );
 }
