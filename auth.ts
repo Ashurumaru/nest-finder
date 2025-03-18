@@ -45,7 +45,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: profile.email,
           image: profile.response?.[0]?.photo_max
         };
-      }
+      },
+      checks: ["none"]
     }),
     YandexProvider({
       clientId: process.env.YANDEX_ID,
