@@ -1,3 +1,4 @@
+// components/auth/LoginForm.tsx
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +10,7 @@ import toast from 'react-hot-toast';
 import { signIn } from 'next-auth/react';
 import { LoginUserInput, loginUserSchema } from '@/lib/user-schema';
 import Link from "next/link";
-
+import { VKIDAuth } from './VKIDAuth';
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -110,7 +111,7 @@ export const LoginForm = () => {
 
             <a
                 className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center mb-3'
-                style={{backgroundColor: '#000000'}} // Цвет для Yandex
+                style={{backgroundColor: '#000000'}}
                 onClick={() => signIn('yandex', {callbackUrl})}
                 role='button'
             >
@@ -124,28 +125,8 @@ export const LoginForm = () => {
                 />
                 Продолжить через Yandex
             </a>
-            <a
-                className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center'
-                style={{backgroundColor: '#4a76b9'}} // Цвет для VK
-                onClick={() => signIn('vk', {callbackUrl})}
-                role='button'
-            >
-                <Image
-                    className='pr-2'
-                    src='/images/vk.svg'
-                    alt=''
-                    width={40}
-                    height={40}
-                />
-                Продолжить через VK
-            </a>
-            <div className='flex justify-between items-center mt-6'>
-                <p className='text-sm mx-auto'>
-                    Нет аккаунта?{' '}
-                    <Link href='/register' className='text-blue-500 hover:underline'>
-                        Зарегистрироваться
-                    </Link>
-                </p>
+            <div className="mb-3">
+                <VKIDAuth callbackUrl={callbackUrl} />
             </div>
 
             <div className="text-center mt-4 text-xs text-gray-500">

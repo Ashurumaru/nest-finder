@@ -17,11 +17,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/auth/error',
   },
   providers: [
-    VKProvider({
-      clientId: process.env.VK_ID,
-      clientSecret: process.env.VK_SECRET,
-      checks: ["none"]
-    }),
+    {
+      id: 'vk-id',
+      name: 'VK ID',
+      type: 'oauth',
+      authorization: {
+        url: "https://oauth.vk.com/authorize",
+        params: {
+          scope: "email",
+          response_type: "code",
+          v: "5.199"
+        }
+      },
+      token: "https://oauth.vk.com/access_token",
+      userinfo: "https://api.vk.com/method/users.get",
+      profile(profile, tokens) {
+        return {
+          id: profile.id.toString(),
+          name: `${profile.first_name} ${profile.last_name}`,
+          email: profile.email || `${profile.id}@vk.com`,
+          image: profile.photo_200 || null,
+        };
+      },
+      clientId: process.env.VK_ID!,
+      clientSecret: process.env.VK_SECRET!,
+    }
+    ,
     YandexProvider({
       clientId: process.env.YANDEX_ID,
       clientSecret: process.env.YANDEX_SECRET,
