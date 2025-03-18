@@ -3,8 +3,9 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import prisma from './prisma/prisma';
-import github from 'next-auth/providers/github';
-import google from 'next-auth/providers/google';
+import vk from 'next-auth/providers/vk';
+import yandex from 'next-auth/providers/yandex';
+
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
@@ -16,8 +17,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/login',
   },
   providers: [
-    github,
-    google,
+    vk,
+    yandex,
     CredentialsProvider({
       name: 'Sign in',
       id: 'credentials',

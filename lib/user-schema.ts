@@ -1,35 +1,25 @@
-import { TypeOf, object, string } from "zod";
+import { z } from 'zod';
 
-export const createUserSchema = object({
-  name: string({ required_error: "Name is required" }).min(
-    1,
-    "Name is required"
-  ),
-  email: string({ required_error: "Email is required" })
-    .min(1, "Email is required")
-    .email("Invalid email"),
-  photo: string().optional(),
-  password: string({ required_error: "Password is required" })
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
-  passwordConfirm: string({
-    required_error: "Please confirm your password",
-  }).min(1, "Please confirm your password"),
+export const loginUserSchema = z.object({
+  email: z.string().min(1, 'Email обязателен').email('Неверный формат email'),
+  password: z.string().min(1, 'Пароль обязателен'),
+});
+
+export const createUserSchema = z.object({
+  name: z.string().min(1, 'Имя обязательно'),
+  email: z.string().min(1, 'Email обязателен').email('Неверный формат email'),
+  password: z
+      .string()
+      .min(1, 'Пароль обязателен')
+      .min(8, 'Пароль должен содержать минимум 8 символов'),
+  passwordConfirm: z.string().min(1, 'Подтверждение пароля обязательно'),
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: 'Вы должны принять Условия использования и Политику конфиденциальности' }),
+  }),
 }).refine((data) => data.password === data.passwordConfirm, {
-  path: ["passwordConfirm"],
-  message: "Passwords do not match",
+  message: 'Пароли не совпадают',
+  path: ['passwordConfirm'],
 });
 
-export const loginUserSchema = object({
-  email: string({ required_error: "Email is required" })
-    .min(1, "Email is required")
-    .email("Invalid email or password"),
-  password: string({ required_error: "Password is required" }).min(
-    1,
-    "Password is required"
-  ),
-});
-
-export type LoginUserInput = TypeOf<typeof loginUserSchema>;
-export type CreateUserInput = TypeOf<typeof createUserSchema>;
+export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;

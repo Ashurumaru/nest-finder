@@ -63,61 +63,83 @@ export const RegisterForm = () => {
             <div className="mb-6">
                 <input
                     {...register("name")}
-                    placeholder="Name"
+                    placeholder="Имя"
                     className={`${input_style}`}
                 />
                 {errors["name"] && (
                     <span className="text-red-500 text-xs pt-1 block">
-            {errors["name"]?.message as string}
-          </span>
+                        {errors["name"]?.message as string}
+                    </span>
                 )}
             </div>
             <div className="mb-6">
                 <input
                     type="email"
                     {...register("email")}
-                    placeholder="Email address"
+                    placeholder="Email"
                     className={`${input_style}`}
                 />
                 {errors["email"] && (
                     <span className="text-red-500 text-xs pt-1 block">
-            {errors["email"]?.message as string}
-          </span>
+                        {errors["email"]?.message as string}
+                    </span>
                 )}
             </div>
             <div className="mb-6">
                 <input
                     type="password"
                     {...register("password")}
-                    placeholder="Password"
+                    placeholder="Пароль"
                     className={`${input_style}`}
                 />
                 {errors["password"] && (
                     <span className="text-red-500 text-xs pt-1 block">
-            {errors["password"]?.message as string}
-          </span>
+                        {errors["password"]?.message as string}
+                    </span>
                 )}
             </div>
             <div className="mb-6">
                 <input
                     type="password"
                     {...register("passwordConfirm")}
-                    placeholder="Confirm Password"
+                    placeholder="Подтверждение пароля"
                     className={`${input_style}`}
                 />
                 {errors["passwordConfirm"] && (
                     <span className="text-red-500 text-xs pt-1 block">
-            {errors["passwordConfirm"]?.message as string}
-          </span>
+                        {errors["passwordConfirm"]?.message as string}
+                    </span>
                 )}
             </div>
+
+            <div className="mb-6 flex items-start">
+                <div className="flex h-5 items-center">
+                    <input
+                        id="acceptTerms"
+                        type="checkbox"
+                        {...register("acceptTerms")}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                </div>
+                <div className="ml-3 text-sm">
+                    <label htmlFor="acceptTerms" className="text-gray-700">
+                        Я согласен с <Link href="/terms-of-use" className="text-blue-500 hover:underline">Условиями использования</Link> и <Link href="/privacy-policy" className="text-blue-500 hover:underline">Политикой конфиденциальности</Link>
+                    </label>
+                    {errors["acceptTerms"] && (
+                        <p className="text-red-500 text-xs pt-1 block">
+                            {errors["acceptTerms"]?.message as string}
+                        </p>
+                    )}
+                </div>
+            </div>
+
             <button
                 type="submit"
                 style={{backgroundColor: `${submitting ? "#ccc" : "#3446eb"}`}}
                 className="inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
                 disabled={submitting}
             >
-                {submitting ? "loading..." : "Sign Up"}
+                {submitting ? "loading..." : "Зарегистрироваться"}
             </button>
             <div className="flex justify-between items-center mt-6">
                 <p className="text-sm mx-auto">
@@ -129,4 +151,4 @@ export const RegisterForm = () => {
             </div>
         </form>
     );
-};
+}

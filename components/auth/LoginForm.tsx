@@ -72,26 +72,26 @@ export const LoginForm = () => {
                 <input
                     type='email'
                     {...register('email')}
-                    placeholder='Email address'
+                    placeholder='Логин'
                     className={`${input_style}`}
                 />
                 {errors['email'] && (
                     <span className='text-red-500 text-xs pt-1 block'>
-            {errors['email']?.message as string}
-          </span>
+                        {errors['email']?.message as string}
+                    </span>
                 )}
             </div>
             <div className='mb-6'>
                 <input
                     type='password'
                     {...register('password')}
-                    placeholder='Password'
+                    placeholder='Пароль'
                     className={`${input_style}`}
                 />
                 {errors['password'] && (
                     <span className='text-red-500 text-xs pt-1 block'>
-            {errors['password']?.message as string}
-          </span>
+                        {errors['password']?.message as string}
+                    </span>
                 )}
             </div>
             <button
@@ -100,7 +100,7 @@ export const LoginForm = () => {
                 className='inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full'
                 disabled={submitting}
             >
-                {submitting ? 'loading...' : 'Sign In'}
+                {submitting ? 'loading...' : 'Войти'}
             </button>
 
             <div
@@ -110,34 +110,34 @@ export const LoginForm = () => {
 
             <a
                 className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center mb-3'
-                style={{backgroundColor: '#3b5998'}}
-                onClick={() => signIn('google', {callbackUrl})}
+                style={{backgroundColor: '#000000'}} // Цвет для Yandex
+                onClick={() => signIn('yandex', {callbackUrl})}
                 role='button'
             >
                 <Image
                     className='pr-2'
-                    src='/images/google.svg'
+                    src='/images/yandex.svg'
                     alt=''
                     style={{height: '2rem'}}
                     width={35}
                     height={35}
                 />
-                Continue with Google
+                Продолжить через Yandex
             </a>
             <a
                 className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center'
-                style={{backgroundColor: '#55acee'}}
-                onClick={() => signIn('github', {callbackUrl})}
+                style={{backgroundColor: '#4a76b9'}} // Цвет для VK
+                onClick={() => signIn('vk', {callbackUrl})}
                 role='button'
             >
                 <Image
                     className='pr-2'
-                    src='/images/github.svg'
+                    src='/images/vk.svg'
                     alt=''
                     width={40}
                     height={40}
                 />
-                Continue with GitHub
+                Продолжить через VK
             </a>
             <div className='flex justify-between items-center mt-6'>
                 <p className='text-sm mx-auto'>
@@ -146,6 +146,16 @@ export const LoginForm = () => {
                         Зарегистрироваться
                     </Link>
                 </p>
+            </div>
+
+            <div className="text-center mt-4 text-xs text-gray-500">
+                Используя сервис, вы соглашаетесь с
+                <Link href="/terms-of-use" className="text-blue-500 hover:underline ml-1">
+                    Условиями использования
+                </Link> и
+                <Link href="/privacy-policy" className="text-blue-500 hover:underline ml-1">
+                    Политикой конфиденциальности
+                </Link>
             </div>
         </form>
     );

@@ -17,18 +17,18 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton'; // Подключаем Skeleton компонент
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChatIcon } from '@heroicons/react/outline';
 
 const Header = () => {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
   if (status === 'loading') {
-    // Возвращаем скелетон-загрузку, пока данные не подгрузились
     return (
         <header className="bg-white shadow-md">
           <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Skeleton className="h-8 w-32" /> {/* Скелетон для логотипа */}
+            <Skeleton className="h-8 w-32" />
             <div className="flex-shrink-0">
               <Skeleton className="h-8 w-8" />
             </div>
@@ -51,9 +51,15 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Десктопное меню */}
           <div className="hidden md:flex items-center space-x-8">
             <ul className="flex items-center space-x-8">
+              {session?.user && (
+                  <li>
+                    <Link href="/chat" className="text-gray-700 hover:text-blue-600">
+                      <ChatIcon className="w-5 h-5" />
+                    </Link>
+                  </li>
+              )}
               <li>
                 <Link href="/rent" className="text-gray-700 hover:text-blue-600">
                   Аренда
@@ -66,7 +72,6 @@ const Header = () => {
               </li>
             </ul>
 
-            {/* Действия пользователя */}
             <div className="flex items-center space-x-4">
               {session?.user ? (
                   <DropdownMenu>
@@ -125,7 +130,6 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Мобильное меню */}
           <div className="md:hidden">
             <button
                 className="text-gray-700 hover:text-blue-600 focus:outline-none"
@@ -137,11 +141,22 @@ const Header = () => {
           </div>
         </nav>
 
-        {/* Мобильное меню с плавным появлением */}
         {menuOpen && (
             <div className="md:hidden transition-all duration-300 ease-in-out">
               <div className="px-4 pt-2 pb-4 space-y-4 bg-white border-t border-gray-200">
                 <ul className="space-y-2">
+                  {session?.user && (
+                      <li>
+                        <Link
+                            href="/chat"
+                            className="block text-gray-700 hover:text-blue-600"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                          <ChatIcon className="w-4 h-4 mr-2 inline-block" />
+                          Чат
+                        </Link>
+                      </li>
+                  )}
                   <li>
                     <Link
                         href="/rent"
