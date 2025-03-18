@@ -19,7 +19,7 @@ const VkIdAuthButton = ({ callbackUrl = '/profile' }: VkIdAuthButtonProps) => {
             // Инициализация SDK
             VKID.Config.init({
                 app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID || '53279730'),
-                redirectUrl: `${window.location.origin}/api/auth/callback/vk`,
+                redirectUrl: `https://nest-finder-diplom.vercel.app/api/auth/callback/vk`,
             });
 
             // Создание экземпляра виджета 3в1
@@ -44,9 +44,9 @@ const VkIdAuthButton = ({ callbackUrl = '/profile' }: VkIdAuthButtonProps) => {
                 // Обработка успешной авторизации
                 oauthList.on('VKIDOAuthListSuccess', function (data: any) {
                     // Инициируем авторизацию через next-auth
-                    signIn('vk', {
-                        callbackUrl
-                    });
+                    // signIn('vk', {
+                    //     callbackUrl
+                    // });
                 });
             }
         }
