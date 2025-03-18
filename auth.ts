@@ -17,18 +17,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/login',
     error: '/auth/error',
   },
-  // Добавьте эту конфигурацию
-  cookies: {
-    pkceCodeVerifier: {
-      name: "authjs.pkce.code_verifier",
-      options: {
-        httpOnly: true,
-        sameSite: "lax", // Используйте "none" если приложение и аутентификация на разных доменах
-        path: "/",
-        secure: true, // В продакшене должно быть true
-      },
-    },
-  },
   providers: [
     YandexProvider({
       clientId: process.env.YANDEX_ID,
@@ -42,8 +30,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     VKProvider({
       clientId: process.env.VK_ID,
       clientSecret: process.env.VK_SECRET,
-      // Дополнительные параметры при необходимости
-    }),
+      checks: ["none"]
+     }),
     CredentialsProvider({
       name: 'Sign in',
       id: 'credentials',
