@@ -59,7 +59,7 @@ export default function CustomVKProvider<P extends VKProfile>(
       };
     },
     style: { logo: "/vk.svg", bg: "#07F", text: "#fff" },
-    options,
+    ...options,
   };
 }
 
