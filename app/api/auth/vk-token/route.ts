@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
         const clientId = process.env.VK_ID;
         const clientSecret = process.env.VK_SECRET;
-        const redirectUri = `${process.env.NEXTAUTH_URL}/api/auth/callback/vk-custom`;
+        const redirectUri = `${process.env.NEXTAUTH_URL}/api/auth/callback/vk`;
 
         // Запрос на получение токена
         const tokenResponse = await fetch(
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
         // Получаем информацию о пользователе
         const userResponse = await fetch(
-            `https://api.vk.com/method/users.get?fields=photo_100&access_token=${tokenData.access_token}&v=5.131`,
+            `https://api.vk.com/method/users.get?fields=photo_100&access_token=${tokenData.access_token}&v=5.199`,
             { method: 'GET' }
         );
 

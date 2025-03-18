@@ -1,3 +1,4 @@
+// components/auth/VkIdAuthButton.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -21,7 +22,7 @@ const VkIdAuthButton = ({ callbackUrl = '/profile' }: VkIdAuthButtonProps) => {
             // Инициализация SDK
             VKID.Config.init({
                 app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID || '53279730'),
-                redirectUrl: `${window.location.origin}/api/auth/callback/vk-custom`,
+                redirectUrl: `${window.location.origin}/api/auth/callback/vk`,
             });
 
             // Создание экземпляра виджета 3в1
@@ -65,7 +66,7 @@ const VkIdAuthButton = ({ callbackUrl = '/profile' }: VkIdAuthButtonProps) => {
 
                         // Создаем сессию через NextAuth
                         if (tokenData.access_token) {
-                            const result = await signIn('vk-custom', {
+                            const result = await signIn('vk', {
                                 access_token: tokenData.access_token,
                                 user: JSON.stringify(tokenData.user),
                                 email: tokenData.email,
