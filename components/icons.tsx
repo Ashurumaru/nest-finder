@@ -2,7 +2,7 @@ import {
     LayoutDashboardIcon,
     User,
     FileText,
-    ArrowRight
+    ArrowRight, FlagIcon
 } from 'lucide-react';
 
 import {
@@ -33,6 +33,7 @@ export const NavIcons = {
     user: User,
     post: FileText,
     arrowRight: ArrowRight,
+    flag: FlagIcon,
 }
 
 export const Icons = {

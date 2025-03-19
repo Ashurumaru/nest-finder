@@ -19,6 +19,12 @@ export const navItems: NavItem[] = [
         icon: 'post',
         label: 'property'
     },
+    {
+        title: 'Жалобы',
+        href: '/dashboard/property/complaints',
+        icon: 'flag',
+        label: 'complaints'
+    }
 ];
 
 export const userRoles = [

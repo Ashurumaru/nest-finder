@@ -23,6 +23,7 @@ model User {
   updatedAt      DateTime      @updatedAt
   posts          Post[]
   savedPosts     SavedPost[]
+  complaints     Complaint[]
   chats          ChatUser[]
   accounts       Account[]
   sessions       Session[]
@@ -52,6 +53,7 @@ model Post {
   isArchive   Boolean  @default(false)
 
   savedPosts SavedPost[]
+  complaints   Complaint[]
 
   apartment Apartment?
   house     House?
@@ -62,6 +64,37 @@ model Post {
   reservations   Reservation[]
 
   @@map("posts")
+}
+model Complaint {
+  id          String           @id @default(uuid())
+  reason      ComplaintReason
+  description String?
+  status      ComplaintStatus  @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  post        Post             @relation(fields: [postId], references: [id])
+  postId      String
+
+  user        User             @relation(fields: [userId], references: [id])
+  userId      String
+
+  @@map("complaints")
+}
+
+enum ComplaintReason {
+  INCORRECT_INFO
+  SCAM
+  ALREADY_SOLD
+  INAPPROPRIATE_CONTENT
+  DUPLICATE
+  OTHER
+}
+
+enum ComplaintStatus {
+  PENDING
+  RESOLVED
+  REJECTED
 }
 
 model Reservation {

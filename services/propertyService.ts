@@ -248,3 +248,84 @@ export async function fetchUsers(): Promise<User[]> {
         return [];
     }
 }
+
+export async function submitComplaint(data: {
+    postId: string;
+    reason: string;
+    description?: string;
+}) {
+    try {
+        const response = await fetch('/api/complaints', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit complaint');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error submitting complaint:', error);
+        throw error;
+    }
+}
+
+export async function fetchComplaints(params?: {
+    status?: string;
+    page?: number;
+    limit?: number;
+}) {
+    try {
+        const queryParams = new URLSearchParams();
+
+        if (params?.status) {
+            queryParams.append('status', params.status);
+        }
+
+        if (params?.page) {
+            queryParams.append('page', params.page.toString());
+        }
+
+        if (params?.limit) {
+            queryParams.append('limit', params.limit.toString());
+        }
+
+        const url = `/api/complaints${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch complaints');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching complaints:', error);
+        throw error;
+    }
+}
+
+export async function updateComplaintStatus(complaintId: string, status: string) {
+    try {
+        const response = await fetch(`/api/complaints/${complaintId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update complaint status');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating complaint status:', error);
+        throw error;
+    }
+}

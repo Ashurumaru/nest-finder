@@ -1,3 +1,5 @@
+// Update app/property/[id]/page.tsx
+
 import { Icons } from "@/components/icons";
 import dynamic from "next/dynamic";
 import { formatDate } from "@/utils/formatDate";
@@ -8,8 +10,9 @@ import FavoriteButton from "@/components/property/selected-property/FavoriteButt
 import ListingReservation from "@/components/property/selected-property/ListingReservation";
 import { CharacteristicsList } from "@/components/property/selected-property/PropertyCharacteristicsList";
 import ContactCard from "@/components/property/selected-property/ContactCard";
+import ComplaintButton from "@/components/property/selected-property/ComplaintButton";
 import { Decimal } from "@prisma/client/runtime/library";
-import {auth} from "@/auth";
+import { auth } from "@/auth";
 
 const ImageCarousel = dynamic(() => import("@/components/property/selected-property/ImageCarousel"));
 const ShareButton = dynamic(() => import("@/components/property/selected-property/ShareButton"));
@@ -26,6 +29,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
 
         const session = await auth();
         const user = session?.user;
+        const isLoggedIn = !!user;
 
         if (!property) {
             return <h1 className="text-center text-2xl font-bold mt-10">Объект не найден</h1>;
@@ -42,7 +46,10 @@ export default async function PropertyPage({ params }: { params: { id: string } 
 
         return (
             <div className="container mx-auto py-6 px-4">
-                <Header property={property} />
+                <Header
+                    property={property}
+                    isLoggedIn={isLoggedIn}
+                />
 
                 <div className="grid lg:grid-cols-3 gap-6">
                     <MainContent property={property} />
@@ -68,7 +75,7 @@ export default async function PropertyPage({ params }: { params: { id: string } 
     }
 }
 
-function Header({ property }: { property: PostData }) {
+function Header({ property, isLoggedIn }: { property: PostData; isLoggedIn: boolean }) {
     return (
         <div className="flex flex-col md:flex-row justify-between mb-6">
             <div>
@@ -79,6 +86,9 @@ function Header({ property }: { property: PostData }) {
                         {property.address}, {property.city}
                     </p>
                 </div>
+            </div>
+            <div className="mt-4 md:mt-0 flex items-center space-x-3">
+                {property.id && <ComplaintButton postId={property.id} isLoggedIn={isLoggedIn} />}
             </div>
         </div>
     );
@@ -151,7 +161,6 @@ function Sidebar({
         </div>
     );
 }
-
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
