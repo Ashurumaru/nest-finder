@@ -45,11 +45,11 @@ export const LoginForm = () => {
             setSubmitting(false);
 
             if (!res?.error) {
-                toast.success('successfully logged in');
+                toast.success('Вход выполнен успешно');
                 router.push(callbackUrl);
             } else {
                 reset({ password: '' });
-                const message = 'invalid email or password';
+                const message = 'Неверный email или пароль';
                 toast.error(message);
                 setError(message);
             }
@@ -61,82 +61,99 @@ export const LoginForm = () => {
         }
     };
 
-    const input_style =
-        'form-control block w-full px-4 py-5 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none';
+    const inputStyle =
+        'block w-full px-4 py-3 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent';
 
     return (
-        <form onSubmit={handleSubmit(onSubmitHandler)}>
+        <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-6">
             {error && (
-                <p className='text-center bg-red-300 py-4 mb-6 rounded'>{error}</p>
+                <div className='p-4 mb-4 text-sm text-white bg-red-500 rounded-lg' role="alert">
+                    {error}
+                </div>
             )}
-            <div className='mb-6'>
+            <div>
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
+                    Email
+                </label>
                 <input
+                    id="email"
                     type='email'
                     {...register('email')}
-                    placeholder='Логин'
-                    className={`${input_style}`}
+                    placeholder='Введите ваш email'
+                    className={inputStyle}
                 />
                 {errors['email'] && (
-                    <span className='text-red-500 text-xs pt-1 block'>
+                    <p className='mt-1 text-sm text-red-600'>
                         {errors['email']?.message as string}
-                    </span>
+                    </p>
                 )}
             </div>
-            <div className='mb-6'>
+            <div>
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
+                    Пароль
+                </label>
                 <input
+                    id="password"
                     type='password'
                     {...register('password')}
-                    placeholder='Пароль'
-                    className={`${input_style}`}
+                    placeholder='Введите ваш пароль'
+                    className={inputStyle}
                 />
                 {errors['password'] && (
-                    <span className='text-red-500 text-xs pt-1 block'>
+                    <p className='mt-1 text-sm text-red-600'>
                         {errors['password']?.message as string}
-                    </span>
+                    </p>
                 )}
             </div>
             <button
                 type='submit'
-                style={{backgroundColor: `${submitting ? '#ccc' : '#3446eb'}`}}
-                className='inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full'
+                className={`w-full px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg transition-colors duration-300 ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-blue-700 focus:ring-4 focus:ring-blue-300'}`}
                 disabled={submitting}
             >
-                {submitting ? 'loading...' : 'Войти'}
+                {submitting ? 'Выполняется вход...' : 'Войти'}
             </button>
 
-            <div
-                className='flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5'>
-                <p className='text-center font-semibold mx-4 mb-0'>OR</p>
+            <div className='relative flex items-center py-4'>
+                <div className='flex-grow border-t border-gray-300'></div>
+                <span className='flex-shrink mx-4 text-sm text-gray-500'>или</span>
+                <div className='flex-grow border-t border-gray-300'></div>
             </div>
 
             <a
-                className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center mb-3'
-                style={{backgroundColor: '#000000'}} // Цвет для Yandex
+                className='flex items-center justify-center w-full px-5 py-3 text-sm font-medium text-white bg-black rounded-lg transition-colors duration-300 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300'
                 onClick={() => signIn('yandex', {callbackUrl})}
                 role='button'
             >
                 <Image
-                    className='pr-2'
+                    className='mr-2'
                     src='/images/yandex.svg'
-                    alt=''
-                    style={{height: '2rem'}}
-                    width={35}
-                    height={35}
+                    alt='Яндекс'
+                    width={24}
+                    height={24}
                 />
-                Продолжить через Yandex
+                Войти через Яндекс
             </a>
-            <div className="mb-3">
+            <div className="mt-3">
                 <VkIdAuthButton callbackUrl={callbackUrl} />
             </div>
 
-            <div className="text-center mt-4 text-xs text-gray-500">
+            <div className="mt-6 text-center text-xs text-gray-500">
                 Используя сервис, вы соглашаетесь с
-                <Link href="/terms-of-use" className="text-blue-500 hover:underline ml-1">
+                <Link href="/terms-of-use" className="ml-1 text-blue-600 hover:underline">
                     Условиями использования
                 </Link> и
-                <Link href="/privacy-policy" className="text-blue-500 hover:underline ml-1">
+                <Link href="/privacy-policy" className="ml-1 text-blue-600 hover:underline">
                     Политикой конфиденциальности
                 </Link>
+            </div>
+
+            <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                    Нет аккаунта?{' '}
+                    <Link href='/register' className="text-blue-600 font-medium hover:underline">
+                        Зарегистрироваться
+                    </Link>
+                </p>
             </div>
         </form>
     );

@@ -47,6 +47,7 @@ export const RegisterForm = () => {
                 return;
             }
 
+            toast.success('Регистрация успешна');
             signIn(undefined, { callbackUrl: "/" });
         } catch (error: any) {
             toast.error(error.message);
@@ -55,78 +56,97 @@ export const RegisterForm = () => {
         }
     };
 
-    const input_style =
-        "form-control block w-full px-4 py-5 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none";
+    const inputStyle =
+        'block w-full px-4 py-3 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent';
 
     return (
-        <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="mb-6">
+        <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-6">
+            <div>
+                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700">
+                    Имя
+                </label>
                 <input
+                    id="name"
                     {...register("name")}
-                    placeholder="Имя"
-                    className={`${input_style}`}
+                    placeholder="Введите ваше имя"
+                    className={inputStyle}
                 />
                 {errors["name"] && (
-                    <span className="text-red-500 text-xs pt-1 block">
+                    <p className="mt-1 text-sm text-red-600">
                         {errors["name"]?.message as string}
-                    </span>
-                )}
-            </div>
-            <div className="mb-6">
-                <input
-                    type="email"
-                    {...register("email")}
-                    placeholder="Email"
-                    className={`${input_style}`}
-                />
-                {errors["email"] && (
-                    <span className="text-red-500 text-xs pt-1 block">
-                        {errors["email"]?.message as string}
-                    </span>
-                )}
-            </div>
-            <div className="mb-6">
-                <input
-                    type="password"
-                    {...register("password")}
-                    placeholder="Пароль"
-                    className={`${input_style}`}
-                />
-                {errors["password"] && (
-                    <span className="text-red-500 text-xs pt-1 block">
-                        {errors["password"]?.message as string}
-                    </span>
-                )}
-            </div>
-            <div className="mb-6">
-                <input
-                    type="password"
-                    {...register("passwordConfirm")}
-                    placeholder="Подтверждение пароля"
-                    className={`${input_style}`}
-                />
-                {errors["passwordConfirm"] && (
-                    <span className="text-red-500 text-xs pt-1 block">
-                        {errors["passwordConfirm"]?.message as string}
-                    </span>
+                    </p>
                 )}
             </div>
 
-            <div className="mb-6 flex items-start">
-                <div className="flex h-5 items-center">
+            <div>
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
+                    Email
+                </label>
+                <input
+                    id="email"
+                    type="email"
+                    {...register("email")}
+                    placeholder="Введите ваш email"
+                    className={inputStyle}
+                />
+                {errors["email"] && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors["email"]?.message as string}
+                    </p>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
+                    Пароль
+                </label>
+                <input
+                    id="password"
+                    type="password"
+                    {...register("password")}
+                    placeholder="Создайте пароль"
+                    className={inputStyle}
+                />
+                {errors["password"] && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors["password"]?.message as string}
+                    </p>
+                )}
+            </div>
+
+            <div>
+                <label htmlFor="passwordConfirm" className="block mb-2 text-sm font-medium text-gray-700">
+                    Подтверждение пароля
+                </label>
+                <input
+                    id="passwordConfirm"
+                    type="password"
+                    {...register("passwordConfirm")}
+                    placeholder="Повторите пароль"
+                    className={inputStyle}
+                />
+                {errors["passwordConfirm"] && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors["passwordConfirm"]?.message as string}
+                    </p>
+                )}
+            </div>
+
+            <div className="flex items-start">
+                <div className="flex items-center h-5">
                     <input
                         id="acceptTerms"
                         type="checkbox"
                         {...register("acceptTerms")}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
                     />
                 </div>
                 <div className="ml-3 text-sm">
                     <label htmlFor="acceptTerms" className="text-gray-700">
-                        Я согласен с <Link href="/terms-of-use" className="text-blue-500 hover:underline">Условиями использования</Link> и <Link href="/privacy-policy" className="text-blue-500 hover:underline">Политикой конфиденциальности</Link>
+                        Я согласен с <Link href="/terms-of-use" className="text-blue-600 hover:underline">Условиями использования</Link> и <Link href="/privacy-policy" className="text-blue-600 hover:underline">Политикой конфиденциальности</Link>
                     </label>
                     {errors["acceptTerms"] && (
-                        <p className="text-red-500 text-xs pt-1 block">
+                        <p className="mt-1 text-sm text-red-600">
                             {errors["acceptTerms"]?.message as string}
                         </p>
                     )}
@@ -135,16 +155,16 @@ export const RegisterForm = () => {
 
             <button
                 type="submit"
-                style={{backgroundColor: `${submitting ? "#ccc" : "#3446eb"}`}}
-                className="inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                className={`w-full px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg transition-colors duration-300 ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-blue-700 focus:ring-4 focus:ring-blue-300'}`}
                 disabled={submitting}
             >
-                {submitting ? "loading..." : "Зарегистрироваться"}
+                {submitting ? "Выполняется регистрация..." : "Зарегистрироваться"}
             </button>
-            <div className="flex justify-between items-center mt-6">
-                <p className="text-sm mx-auto">
+
+            <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
                     Уже есть аккаунт?{' '}
-                    <Link href='/login' className="text-blue-500 hover:underline">
+                    <Link href='/login' className="text-blue-600 font-medium hover:underline">
                         Войти
                     </Link>
                 </p>
