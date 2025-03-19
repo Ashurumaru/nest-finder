@@ -1,6 +1,6 @@
 'use client';
 
-import { YMaps, Map, Placemark, ZoomControl } from '@pbe/react-yandex-maps';
+import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 import { PostData } from '@/types/propertyTypes';
 
 interface YandexMapProps {
@@ -48,8 +48,6 @@ export default function YandexMap({
                 onBoundsChange={handleBoundsChange}
                 options={{ suppressMapOpenBlock: true }}
             >
-                <ZoomControl options={{ float: 'right' }} />
-
                 {properties.map((property) => {
                     if (!property.latitude || !property.longitude) return null;
 
@@ -61,8 +59,8 @@ export default function YandexMap({
                                 preset: selectedProperty === property.id
                                     ? 'islands#redDotIconWithCaption'
                                     : 'islands#blueDotIconWithCaption',
-                                iconCaption: `${Number(property.price).toLocaleString()} ₽`,
-                                iconCaptionMaxWidth: '200'
+                                // iconCaption: `${Number(property.price).toLocaleString()} ₽`,
+                                // iconCaptionMaxWidth: '200'
                             }}
                             properties={{
                                 hintContent: property.title || property.address

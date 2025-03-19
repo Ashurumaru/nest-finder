@@ -70,7 +70,6 @@
     "react-leaflet": "^4.2.1",
     "react-map-gl": "^7.1.7",
     "react-spinners": "^0.14.1",
-    "react-yandex-maps": "^4.6.0",
     "recharts": "^2.13.0",
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
