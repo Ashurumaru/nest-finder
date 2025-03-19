@@ -365,7 +365,7 @@ export default function ComplaintsPage() {
                                         variant="outline"
                                         size="sm"
                                         className="flex items-center gap-1"
-                                        onClick={() => window.open(`/property/${selectedComplaint.post.id}`, '_blank')}
+                                        onClick={() => window.open(`/properties/${selectedComplaint.post.id}`, '_blank')}
                                     >
                                         <Eye size={16} />
                                         <span>Просмотреть объявление</span>
