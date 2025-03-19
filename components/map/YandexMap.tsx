@@ -22,10 +22,9 @@ export default function YandexMap({
                                       onPositionChange
                                   }: YandexMapProps) {
     const mapRef = useRef<HTMLDivElement>(null);
-    const [ymaps, setYmaps] = useState<any>(null);
     const [map, setMap] = useState<any>(null);
-    const [objectManager, setObjectManager] = useState<any>(null);
     const [isLoaded, setIsLoaded] = useState(false);
+    const markersRef = useRef<any[]>([]);
 
     // Load Yandex Maps scripts
     const handleScriptLoad = () => {
@@ -40,56 +39,53 @@ export default function YandexMap({
             try {
                 // Wait for ymaps to load
                 await (window as any).ymaps3.ready;
-                const ymaps3 = (window as any).ymaps3;
 
-                // Save ymaps instance
-                setYmaps(ymaps3);
+                const {
+                    YMap,
+                    YMapDefaultSchemeLayer,
+                    YMapDefaultFeaturesLayer,
+                    YMapControls,
+                    YMapMarker
+                } = (window as any).ymaps3;
 
-                // Create map - ensure mapRef.current is not null before using it
-                if (!mapRef.current) return;
+                // Import controls
+                const { YMapZoomControl } = await (window as any).ymaps3.import('@yandex/ymaps3-controls@0.0.1');
 
-                const ymap = new ymaps3.YMap(mapRef.current, {
+                // Create map
+                const ymap = new YMap(mapRef.current, {
                     location: {
                         center: [center[1], center[0]], // Yandex uses [lon, lat]
                         zoom: zoom
                     }
                 });
 
-                // Add map layers with proper parameters
-                const defaultSchemeLayer = new ymaps3.YMapDefaultSchemeLayer({});
-                ymap.addChild(defaultSchemeLayer);
-
-                const defaultFeaturesLayer = new ymaps3.YMapDefaultFeaturesLayer({});
-                ymap.addChild(defaultFeaturesLayer);
-
-                // Create ObjectManager for object management
-                // Use YMapObjectManager instead of YMapDefaultObjectManager
-                const manager = new ymaps3.YMapObjectManager({});
-                ymap.addChild(manager);
-                setObjectManager(manager);
+                // Add map layers
+                ymap.addChild(new YMapDefaultSchemeLayer());
+                ymap.addChild(new YMapDefaultFeaturesLayer());
 
                 // Add controls
-                const controls = new ymaps3.YMapControls({});
-                const zoomControl = new ymaps3.YMapZoomControl({});
-                controls.addChild(zoomControl);
+                const controls = new YMapControls({ position: 'right' });
+                controls.addChild(new YMapZoomControl({}));
                 ymap.addChild(controls);
 
                 // Handle map position changes
-                // Use the proper event listener method and access bounds correctly
                 ymap.on('boundschange', (event: any) => {
+                    if (!event.location) return;
+
                     const mapCenter = event.location.center;
                     const mapZoom = event.location.zoom;
-                    // Access bounds through the correct property
-                    const mapBounds = ymap.bounds;
+                    const mapBounds = ymap.getBounds();
 
-                    onPositionChange({
-                        center: [mapCenter[1], mapCenter[0]], // Convert to [lat, lon]
-                        zoom: mapZoom,
-                        bounds: [
-                            [mapBounds.south, mapBounds.west], // SW
-                            [mapBounds.north, mapBounds.east]  // NE
-                        ]
-                    });
+                    if (mapCenter && mapZoom && mapBounds) {
+                        onPositionChange({
+                            center: [mapCenter[1], mapCenter[0]], // Convert to [lat, lon]
+                            zoom: mapZoom,
+                            bounds: [
+                                [mapBounds.min[1], mapBounds.min[0]], // SW
+                                [mapBounds.max[1], mapBounds.max[0]]  // NE
+                            ]
+                        });
+                    }
                 });
 
                 setMap(ymap);
@@ -105,75 +101,80 @@ export default function YandexMap({
                 map.destroy?.();
             }
         };
-    }, [isLoaded, map, center, zoom, onPositionChange]);
+    }, [isLoaded, center, zoom, onPositionChange]);
 
-    // Update map center and zoom
+    // Update map center and zoom when props change
     useEffect(() => {
         if (!map) return;
 
-        map.setLocation?.({
+        map.setLocation({
             center: [center[1], center[0]], // Yandex uses [lon, lat]
-            zoom: zoom
+            zoom: zoom,
+            duration: 400
         });
     }, [map, center, zoom]);
 
     // Update markers when property list changes
     useEffect(() => {
-        if (!map || !objectManager || !properties.length) return;
+        if (!map || !isLoaded || !properties.length) return;
 
-        // Remove all markers
-        objectManager.removeAll?.();
+        // Remove existing markers
+        markersRef.current.forEach(marker => {
+            if (map.getChild(marker)) {
+                map.removeChild(marker);
+            }
+        });
+        markersRef.current = [];
 
-        // Add new markers
-        properties.forEach((property) => {
-            if (!property.latitude || !property.longitude) return;
-
+        const createMarkers = async () => {
             try {
-                // Create marker with proper options
-                const marker = new ymaps.YMapMarker(
-                    {
+                const { YMapMarker } = (window as any).ymaps3;
+
+                // Add new markers
+                properties.forEach((property) => {
+                    if (!property.latitude || !property.longitude) return;
+
+                    // Create marker element
+                    const markerElement = document.createElement('div');
+                    markerElement.className = 'flex items-center justify-center';
+                    markerElement.innerHTML = `
+                        <div class="${selectedProperty === property.id ? 'bg-primary text-white' : 'bg-white text-primary'}
+                            font-bold text-sm px-2 py-1 rounded-md shadow-md transition-colors">
+                            ${Number(property.price).toLocaleString()} ₽
+                        </div>
+                    `;
+
+                    // Create marker
+                    const marker = new YMapMarker({
                         coordinates: [Number(property.longitude), Number(property.latitude)],
                         properties: {
                             id: property.id,
                             title: property.title || property.address,
-                            price: property.price,
-                            type: property.type,
-                            propertyType: property.property
+                            price: property.price
                         }
-                    },
-                    {}
-                );
+                    }, markerElement);
 
-                // Create DOM element for marker
-                const markerElement = document.createElement('div');
-                markerElement.className = 'flex items-center justify-center';
-                markerElement.innerHTML = `
-          <div class="${selectedProperty === property.id ? 'bg-primary text-white' : 'bg-white text-primary'}
-            font-bold text-sm px-2 py-1 rounded-md shadow-md transition-colors">
-            ${Number(property.price).toLocaleString()} ₽
-          </div>
-        `;
+                    // Add click handler
+                    markerElement.onclick = () => {
+                        onPropertySelect(property.id ?? "");
+                    };
 
-                // Add click handler
-                markerElement.onclick = () => {
-                    onPropertySelect(property.id ?? "");
-                };
-
-                // Set DOM element for marker using the proper method
-                marker.element.appendChild(markerElement);
-
-                // Add marker to the map
-                objectManager.addChild?.(marker);
+                    // Add marker to map
+                    map.addChild(marker);
+                    markersRef.current.push(marker);
+                });
             } catch (error) {
-                console.error("Error creating marker:", error);
+                console.error("Error creating markers:", error);
             }
-        });
-    }, [map, objectManager, properties, selectedProperty, onPropertySelect, ymaps]);
+        };
+
+        createMarkers();
+    }, [map, properties, selectedProperty, onPropertySelect, isLoaded]);
 
     return (
         <>
             <Script
-                src={`https://api-maps.yandex.ru/v3/?apikey=${process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY}&lang=ru_RU`}
+                src={`https://api-maps.yandex.ru/3.0/?apikey=${process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY}&lang=ru_RU`}
                 onLoad={handleScriptLoad}
                 strategy="afterInteractive"
             />
