@@ -65,53 +65,6 @@ model Post {
 
   @@map("posts")
 }
-model Complaint {
-  id          String           @id @default(uuid())
-  reason      ComplaintReason
-  description String?
-  status      ComplaintStatus  @default(PENDING)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-
-  post        Post             @relation(fields: [postId], references: [id])
-  postId      String
-
-  user        User             @relation(fields: [userId], references: [id])
-  userId      String
-
-  @@map("complaints")
-}
-
-enum ComplaintReason {
-  INCORRECT_INFO
-  SCAM
-  ALREADY_SOLD
-  INAPPROPRIATE_CONTENT
-  DUPLICATE
-  OTHER
-}
-
-enum ComplaintStatus {
-  PENDING
-  RESOLVED
-  REJECTED
-}
-
-model Reservation {
-  id         String            @id @default(uuid())
-  userId     String
-  postId     String
-  startDate  DateTime
-  endDate    DateTime
-  totalPrice Decimal           @db.Decimal(15, 2)
-  status     ReservationStatus @default(PENDING)
-  createdAt  DateTime          @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@map("reservations")
-}
 
 model Apartment {
   id                   String           @id @default(uuid())
@@ -212,6 +165,54 @@ model SaleFeatures {
   postId String @unique
 
   @@map("sale_features")
+}
+
+model Complaint {
+  id          String           @id @default(uuid())
+  reason      ComplaintReason
+  description String?
+  status      ComplaintStatus  @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  post        Post             @relation(fields: [postId], references: [id])
+  postId      String
+
+  user        User             @relation(fields: [userId], references: [id])
+  userId      String
+
+  @@map("complaints")
+}
+
+enum ComplaintReason {
+  INCORRECT_INFO
+  SCAM
+  ALREADY_SOLD
+  INAPPROPRIATE_CONTENT
+  DUPLICATE
+  OTHER
+}
+
+enum ComplaintStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+
+model Reservation {
+  id         String            @id @default(uuid())
+  userId     String
+  postId     String
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Decimal           @db.Decimal(15, 2)
+  status     ReservationStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("reservations")
 }
 
 model SavedPost {
