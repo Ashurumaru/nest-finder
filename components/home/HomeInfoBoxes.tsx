@@ -35,7 +35,7 @@ const HomeInfoBoxes: React.FC = () => {
                         backgroundColor={"bg-white"}
                         buttonInfo={{
                             text: "Найти на карте",
-                            link: "/sale",
+                            link: "/map",
                             backgroundColor: "bg-blue-600"
                         }}>
                         <p className="text-gray-600">Ищите объявления рядом с работой и другими важными местами.</p>

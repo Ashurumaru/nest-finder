@@ -11,8 +11,8 @@ import {
     FormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {DropdownSelect} from "@/components/ui/DropdownSelect";
-import {propertyTypes, roomCounts, transactionTypes} from "@/constants/data";
+import { DropdownSelect } from "@/components/ui/DropdownSelect";
+import { propertyTypes, roomCounts, transactionTypes } from "@/constants/data";
 
 // Валидация с Zod
 const FormSchema = z.object({
@@ -55,6 +55,23 @@ export default function PropertySearchForm() {
         router.push(`${path}?${queryString}`);
     };
 
+    const handleMapView = () => {
+        const formData = form.getValues();
+        const { transactionType, propertyType, rooms, priceFrom, priceTo, location } = formData;
+
+        const queryParams: Record<string, string> = {};
+
+        if (transactionType) queryParams.transactionType = transactionType;
+        if (propertyType) queryParams.propertyType = propertyType;
+        if (rooms) queryParams.rooms = rooms;
+        if (priceFrom) queryParams.minPrice = priceFrom;
+        if (priceTo) queryParams.maxPrice = priceTo;
+        if (location) queryParams.searchQuery = location;
+
+        const queryString = new URLSearchParams(queryParams).toString();
+        router.push(`/map?${queryString}`);
+    };
+
     return (
         <Form {...form}>
             <form
@@ -91,14 +108,19 @@ export default function PropertySearchForm() {
 
                 {/** Кнопки */}
                 <div className="col-span-1 md:col-span-2 lg:col-span-3 flex items-center space-x-2 mt-4">
-                    <Button variant="secondary">Показать на карте</Button>
+                    <Button
+                        variant="secondary"
+                        type="button"
+                        onClick={handleMapView}
+                    >
+                        Показать на карте
+                    </Button>
                     <Button variant="primary" type="submit">Найти</Button>
                 </div>
             </form>
         </Form>
     );
 }
-
 
 // Компонент для текстового поля
 function InputField({ field, placeholder }: any) {

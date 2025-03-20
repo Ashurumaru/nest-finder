@@ -1,9 +1,10 @@
+// components/layout/Header.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import { MenuIcon, XIcon, ChatIcon, HeartIcon } from '@heroicons/react/outline';
 import Logo from '@/components/layout/Logo';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,7 +19,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ChatIcon } from '@heroicons/react/outline';
 
 const Header = () => {
   const { data: session, status } = useSession();
@@ -54,11 +54,18 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-8">
             <ul className="flex items-center space-x-8">
               {session?.user && (
-                  <li>
-                    <Link href="/chat" className="text-gray-700 hover:text-blue-600">
-                      <ChatIcon className="w-5 h-5" />
-                    </Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link href="/chat" className="text-gray-700 hover:text-blue-600" title="Чаты">
+                        <ChatIcon className="w-5 h-5" />
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/profile#favorites" className="text-gray-700 hover:text-blue-600" title="Избранное">
+                        <HeartIcon className="w-5 h-5" />
+                      </Link>
+                    </li>
+                  </>
               )}
               <li>
                 <Link href="/rent" className="text-gray-700 hover:text-blue-600">
@@ -101,6 +108,9 @@ const Header = () => {
                       <DropdownMenuGroup>
                         <DropdownMenuItem>
                           <Link href="/profile">Профиль</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href="/profile#favorites">Избранное</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Link href="/properties/create">Добавить недвижимость</Link>
@@ -146,16 +156,28 @@ const Header = () => {
               <div className="px-4 pt-2 pb-4 space-y-4 bg-white border-t border-gray-200">
                 <ul className="space-y-2">
                   {session?.user && (
-                      <li>
-                        <Link
-                            href="/chat"
-                            className="block text-gray-700 hover:text-blue-600"
-                            onClick={() => setMenuOpen(false)}
-                        >
-                          <ChatIcon className="w-4 h-4 mr-2 inline-block" />
-                          Чат
-                        </Link>
-                      </li>
+                      <>
+                        <li>
+                          <Link
+                              href="/chat"
+                              className="block text-gray-700 hover:text-blue-600"
+                              onClick={() => setMenuOpen(false)}
+                          >
+                            <ChatIcon className="w-4 h-4 mr-2 inline-block" />
+                            Чат
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                              href="/profile#favorites"
+                              className="block text-gray-700 hover:text-blue-600"
+                              onClick={() => setMenuOpen(false)}
+                          >
+                            <HeartIcon className="w-4 h-4 mr-2 inline-block" />
+                            Избранное
+                          </Link>
+                        </li>
+                      </>
                   )}
                   <li>
                     <Link

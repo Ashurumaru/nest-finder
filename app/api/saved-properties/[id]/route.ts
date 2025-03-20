@@ -1,4 +1,4 @@
-// app/api/saved-posts/[postId]/route.ts
+// app/api/saved-properties/[id]/route.ts
 
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
@@ -16,7 +16,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const postId = params.id;
 
     if (!postId) {
-        throw new Error("Post ID is missing.");
+        return NextResponse.json({ error: "Post ID is missing" }, { status: 400 });
     }
 
     try {
@@ -27,6 +27,17 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
         if (!postExists) {
             return NextResponse.json({ error: "Post not found" }, { status: 404 });
+        }
+
+        // Проверяем, не добавлен ли уже пост в избранное
+        const existingSaved = await prisma.savedPost.findUnique({
+            where: {
+                userId_postId: { userId, postId },
+            },
+        });
+
+        if (existingSaved) {
+            return NextResponse.json({ message: "Already in favorites" }, { status: 200 });
         }
 
         // Добавляем пост в избранное
@@ -44,7 +55,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 }
 
-
+// Удаление из избранного
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
     const session = await auth();
 
@@ -56,10 +67,22 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const postId = params.id;
 
     if (!postId) {
-        throw new Error("Post ID is missing.");
+        return NextResponse.json({ error: "Post ID is missing" }, { status: 400 });
     }
 
     try {
+        // Проверяем, существует ли запись в избранном
+        const savedPost = await prisma.savedPost.findUnique({
+            where: {
+                userId_postId: { userId, postId },
+            },
+        });
+
+        if (!savedPost) {
+            return NextResponse.json({ error: "Post not found in favorites" }, { status: 404 });
+        }
+
+        // Удаляем из избранного
         await prisma.savedPost.delete({
             where: {
                 userId_postId: { userId, postId },

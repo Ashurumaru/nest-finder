@@ -1,38 +1,83 @@
-//components/property/selected-property/FavoriteButton.tsx
+// components/property/selected-property/FavoriteButton.tsx
 "use client";
 
 import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Tooltip } from "@/components/ui/tooltip";
-import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import {useToast} from "@/hooks/useToast";
 
 export default function FavoriteButton({ isFavorite, id }: { isFavorite: boolean, id: string }) {
     const [favorite, setFavorite] = useState(isFavorite);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { toast } = useToast();
 
     const handleFavoriteToggle = async () => {
         try {
             setIsLoading(true);
-            const res = await fetch('/api/auth/check-session', { method: 'GET' });
-            const session = await res.json();
+
+            // Проверяем авторизацию пользователя
+            const sessionRes = await fetch('/api/auth/check-session', { method: 'GET' });
+
+            if (!sessionRes.ok) {
+                router.push('/login');
+                return;
+            }
+
+            const session = await sessionRes.json();
 
             if (!session?.user) {
-                router.push('/api/auth/signin');
+                router.push('/login');
                 return;
             }
 
             if (favorite) {
-                await fetch(`/api/saved-properties/${id}`, { method: "DELETE" });
-                setFavorite(false);
+                // Удаляем из избранного
+                const response = await fetch(`/api/saved-properties/${id}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    setFavorite(false);
+                    toast({
+                        title: "Удалено из избранного",
+                        description: "Объект успешно удален из избранного",
+                    });
+                    router.refresh(); // Обновляем страницу для актуализации данных
+                } else {
+                    throw new Error("Failed to remove from favorites");
+                }
             } else {
-                await fetch(`/api/saved-properties/${id}`, { method: "POST" });
-                setFavorite(true);
+                // Добавляем в избранное
+                const response = await fetch(`/api/saved-properties/${id}`, {
+                    method: "POST",
+                });
+
+                if (response.ok) {
+                    setFavorite(true);
+                    toast({
+                        title: "Добавлено в избранное",
+                        description: "Объект успешно добавлен в избранное",
+                    });
+                    router.refresh(); // Обновляем страницу для актуализации данных
+                } else {
+                    throw new Error("Failed to add to favorites");
+                }
             }
         } catch (error) {
             console.error("Ошибка при добавлении/удалении из избранного:", error);
+            toast({
+                title: "Ошибка",
+                description: "Не удалось выполнить операцию. Пожалуйста, попробуйте еще раз.",
+                variant: "destructive",
+            });
         } finally {
             setIsLoading(false);
         }
