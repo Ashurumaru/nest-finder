@@ -20,8 +20,8 @@ const YandexMap = dynamic(() => import('@/components/map/YandexMap'), {
     )
 });
 
-// Default center coordinates (Moscow)
-const DEFAULT_CENTER = [55.751574, 37.573856];
+// Default center coordinates
+const DEFAULT_CENTER = [51.82570418957087, 107.62180724816872];
 const DEFAULT_ZOOM = 10;
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 19;

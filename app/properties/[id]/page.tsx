@@ -13,6 +13,7 @@ import ContactCard from "@/components/property/selected-property/ContactCard";
 import ComplaintButton from "@/components/property/selected-property/ComplaintButton";
 import { Decimal } from "@prisma/client/runtime/library";
 import { auth } from "@/auth";
+import {Property} from "@prisma/client";
 
 const ImageCarousel = dynamic(() => import("@/components/property/selected-property/ImageCarousel"));
 const ShareButton = dynamic(() => import("@/components/property/selected-property/ShareButton"));
@@ -84,6 +85,19 @@ export default async function PropertyPage({ params }: { params: { id: string } 
     }
 }
 
+function translatePropertyType(propertyType: Property): string {
+    switch (propertyType) {
+        case 'APARTMENT':
+            return 'Квартира';
+        case 'HOUSE':
+            return 'Дом';
+        case 'LAND_PLOT':
+            return 'Земельный участок';
+        default:
+            return propertyType;
+    }
+}
+
 function Header({ property, isLoggedIn }: { property: PostData; isLoggedIn: boolean }) {
     return (
         <div className="flex flex-col md:flex-row justify-between mb-8 bg-white p-6 rounded-xl shadow-md">
@@ -93,7 +107,7 @@ function Header({ property, isLoggedIn }: { property: PostData; isLoggedIn: bool
                         {property.type === "SALE" ? "Продажа" : "Аренда"}
                     </span>
                     <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                        {property.property}
+                        {translatePropertyType(property.property)}
                     </span>
                 </div>
                 <h1 className="text-3xl font-bold mb-3 text-gray-800">{property.title}</h1>
