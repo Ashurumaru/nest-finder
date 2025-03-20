@@ -18,7 +18,7 @@ export function CharacteristicsList({ property }: { property: PostData }) {
     };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {property.apartment && (
                 <>
                     {renderCharacteristic(Icons.area, "Площадь", property.apartment.apartmentArea ? `${property.apartment.apartmentArea} м²` : null)}
@@ -78,9 +78,12 @@ export function CharacteristicsList({ property }: { property: PostData }) {
 
 function Characteristic({ icon, label, value }: { icon: React.ReactNode; label: string; value: any }) {
     return (
-        <div className="flex items-center text-gray-700">
-            {icon}
-            <p>{label}: {value}</p>
+        <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+            <div className="text-indigo-600">{icon}</div>
+            <div>
+                <span className="text-gray-500 text-sm">{label}:</span>
+                <span className="ml-1 font-medium text-gray-800">{value}</span>
+            </div>
         </div>
     );
 }

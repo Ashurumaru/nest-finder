@@ -4,18 +4,33 @@ export function formatDate(dateString: string | Date | null | undefined): string
         return "Дата неизвестна";
     }
 
+    // Создаем объект Date из переданного значения
     const date = new Date(dateString);
 
+    // Проверяем, является ли дата валидной
+    if (isNaN(date.getTime())) {
+        return "Дата неизвестна";
+    }
+
     const now = new Date();
+
+    // Получаем разницу в миллисекундах
     const diffMs = now.getTime() - date.getTime();
+
+    // Проверяем, является ли разница отрицательной (будущая дата)
+    if (diffMs < 0) {
+        return "Дата в будущем";
+    }
+
+    // Вычисляем разницу в секундах, минутах, часах и днях напрямую
     const diffSeconds = Math.floor(diffMs / 1000);
     const diffMinutes = Math.floor(diffSeconds / 60);
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffDays = Math.floor(diffHours / 24);
+    const diffHours = Math.floor(diffSeconds / 3600);
+    const diffDays = Math.floor(diffSeconds / 86400);
 
     // Format for recent dates
     if (diffDays < 1) {
-        if (diffMinutes < 1) {
+        if (diffSeconds < 60) {
             return "Только что";
         } else if (diffHours < 1) {
             return `${diffMinutes} ${getRussianWordForm(diffMinutes, ["минуту", "минуты", "минут"])} назад`;

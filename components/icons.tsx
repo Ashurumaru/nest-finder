@@ -2,7 +2,7 @@ import {
     LayoutDashboardIcon,
     User,
     FileText,
-    ArrowRight, FlagIcon
+    ArrowRight, FlagIcon, Calendar
 } from 'lucide-react';
 
 import {
@@ -55,4 +55,5 @@ export const Icons = {
     renovation: <FaHome className="mr-2 text-blue-500" />,
     house: <MdHouse className="mr-2 text-blue-500" />,
     tag: <FaTag className="mr-2 text-blue-500" />,
+    calendar: <Calendar className="mr-2 text-blue-500" />,
 };
