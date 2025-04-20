@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { PostData } from '@/types/propertyTypes';
 import Image from 'next/image';
+import { PostData } from '@/types/propertyTypes';
 import { Button } from '@/components/ui/button';
-import {FaBath, FaBed, FaMapMarkerAlt, FaRulerCombined, FaTag} from "react-icons/fa";
+import { FaBath, FaBed, FaMapMarkerAlt, FaRulerCombined, FaTag } from "react-icons/fa";
 
 interface PropertyCardProps {
     property: PostData;
@@ -90,8 +90,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                     <div className="flex items-center gap-2 mb-4 lg:mb-0">
                         <FaMapMarkerAlt className="text-lg text-orange-700" />
                         <span className="text-orange-700">
-                            {property.city || 'Н/Д'}, {property.address || 'Н/Д'}
-                        </span>
+              {property.city || 'Н/Д'}, {property.address || 'Н/Д'}
+            </span>
                     </div>
                     <Link href={`/properties/${property.id}`}>
                         <Button>Подробнее</Button>

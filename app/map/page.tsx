@@ -204,7 +204,6 @@ function MapContent() {
 
     return (
         <div className="relative h-screen w-full overflow-hidden bg-gray-50">
-            {/* Map container */}
             <div className="absolute inset-0">
                 <YandexMap
                     key={mapKey}
@@ -216,8 +215,6 @@ function MapContent() {
                     onPropertySelect={handlePropertySelect}
                 />
             </div>
-
-            {/* Map Controls */}
             <MapControls
                 visiblePanel={sidebarVisible}
                 togglePanel={() => setSidebarVisible(!sidebarVisible)}
@@ -231,22 +228,17 @@ function MapContent() {
                 maxZoom={MAX_ZOOM}
                 minZoom={MIN_ZOOM}
             />
-
-            {/* Sidebar */}
             <div
                 className={`absolute top-0 right-0 h-full bg-white shadow-lg transition-transform duration-300 ease-in-out transform ${
                     sidebarVisible ? 'translate-x-0' : 'translate-x-full'
                 } w-96 z-10 flex flex-col`}
             >
-                {/* Filters */}
                 <FilterPanel
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     totalProperties={properties.length}
                     loading={loading}
                 />
-
-                {/* Properties list */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {loading ? (
                         <div className="flex justify-center items-center h-32">
@@ -282,7 +274,6 @@ function MapContent() {
     );
 }
 
-// Main page component with Suspense wrapper
 export default function MapPage() {
     return (
         <Suspense fallback={

@@ -50,7 +50,7 @@ export default function PropertySearchForm() {
         if (location) queryParams.searchQuery = location;
 
         const queryString = new URLSearchParams(queryParams).toString();
-        const path = transactionType === "SALE" ? "/sale" : "/rent";
+        const path = transactionType === "SALE" ? "/properties?type=SALE" : "/properties?type=RENT";
 
         router.push(`${path}?${queryString}`);
     };

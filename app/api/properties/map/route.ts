@@ -24,12 +24,9 @@ export async function GET(request: NextRequest) {
         const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice') as string) : undefined;
         const rooms = searchParams.getAll('rooms');
 
-        // Build query conditions
         const where: any = {
             isArchive: false,
         };
-
-        // Only add latitude/longitude filters if they're valid numbers
         if (!isNaN(swLat) && !isNaN(neLat) && !isNaN(swLng) && !isNaN(neLng)) {
             where.latitude = {
                 gte: new Decimal(swLat),
@@ -40,35 +37,25 @@ export async function GET(request: NextRequest) {
                 lte: new Decimal(neLng)
             };
         }
-
         if (type) {
             where.type = type;
         }
-
         if (property) {
             where.property = property;
         }
-
         if (minPrice !== undefined || maxPrice !== undefined) {
             where.price = {};
-
             if (minPrice !== undefined) {
                 where.price.gte = new Decimal(minPrice);
             }
-
             if (maxPrice !== undefined) {
                 where.price.lte = new Decimal(maxPrice);
             }
         }
-
-        // Handle room filtering
         if (rooms && rooms.length > 0) {
             where.OR = [];
-
             for (const room of rooms) {
                 const roomNumber = parseInt(room, 10);
-
-                // For studios
                 if (roomNumber === 0) {
                     where.OR.push({
                         apartment: {
@@ -76,7 +63,6 @@ export async function GET(request: NextRequest) {
                         }
                     });
                 }
-                // For 1-3 bedroom apartments
                 else if (roomNumber >= 1 && roomNumber <= 3) {
                     where.OR.push({
                         apartment: {
@@ -89,7 +75,6 @@ export async function GET(request: NextRequest) {
                         }
                     });
                 }
-                // For 4+ bedroom apartments/houses
                 else if (roomNumber === 4) {
                     where.OR.push({
                         apartment: {
@@ -108,7 +93,6 @@ export async function GET(request: NextRequest) {
                 }
             }
         }
-
         const properties = await prisma.post.findMany({
             where,
             include: {
@@ -127,7 +111,7 @@ export async function GET(request: NextRequest) {
             orderBy: {
                 createdAt: 'desc'
             },
-            take: 100 // Limit results count
+            take: 100
         });
 
         return NextResponse.json(properties);

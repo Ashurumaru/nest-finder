@@ -29,7 +29,6 @@ export default function YandexMap({
     const prevZoomRef = useRef<number>(zoom);
     const userInteractionRef = useRef<boolean>(false);
 
-    // Оптимизированные цвета для меток с поддержкой темы
     const colors = useMemo(() => ({
         primary: '#3B82F6',   // Синий
         secondary: '#6366F1', // Индиго
@@ -172,7 +171,6 @@ export default function YandexMap({
         };
     }, []);
 
-    // Форматирование цены с учетом валюты
     const formatPrice = useCallback((price: number) => {
         if (!price) return 'Цена не указана';
 
@@ -185,7 +183,6 @@ export default function YandexMap({
         }
     }, []);
 
-    // Создание содержимого балуна с улучшенным дизайном
     const createBalloonContent = useCallback((property: PostData) => {
         const price = Number(property.price || 0);
         const formattedPrice = formatPrice(price);
@@ -220,7 +217,6 @@ export default function YandexMap({
         `;
     }, [formatPrice]);
 
-    // Оптимизированное отображение плейсмарков с мемоизацией
     const renderPlacemarks = useMemo(() => {
         return properties.map((property) => {
             if (!property.latitude || !property.longitude) return null;
@@ -254,7 +250,7 @@ export default function YandexMap({
                 options={{
                     suppressMapOpenBlock: true,
                     yandexMapDisablePoiInteractivity: true,
-                    avoidFractionalZoom: false, // Разрешаем дробный зум для более плавной анимации
+                    avoidFractionalZoom: false,
                 }}
                 modules={[
                     'control.ZoomControl',
@@ -271,10 +267,8 @@ export default function YandexMap({
                         clusterDisableClickZoom: false,
                         clusterHideIconOnBalloonOpen: false,
                         geoObjectHideIconOnBalloonOpen: false,
-                        // Настройки для плавного кластеринга
                         hasBalloon: true,
                         hasHint: true,
-                        // Анимированные кластеры
                         clusterIconShape: {
                             type: 'Circle',
                             coordinates: [0, 0],

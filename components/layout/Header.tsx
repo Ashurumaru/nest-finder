@@ -1,4 +1,3 @@
-// components/layout/Header.tsx
 'use client';
 
 import { useState } from 'react';
@@ -15,10 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Type } from '@prisma/client';
 
 const Header = () => {
   const { data: session, status } = useSession();
@@ -26,7 +25,7 @@ const Header = () => {
 
   if (status === 'loading') {
     return (
-        <header className="bg-white shadow-md">
+        <header className="bg-background border-b border-border/40 shadow-sm">
           <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Skeleton className="h-8 w-32" />
             <div className="flex-shrink-0">
@@ -43,7 +42,7 @@ const Header = () => {
   const isAdmin = session?.user?.role === 'ADMIN';
 
   return (
-      <header className="bg-white shadow-md">
+      <header className="bg-background border-b border-border/40 shadow-sm">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex-shrink-0">
             <Link href="/">
@@ -56,24 +55,30 @@ const Header = () => {
               {session?.user && (
                   <>
                     <li>
-                      <Link href="/chat" className="text-gray-700 hover:text-blue-600" title="Чаты">
+                      <Link href="/chat" className="text-foreground/80 hover:text-foreground transition-colors" title="Чаты">
                         <ChatIcon className="w-5 h-5" />
                       </Link>
                     </li>
                     <li>
-                      <Link href="/profile#favorites" className="text-gray-700 hover:text-blue-600" title="Избранное">
+                      <Link href="/profile#favorites" className="text-foreground/80 hover:text-foreground transition-colors" title="Избранное">
                         <HeartIcon className="w-5 h-5" />
                       </Link>
                     </li>
                   </>
               )}
               <li>
-                <Link href="/rent" className="text-gray-700 hover:text-blue-600">
+                <Link
+                    href={`/properties?type=${Type.RENT}`}
+                    className="text-foreground/80 hover:text-foreground transition-colors"
+                >
                   Аренда
                 </Link>
               </li>
               <li>
-                <Link href="/sale" className="text-gray-700 hover:text-blue-600">
+                <Link
+                    href={`/properties?type=${Type.SALE}`}
+                    className="text-foreground/80 hover:text-foreground transition-colors"
+                >
                   Продажа
                 </Link>
               </li>
@@ -107,17 +112,17 @@ const Header = () => {
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
                         <DropdownMenuItem>
-                          <Link href="/profile">Профиль</Link>
+                          <Link href="/profile" className="w-full">Профиль</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Link href="/profile#favorites">Избранное</Link>
+                          <Link href="/profile#favorites" className="w-full">Избранное</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Link href="/properties/create">Добавить недвижимость</Link>
+                          <Link href="/properties/create" className="w-full">Добавить недвижимость</Link>
                         </DropdownMenuItem>
                         {isAdmin && (
                             <DropdownMenuItem>
-                              <Link href="/dashboard">Панель управления</Link>
+                              <Link href="/dashboard" className="w-full">Панель управления</Link>
                             </DropdownMenuItem>
                         )}
                       </DropdownMenuGroup>
@@ -130,10 +135,10 @@ const Header = () => {
               ) : (
                   <>
                     <Link href="/properties/create">
-                      <Button>+ Подать объявление</Button>
+                      <Button className="rounded-lg">+ Подать объявление</Button>
                     </Link>
                     <Link href="/login">
-                      <Button variant="outline">Войти</Button>
+                      <Button variant="outline" className="rounded-lg">Войти</Button>
                     </Link>
                   </>
               )}
@@ -142,7 +147,7 @@ const Header = () => {
 
           <div className="md:hidden">
             <button
-                className="text-gray-700 hover:text-blue-600 focus:outline-none"
+                className="text-foreground/80 hover:text-foreground focus:outline-none"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle menu"
             >
@@ -153,14 +158,14 @@ const Header = () => {
 
         {menuOpen && (
             <div className="md:hidden transition-all duration-300 ease-in-out">
-              <div className="px-4 pt-2 pb-4 space-y-4 bg-white border-t border-gray-200">
+              <div className="px-4 pt-2 pb-4 space-y-4 bg-background border-t border-border/40">
                 <ul className="space-y-2">
                   {session?.user && (
                       <>
                         <li>
                           <Link
                               href="/chat"
-                              className="block text-gray-700 hover:text-blue-600"
+                              className="block text-foreground/80 hover:text-foreground transition-colors"
                               onClick={() => setMenuOpen(false)}
                           >
                             <ChatIcon className="w-4 h-4 mr-2 inline-block" />
@@ -170,7 +175,7 @@ const Header = () => {
                         <li>
                           <Link
                               href="/profile#favorites"
-                              className="block text-gray-700 hover:text-blue-600"
+                              className="block text-foreground/80 hover:text-foreground transition-colors"
                               onClick={() => setMenuOpen(false)}
                           >
                             <HeartIcon className="w-4 h-4 mr-2 inline-block" />
@@ -181,8 +186,8 @@ const Header = () => {
                   )}
                   <li>
                     <Link
-                        href="/rent"
-                        className="block text-gray-700 hover:text-blue-600"
+                        href={`/properties?type=${Type.RENT}`}
+                        className="block text-foreground/80 hover:text-foreground transition-colors"
                         onClick={() => setMenuOpen(false)}
                     >
                       Аренда
@@ -190,8 +195,8 @@ const Header = () => {
                   </li>
                   <li>
                     <Link
-                        href="/sale"
-                        className="block text-gray-700 hover:text-blue-600"
+                        href={`/properties?type=${Type.SALE}`}
+                        className="block text-foreground/80 hover:text-foreground transition-colors"
                         onClick={() => setMenuOpen(false)}
                     >
                       Продажа
@@ -201,7 +206,7 @@ const Header = () => {
                       <li>
                         <Link
                             href="/dashboard"
-                            className="block text-gray-700 hover:text-blue-600"
+                            className="block text-foreground/80 hover:text-foreground transition-colors"
                             onClick={() => setMenuOpen(false)}
                         >
                           Панель управления
@@ -215,7 +220,7 @@ const Header = () => {
                         <Link href="/profile">
                           <Button
                               variant="outline"
-                              className="w-full"
+                              className="w-full rounded-lg"
                               onClick={() => setMenuOpen(false)}
                           >
                             Профиль
@@ -223,7 +228,7 @@ const Header = () => {
                         </Link>
                         <Link href="/properties/create">
                           <Button
-                              className="w-full"
+                              className="w-full rounded-lg"
                               onClick={() => setMenuOpen(false)}
                           >
                             Добавить недвижимость
@@ -231,7 +236,7 @@ const Header = () => {
                         </Link>
                         <Button
                             variant="destructive"
-                            className="w-full"
+                            className="w-full rounded-lg"
                             onClick={() => {
                               setMenuOpen(false);
                               signOut();
@@ -241,15 +246,25 @@ const Header = () => {
                         </Button>
                       </>
                   ) : (
-                      <Link href="/login">
-                        <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={() => setMenuOpen(false)}
-                        >
-                          Войти
-                        </Button>
-                      </Link>
+                      <>
+                        <Link href="/properties/create">
+                          <Button
+                              className="w-full rounded-lg mb-2"
+                              onClick={() => setMenuOpen(false)}
+                          >
+                            + Подать объявление
+                          </Button>
+                        </Link>
+                        <Link href="/login">
+                          <Button
+                              variant="outline"
+                              className="w-full rounded-lg"
+                              onClick={() => setMenuOpen(false)}
+                          >
+                            Войти
+                          </Button>
+                        </Link>
+                      </>
                   )}
                 </div>
               </div>

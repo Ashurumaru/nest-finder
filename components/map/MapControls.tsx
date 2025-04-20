@@ -31,7 +31,6 @@ const MapControls = ({
     const [tooltip, setTooltip] = useState<{message: string, type?: 'info' | 'error'} | null>(null);
     const [locationLoading, setLocationLoading] = useState(false);
 
-    // Сброс состояния загрузки местоположения при размонтировании
     useEffect(() => {
         return () => {
             setLocationLoading(false);
@@ -45,7 +44,6 @@ const MapControls = ({
 
         if (onMyLocation) {
             onMyLocation();
-            // Сброс состояния загрузки через 3 секунды (на случай если геолокация не сработает)
             setTimeout(() => setLocationLoading(false), 3000);
             return;
         }
@@ -87,7 +85,6 @@ const MapControls = ({
 
     return (
         <>
-            {/* Panel Toggle Button */}
             <div className="absolute top-4 left-4 z-10">
                 <button
                     onClick={togglePanel}
@@ -100,10 +97,8 @@ const MapControls = ({
                 </button>
             </div>
 
-            {/* Map Controls */}
             <div className="absolute top-4 left-20 z-10">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    {/* Zoom Controls */}
                     <div className="border-b border-gray-200">
                         <button
                             onClick={handleZoomIn}
@@ -128,7 +123,6 @@ const MapControls = ({
                         </button>
                     </div>
 
-                    {/* Geolocation Button */}
                     <div className="border-b border-gray-200">
                         <button
                             onClick={handleMyLocation}
@@ -142,7 +136,6 @@ const MapControls = ({
                         </button>
                     </div>
 
-                    {/* Reset View Button */}
                     <div className="border-b border-gray-200">
                         <button
                             onClick={onResetView}
@@ -155,7 +148,6 @@ const MapControls = ({
                         </button>
                     </div>
 
-                    {/* Lock/Unlock Map Button */}
                     {toggleLockMap && (
                         <div>
                             <button

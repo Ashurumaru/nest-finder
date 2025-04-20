@@ -1,30 +1,56 @@
 'use client';
 
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
-import PropertyCard from './PropertyCard';
-import PropertyFilter from './PropertyFilter';
 import { PostData } from '@/types/propertyTypes';
-import { Type } from '@prisma/client';
+import EnhancedPropertyCard from './EnhancedPropertyCard';
+import { motion } from 'framer-motion';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { MessageSquare } from "lucide-react";
 
 interface PropertyListProps {
-    initialProperties: PostData[];
-    propertyType: Type;
+    properties: PostData[];
 }
 
-export default function PropertyList({ initialProperties, propertyType }: PropertyListProps) {
+export default function PropertyList({ properties }: PropertyListProps) {
+    if (!properties || properties.length === 0) {
+        return (
+            <Alert className="bg-blue-50 border-blue-100 my-8">
+                <MessageSquare className="h-5 w-5 text-blue-500" />
+                <AlertTitle className="text-blue-700">Объекты не найдены</AlertTitle>
+                <AlertDescription className="text-blue-600">
+                    По вашему запросу не найдено ни одного объекта недвижимости. Попробуйте изменить параметры поиска.
+                </AlertDescription>
+            </Alert>
+        );
+    }
+
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const item = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0 }
+    };
+
     return (
-        <>
-            <PropertyFilter propertyType={propertyType} />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {initialProperties.length > 0 ? (
-                    initialProperties.map((property) => (
-                        <PropertyCard key={property.id} property={property} />
-                    ))
-                ) : (
-                    <p className="col-span-3 text-center">Ничего не найдено</p>
-                )}
-            </div>
-        </>
+        <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={container}
+            initial="hidden"
+            animate="show"
+        >
+            {properties.map((property) => (
+                <motion.div key={property.id} variants={item}>
+                    <EnhancedPropertyCard property={property} />
+                </motion.div>
+            ))}
+        </motion.div>
     );
 }
