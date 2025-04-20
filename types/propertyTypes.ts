@@ -203,12 +203,12 @@ export interface PropertyFilters {
 export interface PropertyFormValues {
     id?: string;
     title: string;
-    price: number | Prisma.Decimal;
+    price: number;
     imageUrls: string[];
     address: string;
     city: string;
-    latitude: number | Prisma.Decimal;
-    longitude: number | Prisma.Decimal;
+    latitude: number;
+    longitude: number;
     type: Type;
     property: Property;
     description?: string | null;
@@ -275,10 +275,10 @@ export interface PropertyFormValues {
     // Rental features
     rentalFeatures?: {
         rentalTerm?: RentalTerm | null;
-        securityDeposit?: number | Prisma.Decimal | null;
+        securityDeposit?: number | null;
         securityDepositConditions?: string | null;
         utilitiesPayment?: UtilitiesPayment | null;
-        utilitiesCost?: number | Prisma.Decimal | null;
+        utilitiesCost?: number  | null;
         leaseAgreementUrl?: string | null;
         petPolicy?: PetPolicy | null;
         availabilityDate?: Date | null;

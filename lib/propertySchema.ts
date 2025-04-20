@@ -3,8 +3,11 @@ import { RenovationState } from "@prisma/client";
 
 export const propertySchema = z.object({
     title: z.string().min(1, 'Заголовок обязателен'),
-    price: z.string().transform(Number).refine((val) => val > 0, {
-        message: 'Цена должна быть положительным числом',
+    price: z.union([
+        z.string().transform(val => Number(val)),
+        z.number()
+    ]).refine((val) => val > 0, {
+        message: 'Цена должна быть положительным числом'
     }),
     imageUrls: z.array(z.string().url('Неверный формат URL')).optional(),
     address: z.string().min(1, 'Адрес обязателен'),
