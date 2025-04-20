@@ -1,15 +1,12 @@
 import {User} from "@/types/userTypes";
+import {PostData, PropertyDB, PropertyFormValues, ReservationData} from "@/types/propertyTypes";
+import { ReservationStatus } from "@prisma/client";
 
 const API_URL = process.env.NEXT_PUBLIC_ENV === 'production'
     ? 'https://nest-finder-diplom.vercel.app'
     : 'http://localhost:3000';
 
-// services/propertyService.ts
-import { PostData, PropertyDB, ReservationData } from "@/types/propertyTypes";
-import { ReservationStatus } from "@prisma/client";
-import { PropertyFormValues } from "@/components/property/create-property/CreateUpdateProperty";
 
-// Функция для получения данных конкретной недвижимости по её ID
 export async function fetchPropertyData(id: string): Promise<PropertyFormValues | null> {
     const res = await fetch(`${API_URL}/api/properties/${id}`, {
         method: 'GET',
@@ -70,35 +67,179 @@ export async function fetchProperties(filters?: { userId?: string; type?: 'SALE'
     }
 }
 
+/**
+ * Creates a new property listing
+ */
 export async function createProperty(data: PropertyFormValues): Promise<PropertyFormValues> {
-    const res = await fetch(`${API_URL}/api/properties`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
+    try {
+        // Ensure proper date handling
+        const formattedData = formatPropertyData(data);
 
-    if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Ошибка при создании объявления');
+        const res = await fetch(`/api/properties`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formattedData),
+        });
+
+        const responseData = await res.json();
+
+        if (!res.ok) {
+            // Extract error details from the response
+            const errorMessage = responseData.message || 'Ошибка при создании объявления';
+            console.error('API Error:', responseData);
+
+            if (responseData.errors) {
+                // Handle validation errors
+                const validationErrors = formatValidationErrors(responseData.errors);
+                throw new Error(`${errorMessage}: ${validationErrors}`);
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        return responseData.property;
+    } catch (error) {
+        console.error('Error creating property:', error);
+        throw error;
     }
-
-    return res.json();
 }
 
-// Функция для обновления объявления недвижимости
+/**
+ * Updates an existing property listing
+ */
 export async function updateProperty(id: string, data: PropertyFormValues): Promise<PropertyFormValues> {
-    const res = await fetch(`${API_URL}/api/properties/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
+    try {
+        // Ensure proper date handling
+        const formattedData = formatPropertyData(data);
 
-    if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Ошибка при обновлении объявления');
+        const res = await fetch(`/api/properties/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formattedData),
+        });
+
+        const responseData = await res.json();
+
+        if (!res.ok) {
+            // Extract error details from the response
+            const errorMessage = responseData.message || 'Ошибка при обновлении объявления';
+            console.error('API Error:', responseData);
+
+            if (responseData.errors) {
+                // Handle validation errors
+                const validationErrors = formatValidationErrors(responseData.errors);
+                throw new Error(`${errorMessage}: ${validationErrors}`);
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error('Error updating property:', error);
+        throw error;
+    }
+}
+
+/**
+ * Formats property data for API submission
+ */
+function formatPropertyData(data: PropertyFormValues): PropertyFormValues {
+    const formattedData = { ...data };
+
+    // Convert string price to number
+    if (typeof formattedData.price === 'string') {
+        const priceAsString = formattedData.price as unknown as string;
+        formattedData.price = Number(priceAsString.replace(/\s+/g, ''));
     }
 
-    return res.json();
+    // Format apartment data if present
+    if (formattedData.property === 'APARTMENT' && formattedData.apartment) {
+        formattedData.apartment = cleanObjectValues(formattedData.apartment);
+    }
+
+    // Format house data if present
+    if (formattedData.property === 'HOUSE' && formattedData.house) {
+        formattedData.house = cleanObjectValues(formattedData.house);
+    }
+
+    // Format land plot data if present
+    if (formattedData.property === 'LAND_PLOT' && formattedData.landPlot) {
+        formattedData.landPlot = cleanObjectValues(formattedData.landPlot);
+    }
+
+    // Format rental features if present
+    if (formattedData.type === 'RENT' && formattedData.rentalFeatures) {
+        formattedData.rentalFeatures = cleanObjectValues(formattedData.rentalFeatures);
+    }
+
+    // Format sale features if present
+    if (formattedData.type === 'SALE' && formattedData.saleFeatures) {
+        formattedData.saleFeatures = cleanObjectValues(formattedData.saleFeatures);
+    }
+
+    return formattedData;
+}
+/**
+ * Cleans object values (removes empty strings, formats dates)
+ */
+function cleanObjectValues(obj: Record<string, any>): Record<string, any> {
+    const cleanedObj: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+        // Skip empty values
+        if (value === '' || value === null || value === undefined) {
+            continue;
+        }
+
+        // Handle Date objects
+        if (value instanceof Date) {
+            cleanedObj[key] = value;
+        } else {
+            cleanedObj[key] = value;
+        }
+    }
+
+    return cleanedObj;
+}
+
+/**
+ * Formats validation errors into a readable string
+ */
+function formatValidationErrors(errors: Record<string, any>): string {
+    const errorMessages: string[] = [];
+
+    for (const field in errors) {
+        if (errors[field]?._errors?.length) {
+            errorMessages.push(`${field}: ${errors[field]._errors.join(', ')}`);
+        }
+    }
+
+    return errorMessages.join('; ');
+}
+
+/**
+ * Gets a property by ID
+ */
+export async function getPropertyById(id: string): Promise<PropertyFormValues | null> {
+    try {
+        const res = await fetch(`/api/properties/${id}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!res.ok) {
+            if (res.status === 404) {
+                return null;
+            }
+            throw new Error('Ошибка при получении объявления');
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error('Error fetching property:', error);
+        return null;
+    }
 }
 
 // Функция для проверки, является ли объект избранным

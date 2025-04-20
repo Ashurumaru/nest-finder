@@ -1,3 +1,5 @@
+//app/api/properties/[id]/route.ts
+
 import { NextResponse } from 'next/server';
 import { auth } from "@/auth";
 import prisma from '@/prisma/prisma';

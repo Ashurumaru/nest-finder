@@ -12,33 +12,26 @@ import {
     ReservationStatus
 } from '@prisma/client';
 
-// Интерфейс для данных бронирования (ReservationData)
 export interface ReservationData {
     id: string;
-    startDate: Date;
-    endDate: Date;
-    totalPrice: number | Prisma.Decimal;
-    postId: string;
     userId: string;
-    createdAt?: Date;
-    status?: ReservationStatus;  // Возможные статусы: "PENDING", "CONFIRMED", "CANCELLED"
+    postId: string;
+    startDate: Date | string;
+    endDate: Date | string;
+    totalPrice: number | Prisma.Decimal;
+    status: ReservationStatus;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    post?: PostData;
+    user?: UserData;
+}
 
-    // Связанные данные: минимальные данные о недвижимости и пользователе
-    post?: {
-        id: string;
-        title: string;
-        price: number | Prisma.Decimal;
-        imageUrls: string[];
-        address: string;
-        city: string;
-        description?: string | null;
-    } | null;
-
-    user?: {
-        id: string;
-        name: string;
-        email?: string | null;
-    } | null;
+export interface UserData {
+    id: string;
+    name: string;
+    email: string;
+    phoneNumber?: string | null;
+    image?: string | null;
 }
 
 // Окончательная версия интерфейса для данных публикации (PostData)
@@ -205,4 +198,99 @@ export interface PropertyFilters {
     maxPrice?: number;       // Максимальная цена
     minBedrooms?: number;    // Минимальное количество спален
     maxBedrooms?: number;    // Минимальное количество спален
+}
+
+export interface PropertyFormValues {
+    id?: string;
+    title: string;
+    price: number | Prisma.Decimal;
+    imageUrls: string[];
+    address: string;
+    city: string;
+    latitude: number | Prisma.Decimal;
+    longitude: number | Prisma.Decimal;
+    type: Type;
+    property: Property;
+    description?: string | null;
+    views?: number;
+    updatedAt?: Date;
+    createdAt?: Date;
+    userId?: string;
+    isArchive?: boolean;
+
+    // Apartment specific data
+    apartment?: {
+        numBedrooms?: number | null;
+        numBathrooms?: number | null;
+        floorNumber?: number | null;
+        totalFloors?: number | null;
+        apartmentArea?: number | null;
+        buildingType?: BuildingType | null;
+        yearBuilt?: number | null;
+        ceilingHeight?: number | null;
+        hasBalcony?: boolean | null;
+        balconyType?: string | null;
+        hasLoggia?: boolean | null;
+        hasWalkInCloset?: boolean | null;
+        hasPassengerElevator?: boolean | null;
+        hasFreightElevator?: boolean | null;
+        heatingType?: HeatingType | null;
+        renovationState?: RenovationState | null;
+        parkingType?: ParkingType | null;
+        furnished?: boolean | null;
+        internetSpeed?: number | null;
+        flooring?: string | null;
+        soundproofing?: boolean | null;
+    };
+
+    // House specific data
+    house?: {
+        numberOfFloors?: number | null;
+        numberOfRooms?: number | null;
+        houseArea?: number | null;
+        landArea?: number | null;
+        wallMaterial?: string | null;
+        yearBuilt?: number | null;
+        hasGarage?: boolean | null;
+        garageArea?: number | null;
+        hasBasement?: boolean | null;
+        basementArea?: number | null;
+        heatingType?: HeatingType | null;
+        houseCondition?: RenovationState | null;
+        fencing?: boolean | null;
+        furnished?: boolean | null;
+        internetSpeed?: number | null;
+        flooring?: string | null;
+        soundproofing?: boolean | null;
+    };
+
+    // Land plot specific data
+    landPlot?: {
+        landArea?: number | null;
+        landPurpose?: string | null;
+        waterSource?: string | null;
+        fencing?: boolean | null;
+    };
+
+    // Rental features
+    rentalFeatures?: {
+        rentalTerm?: RentalTerm | null;
+        securityDeposit?: number | Prisma.Decimal | null;
+        securityDepositConditions?: string | null;
+        utilitiesPayment?: UtilitiesPayment | null;
+        utilitiesCost?: number | Prisma.Decimal | null;
+        leaseAgreementUrl?: string | null;
+        petPolicy?: PetPolicy | null;
+        availabilityDate?: Date | null;
+        minimumLeaseTerm?: number | null;
+        maximumLeaseTerm?: number | null;
+    };
+
+    // Sale features
+    saleFeatures?: {
+        mortgageAvailable?: boolean | null;
+        priceNegotiable?: boolean | null;
+        availabilityDate?: Date | null;
+        titleDeedUrl?: string | null;
+    };
 }
